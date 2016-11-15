@@ -19,19 +19,12 @@
         public Vector3 Offset { get; }
 
         public Vector3 Position { get; private set; }
+        
+        public Rotator RelativeRotation { get; set; }
 
-        private Rotator rotation;
-        public Rotator Rotation
-        {
-            get { return rotation; }
-            set
-            {
-                rotation = value;
-                Direction = rotation.ToVector();
-            }
-        }
         public Vector3 Direction { get; private set; }
 
+        public bool IsActive { get; set; }
 
         private List<SpotlightController> controllers = new List<SpotlightController>();
 
@@ -40,10 +33,19 @@
             Vehicle = vehicle;
             Offset = GetOffsetForModel(vehicle.Model);
             Data = GetSpotlightDataForModel(vehicle.Model);
+            SpotlightData d = Data; // currently color isn't saved in the XML file
+            d.Color = Color.White;
+            Data = d;
+
+            if (vehicle.Model.IsHelicopter)
+                RelativeRotation = new Rotator(-50.0f, 0.0f, 0.0f);
         }
 
         public void Update()
         {
+            if (!IsActive)
+                return;
+            
             Position = Vehicle.GetOffsetPosition(Offset);
 
             for (int i = 0; i < controllers.Count; i++)
@@ -53,10 +55,12 @@
                 Rotator newRotDelta;
                 if (controller.GetUpdatedRotationDelta(out newRotDelta))
                 {
-                    Rotation = Rotation + newRotDelta;
+                    RelativeRotation += newRotDelta;
+                    break;
                 }
             }
 
+            Direction = (Vehicle.Rotation + RelativeRotation).ToVector();
             Utility.DrawSpotlight(Position, Direction, Data);
         }
 

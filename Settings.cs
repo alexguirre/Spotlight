@@ -3,6 +3,7 @@
     // System
     using System.IO;
     using System.Drawing;
+    using System.Windows.Forms;
     using System.Xml.Serialization;
 
     // RPH
@@ -11,6 +12,8 @@
     internal class Settings
     {
         public readonly InitializationFile GeneralSettingsIniFile;
+
+        public readonly Keys ToggleSpotlightKey;
 
         public readonly InitializationFile SpotlightOffsetsIniFile;
 
@@ -59,6 +62,8 @@
             CarsSpotlightData = ReadSpotlightDataFromXMLFile(carsSpotlightDataFileName);
             HelicoptersSpotlightData = ReadSpotlightDataFromXMLFile(helicoptersSpotlightDataFileName);
             BoatsSpotlightData = ReadSpotlightDataFromXMLFile(boatsSpotlightDataFileName);
+
+            ToggleSpotlightKey = GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "Toggle", Keys.I);
         }
 
 
@@ -122,9 +127,15 @@
 
         #region Default Values
         const string DefaultGeneralSettingsText = @"
-[Keys]
+[Keyboard]
 //** VALID KEYS: https://msdn.microsoft.com/en-us/library/system.windows.forms.keys(v=vs.110).aspx **\\
+Toggle = I
 
+Move Left = NumPad4
+Move Right = NumPad6
+
+Move Up = NumPad8
+Move Down = NumPad2
 
 
 [ControllerButtons]
