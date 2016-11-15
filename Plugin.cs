@@ -26,11 +26,11 @@
             if (!Directory.Exists(@"Plugins\Spotlight Resources\"))
                 Directory.CreateDirectory(@"Plugins\Spotlight Resources\");
 
-            Settings = new Settings(@"Plugins\Spotlight Resources\general.ini",
-                                    @"Plugins\Spotlight Resources\offsets.ini",
-                                    @"Plugins\Spotlight Resources\cars spotlight data.xml",
-                                    @"Plugins\Spotlight Resources\helicopters spotlight data.xml",
-                                    @"Plugins\Spotlight Resources\boats spotlight data.xml",
+            Settings = new Settings(@"Plugins\Spotlight Resources\General.ini",
+                                    @"Plugins\Spotlight Resources\Offsets.ini",
+                                    @"Plugins\Spotlight Resources\Spotlight Data - Cars.xml",
+                                    @"Plugins\Spotlight Resources\Spotlight Data - Helicopters.xml",
+                                    @"Plugins\Spotlight Resources\Spotlight Data - Boats.xml",
                                     true);
 
             while (true)
