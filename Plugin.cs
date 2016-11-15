@@ -45,9 +45,7 @@
         {
             if (Game.IsKeyDown(Settings.ToggleSpotlightKey))
             {
-                Game.DisplayNotification("Pressed " + Settings.ToggleSpotlightKey);
                 Spotlight s = GetPlayerCurrentVehicleSpotlight();
-                Game.DisplayNotification("GetPlayerCurrentVehicleSpotlight is null = " + (s == null).ToString());
 
                 if (s != null)
                 {

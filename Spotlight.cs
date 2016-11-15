@@ -33,9 +33,6 @@
             Vehicle = vehicle;
             Offset = GetOffsetForModel(vehicle.Model);
             Data = GetSpotlightDataForModel(vehicle.Model);
-            SpotlightData d = Data; // currently color isn't saved in the XML file
-            d.Color = Color.White;
-            Data = d;
 
             if (vehicle.Model.IsHelicopter)
                 RelativeRotation = new Rotator(-50.0f, 0.0f, 0.0f);

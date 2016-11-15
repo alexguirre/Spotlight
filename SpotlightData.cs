@@ -3,6 +3,7 @@
     // System
     using System;
     using System.Drawing;
+    using System.Xml.Serialization;
 
     // RPH
     using Rage;
@@ -10,7 +11,8 @@
     [Serializable]
     public struct SpotlightData
     {
-        public Color Color; // TODO: make a serializable Color
+        [XmlElement(Type = typeof(Engine.XmlColor))]
+        public Color Color;
         public bool Shadow;
         public float Radius;
         public float Brightness;

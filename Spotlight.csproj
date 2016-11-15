@@ -71,6 +71,7 @@
     </Compile>
     <Compile Include="Engine\Extensions.cs" />
     <Compile Include="Engine\Utility.cs" />
+    <Compile Include="Engine\XmlColor.cs" />
     <Compile Include="KeyboardSpotlightController.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SpotlightController.cs" />
