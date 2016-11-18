@@ -12,6 +12,7 @@
             Owner = owner;
         }
 
+        public abstract void UpdateControls();
         public abstract bool GetUpdatedRotationDelta(out Rotator rotation);
     }
 }

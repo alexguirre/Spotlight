@@ -26,6 +26,12 @@
 
         public bool IsActive { get; set; }
 
+        public bool IsTrackingPed { get { return TrackedPed.Exists(); } }
+        public Ped TrackedPed { get; set; }
+
+        public bool IsTrackingVehicle { get { return TrackedVehicle.Exists(); } }
+        public Vehicle TrackedVehicle { get; set; }
+
         private List<SpotlightController> controllers = new List<SpotlightController>();
 
         public Spotlight(Vehicle vehicle)
@@ -48,16 +54,33 @@
             for (int i = 0; i < controllers.Count; i++)
             {
                 SpotlightController controller = controllers[i];
-
-                Rotator newRotDelta;
-                if (controller.GetUpdatedRotationDelta(out newRotDelta))
-                {
-                    RelativeRotation += newRotDelta;
-                    break;
-                }
+                controller.UpdateControls();
             }
 
-            Direction = (Vehicle.Rotation + RelativeRotation).ToVector();
+            if (IsTrackingVehicle)
+            {
+                Direction = (TrackedVehicle.Position - Position).ToNormalized();
+            }
+            else if (IsTrackingPed)
+            {
+                Direction = (TrackedPed.Position - Position).ToNormalized();
+            }
+            else
+            {
+                for (int i = 0; i < controllers.Count; i++)
+                {
+                    SpotlightController controller = controllers[i];
+
+                    Rotator newRotDelta;
+                    if (controller.GetUpdatedRotationDelta(out newRotDelta))
+                    {
+                        RelativeRotation += newRotDelta;
+                        break;
+                    }
+                }
+                Direction = (Vehicle.Rotation + RelativeRotation).ToVector();
+            }
+
             Utility.DrawSpotlight(Position, Direction, Data);
         }
 

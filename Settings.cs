@@ -97,7 +97,7 @@
         {
             using (StreamWriter writer = new StreamWriter(fileName, false))
             {
-                writer.Write(DefaultGeneralSettingsText);
+                writer.Write(PluginTextTitle + DefaultGeneralSettingsText);
             }
         }
 
@@ -105,7 +105,7 @@
         {
             using (StreamWriter writer = new StreamWriter(fileName, false))
             {
-                writer.Write(DefaultSpotlightOffsetsText);
+                writer.Write(PluginTextTitle + DefaultSpotlightOffsetsText);
             }
         }
 
@@ -126,6 +126,8 @@
         #endregion
 
         #region Default Values
+        static readonly string PluginTextTitle = $"Spotlight v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version} by alexguirre{System.Environment.NewLine}";
+
         const string DefaultGeneralSettingsText = @"
 [Keyboard]
 //** VALID KEYS: https://msdn.microsoft.com/en-us/library/system.windows.forms.keys(v=vs.110).aspx **\\
@@ -137,6 +139,8 @@ Move Right = NumPad6
 Move Up = NumPad8
 Move Down = NumPad2
 
+TrackPedKey = NumPad1
+TrackVehicleKey = NumPad3
 
 [ControllerButtons]
 //** VALID BUTTONS: http://docs.ragepluginhook.net/html/558BC34.htm **\\
