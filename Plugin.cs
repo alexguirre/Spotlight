@@ -6,6 +6,7 @@
     using System.Threading;
     using System.Windows.Forms;
     using System.Collections.Generic;
+    using System.Windows;
 
     // RPH
     using Rage;
@@ -32,6 +33,9 @@
                                     @"Plugins\Spotlight Resources\Spotlight Data - Helicopters.xml",
                                     @"Plugins\Spotlight Resources\Spotlight Data - Boats.xml",
                                     true);
+
+
+            Game.RawFrameRender += OnRawFrameRenderDrawCoronas;
 
             while (true)
             {
@@ -72,6 +76,17 @@
                 SpotlightsByVehicle.Remove(vehicleKeysToRemove[i]);
             }
             vehicleKeysToRemove.Clear();
+        }
+        
+        private static void OnRawFrameRenderDrawCoronas(object sender, GraphicsEventArgs e)
+        {
+            foreach (KeyValuePair<Vehicle, Spotlight> p in SpotlightsByVehicle)
+            {
+                if (p.Value.IsActive)
+                {
+                    Utility.DrawCorona(p.Value.Position, p.Value.Direction, p.Value.Data.Color);
+                }
+            }
         }
 
         private static void OnUnload(bool isTerminating)

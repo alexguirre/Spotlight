@@ -7,6 +7,8 @@
     using Rage;
     using Rage.Native;
 
+    using Engine.Memory;
+
     internal static class Utility
     {
         public static void DrawSpotlight(Vector3 position, Vector3 direction, SpotlightData data)
@@ -25,6 +27,13 @@
                                             color.R, color.G, color.B,
                                             distance, brightness, roundness, 
                                             radius, falloff, shadow ? 0.0f : 0);
+        }
+
+        public static unsafe void DrawCorona(Vector3 position, Vector3 direction, Color color)
+        {
+            NativeVector3 p = position;
+            NativeVector3 d = direction;
+            GameFunctions.DrawCorona(GameFunctions.DrawCoronaUnkPtr, &p, 3.75f, unchecked((uint)color.ToArgb()), 90.0f, 100.0f, &d, 1.0f, 0.0f, 60.0f, 3);
         }
     }
 }

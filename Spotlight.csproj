@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -37,6 +39,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>E:\Rockstar Games\Grand Theft Auto V\Plugins\</OutputPath>
@@ -46,6 +49,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="RagePluginHookSDK">
@@ -55,6 +59,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -63,13 +68,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EditSettingsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="EditSettingsForm.Designer.cs">
-      <DependentUpon>EditSettingsForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Engine\Extensions.cs" />
+    <Compile Include="Engine\Memory\GameFunctions.cs" />
+    <Compile Include="Engine\Memory\NativeVector3.cs" />
     <Compile Include="Engine\Utility.cs" />
     <Compile Include="Engine\XmlColor.cs" />
     <Compile Include="KeyboardSpotlightController.cs" />
@@ -79,11 +80,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Spotlight.cs" />
     <Compile Include="SpotlightData.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="EditSettingsForm.resx">
-      <DependentUpon>EditSettingsForm.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
