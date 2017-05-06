@@ -73,12 +73,13 @@
     <Compile Include="Engine\Memory\NativeVector3.cs" />
     <Compile Include="Engine\Utility.cs" />
     <Compile Include="Engine\XmlColor.cs" />
-    <Compile Include="KeyboardSpotlightController.cs" />
+    <Compile Include="ISpotlight.cs" />
+    <Compile Include="SpotlightControllers\KeyboardSpotlightController.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="SpotlightController.cs" />
+    <Compile Include="SpotlightControllers\SpotlightController.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Spotlight.cs" />
+    <Compile Include="VehicleSpotlight.cs" />
     <Compile Include="SpotlightData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

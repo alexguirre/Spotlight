@@ -5,6 +5,9 @@
     using System.Drawing;
     using System.Windows.Forms;
     using System.Xml.Serialization;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+
 
     // RPH
     using Rage;
@@ -14,8 +17,8 @@
         public readonly InitializationFile GeneralSettingsIniFile;
 
         public readonly Keys ToggleSpotlightKey;
-
-        public readonly InitializationFile SpotlightOffsetsIniFile;
+        
+        public readonly ReadOnlyDictionary<Model, Vector3> SpotlightOffsets;
 
         public readonly SpotlightData CarsSpotlightData;
         public readonly SpotlightData HelicoptersSpotlightData;
@@ -58,7 +61,7 @@
 
             Game.LogTrivial("Reading settings...");
             GeneralSettingsIniFile = new InitializationFile(generalSettingsIniFileName);
-            SpotlightOffsetsIniFile = new InitializationFile(spotlightOffsetsIniFileName);
+            SpotlightOffsets = new ReadOnlyDictionary<Model, Vector3>(ReadSpotlightOffsets(new InitializationFile(spotlightOffsetsIniFileName)));
             CarsSpotlightData = ReadSpotlightDataFromXMLFile(carsSpotlightDataFileName);
             HelicoptersSpotlightData = ReadSpotlightDataFromXMLFile(helicoptersSpotlightDataFileName);
             BoatsSpotlightData = ReadSpotlightDataFromXMLFile(boatsSpotlightDataFileName);
@@ -66,6 +69,62 @@
             ToggleSpotlightKey = GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "Toggle", Keys.I);
         }
 
+
+        private Dictionary<Model, Vector3> ReadSpotlightOffsets(InitializationFile iniFile)
+        {
+            Game.LogTrivial("Loading spotlight offsets...");
+
+            Dictionary<Model, Vector3> dict = new Dictionary<Model, Vector3>();
+
+            foreach (string modelName in iniFile.GetSectionNames())
+            {
+                float x = 0.0f, y = 0.0f, z = 0.0f;
+
+                bool success = false;
+                System.Exception exc = null;
+                try
+                {
+                    if (iniFile.DoesSectionExist(modelName))
+                    {
+                        if (iniFile.DoesKeyExist(modelName, "X") &&
+                            iniFile.DoesKeyExist(modelName, "Y") &&
+                            iniFile.DoesKeyExist(modelName, "Z"))
+                        {
+
+                            x = iniFile.ReadSingle(modelName, "X", -0.8f);
+                            y = iniFile.ReadSingle(modelName, "Y", 1.17f);
+                            z = iniFile.ReadSingle(modelName, "Z", 0.52f);
+
+                            Game.LogTrivial($"  Spotlight offset position settings found and loaded for vehicle model: {modelName}");
+                            success = true;
+                        }
+                    }
+
+                }
+                catch (System.Exception ex)
+                {
+                    exc = ex;
+                }
+
+                if (!success)
+                {
+                    Game.LogTrivial($"  <WARNING> Failed to load spotlight offset position settings for vehicle model: {modelName}");
+                    if (exc != null)
+                    {
+                        Game.LogTrivial($"  <WARNING> {exc}");
+                    }
+                    Game.LogTrivial("       Using default settings");
+                    x = -0.8f;
+                    y = 1.17f;
+                    z = 0.52f;
+                }
+
+                dict.Add(modelName, new Vector3(x, y, z));
+            }
+
+            Game.LogTrivial("Finished loading spotlight offsets...");
+            return dict;
+        }
 
         private SpotlightData ReadSpotlightDataFromXMLFile(string fileName)
         {
@@ -129,6 +188,9 @@
         static readonly string PluginTextTitle = $"Spotlight v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version} by alexguirre{System.Environment.NewLine}";
 
         const string DefaultGeneralSettingsText = @"
+[Controls]
+KeyboardControlsEnabled = true
+
 [Keyboard]
 //** VALID KEYS: https://msdn.microsoft.com/en-us/library/system.windows.forms.keys(v=vs.110).aspx **\\
 Toggle = I

@@ -11,9 +11,12 @@
 
     internal static class Utility
     {
-        public static void DrawSpotlight(Vector3 position, Vector3 direction, SpotlightData data)
+        public static void DrawSpotlight(ISpotlight spotlight)
         {
-            DrawSpotlight(position, direction, data.Color, data.Shadow, data.Radius, data.Brightness, data.Distance, data.Falloff, data.Roundness);
+            if (!spotlight.IsActive)
+                return;
+
+            DrawSpotlight(spotlight.Position, spotlight.Direction, spotlight.Data.Color, spotlight.Data.Shadow, spotlight.Data.Radius, spotlight.Data.Brightness, spotlight.Data.Distance, spotlight.Data.Falloff, spotlight.Data.Roundness);
         }
 
         public static void DrawSpotlight(Vector3 position, Vector3 direction, Color color, bool shadow, float radius, float brightness, float distance, float falloff, float roundness)
@@ -33,7 +36,7 @@
         {
             NativeVector3 p = position;
             NativeVector3 d = direction;
-            GameFunctions.DrawCorona(GameFunctions.DrawCoronaUnkPtr, &p, 3.75f, unchecked((uint)color.ToArgb()), 90.0f, 100.0f, &d, 1.0f, 0.0f, 60.0f, 3);
+            GameFunctions.DrawCorona(GameFunctions.DrawCoronaUnkPtr, &p, 2.25f, unchecked((uint)color.ToArgb()), 80.0f, 100.0f, &d, 1.0f, 10.0f, 65.0f, 2);
         }
     }
 }

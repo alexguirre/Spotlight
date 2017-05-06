@@ -3,21 +3,20 @@
     // System
     using System;
     using System.IO;
-    using System.Threading;
-    using System.Windows.Forms;
+    using System.Linq;
     using System.Collections.Generic;
-    using System.Windows;
 
     // RPH
     using Rage;
+    
+    using Spotlight.SpotlightControllers;
 
     internal static class Plugin
     {
         public static Settings Settings { get; private set; }
 
-        public static readonly Dictionary<Vehicle, Spotlight> SpotlightsByVehicle = new Dictionary<Vehicle, Spotlight>();
-
-        private static List<Vehicle> vehicleKeysToRemove = new List<Vehicle>();
+        public static readonly List<VehicleSpotlight> Spotlights = new List<VehicleSpotlight>();
+        public static readonly List<SpotlightController> SpotlightControllers = new List<SpotlightController>();
 
         private static void Main()
         {
@@ -34,13 +33,14 @@
                                     @"Plugins\Spotlight Resources\Spotlight Data - Boats.xml",
                                     true);
 
+            LoadSpotlightControllers();
 
-            Game.RawFrameRender += OnRawFrameRenderDrawCoronas;
-
+            Game.FrameRender += OnRawFrameRenderDrawCoronas;
+            
             while (true)
             {
                 GameFiber.Yield();
-
+                
                 Update();
             }
         }
@@ -49,42 +49,36 @@
         {
             if (Game.IsKeyDown(Settings.ToggleSpotlightKey))
             {
-                Spotlight s = GetPlayerCurrentVehicleSpotlight();
+                VehicleSpotlight s = GetPlayerCurrentVehicleSpotlight();
 
                 if (s != null)
                 {
-                    Game.DisplaySubtitle(s.IsActive.ToString());
                     s.IsActive = !s.IsActive;
                 }
             }
 
-
-            foreach (KeyValuePair<Vehicle, Spotlight> p in SpotlightsByVehicle)
+            
+            for (int i = Spotlights.Count - 1; i >= 0; i--)
             {
-                if (!p.Key.Exists() || p.Key.IsDead)
+                VehicleSpotlight s = Spotlights[i];
+                if (!s.Vehicle || s.Vehicle.IsDead)
                 {
-                    vehicleKeysToRemove.Add(p.Key);
+                    Spotlights.Remove(s);
                     continue;
                 }
 
-                p.Value.Update();
+                s.Update(SpotlightControllers);
             }
-
-
-            for (int i = 0; i < vehicleKeysToRemove.Count; i++)
-            {
-                SpotlightsByVehicle.Remove(vehicleKeysToRemove[i]);
-            }
-            vehicleKeysToRemove.Clear();
         }
-        
-        private static void OnRawFrameRenderDrawCoronas(object sender, GraphicsEventArgs e)
+
+        private static unsafe void OnRawFrameRenderDrawCoronas(object sender, GraphicsEventArgs e)
         {
-            foreach (KeyValuePair<Vehicle, Spotlight> p in SpotlightsByVehicle)
+            for (int i = 0; i < Spotlights.Count; i++)
             {
-                if (p.Value.IsActive)
+                VehicleSpotlight s = Spotlights[i];
+                if (s.IsActive)
                 {
-                    Utility.DrawCorona(p.Value.Position, p.Value.Direction, p.Value.Data.Color);
+                    Utility.DrawCorona(s.Position, s.Direction, s.Data.Color);
                 }
             }
         }
@@ -94,16 +88,14 @@
             if (!isTerminating)
             {
                 // native calls: delete entities, blips, etc.
-
             }
 
             // dispose objects
-            SpotlightsByVehicle.Clear();
-            vehicleKeysToRemove.Clear();
+            Spotlights.Clear();
         }
 
 
-        private static Spotlight GetPlayerCurrentVehicleSpotlight()
+        private static VehicleSpotlight GetPlayerCurrentVehicleSpotlight()
         {
             Vehicle v = Game.LocalPlayer.Character.CurrentVehicle;
             if (v)
@@ -114,26 +106,34 @@
             return null;
         }
 
-        private static Spotlight GetVehicleSpotlight(Vehicle vehicle)
+        private static VehicleSpotlight GetVehicleSpotlight(Vehicle vehicle)
         {
-            if (SpotlightsByVehicle.ContainsKey(vehicle))
-                return SpotlightsByVehicle[vehicle];
+            VehicleSpotlight s = Spotlights.FirstOrDefault(l => l.Vehicle == vehicle);
 
-            Spotlight s = new Spotlight(vehicle);
-            s.RegisterController<KeyboardSpotlightController>();
-            SpotlightsByVehicle.Add(vehicle, s);
+            if (s != null)
+                return s;
+
+            s = new VehicleSpotlight(vehicle);
+            Spotlights.Add(s);
             return s;
+        }
+
+        private static void LoadSpotlightControllers()
+        {
+            IEnumerable<Type> types = System.Reflection.Assembly.GetExecutingAssembly().GetTypes();
+
+            foreach (Type type in types)
+            {
+                if (!type.IsAbstract && !type.IsInterface && typeof(SpotlightController).IsAssignableFrom(type))
+                {
+                    string iniKeyName = type.Name.Replace("SpotlightController", "") + "ControlsEnabled";
+                    if (Settings.GeneralSettingsIniFile.DoesKeyExist("Controls", iniKeyName) && Settings.GeneralSettingsIniFile.ReadBoolean("Controls", iniKeyName, false))
+                    {
+                        SpotlightController c = (SpotlightController)Activator.CreateInstance(type, true);
+                        SpotlightControllers.Add(c);
+                    }
+                }
+            }
         }
     }
 }
-
-/* RUN WINDOWS FORM
-EditSettingsForm = new EditSettingsForm();
-FormsThread = new Thread(() =>
-{
-    Application.EnableVisualStyles();
-    Application.Run(EditSettingsForm);
-});
-FormsThread.SetApartmentState(ApartmentState.STA);
-FormsThread.Start();
-*/
