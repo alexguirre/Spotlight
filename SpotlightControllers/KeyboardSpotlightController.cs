@@ -10,13 +10,16 @@
 
     internal class KeyboardSpotlightController : SpotlightController
     {
-        private Keys moveLeftKey;
-        private Keys moveRightKey;
-        private Keys moveUpKey;
-        private Keys moveDownKey;
+        private readonly Keys moveLeftKey;
+        private readonly Keys moveRightKey;
+        private readonly Keys moveUpKey;
+        private readonly Keys moveDownKey;
 
-        private Keys trackPedKey;
-        private Keys trackVehicleKey;
+        private readonly Keys trackPedKey;
+        private readonly Keys trackVehicleKey;
+
+        public readonly Keys modifierKey;
+        public readonly Keys toggleKey;
 
         protected KeyboardSpotlightController()
         {
@@ -27,7 +30,12 @@
 
             trackPedKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "TrackPedKey", Keys.NumPad1);
             trackVehicleKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "TrackVehicleKey", Keys.NumPad3);
+
+            modifierKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "Modifier", Keys.I);
+            toggleKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "Toggle", Keys.I);
         }
+
+        public override bool ShouldToggleSpotlight() => Utility.IsKeyDownWithModifier(toggleKey, modifierKey);
 
         bool hasMoved = false;
         Rotator rotationDelta;
@@ -36,31 +44,31 @@
             hasMoved = false;
             float pitch = 0.0f, yaw = 0.0f;
 
-            if (Game.IsKeyDownRightNow(moveLeftKey))
+            if (Utility.IsKeyDownRightNowWithModifier(moveLeftKey, modifierKey))
             {
                 hasMoved = true;
                 yaw += spotlight.Data.MovementSpeed;
             }
-            else if (Game.IsKeyDownRightNow(moveRightKey))
+            else if (Utility.IsKeyDownRightNowWithModifier(moveRightKey, modifierKey))
             {
                 hasMoved = true;
                 yaw -= spotlight.Data.MovementSpeed;
             }
 
 
-            if (Game.IsKeyDownRightNow(moveUpKey))
+            if (Utility.IsKeyDownRightNowWithModifier(moveUpKey, modifierKey))
             {
                 hasMoved = true;
                 pitch += spotlight.Data.MovementSpeed;
             }
-            else if (Game.IsKeyDownRightNow(moveDownKey))
+            else if (Utility.IsKeyDownRightNowWithModifier(moveDownKey, modifierKey))
             {
                 hasMoved = true;
                 pitch -= spotlight.Data.MovementSpeed;
             }
 
 
-            if (Game.IsKeyDown(trackVehicleKey))
+            if (Utility.IsKeyDownWithModifier(trackVehicleKey, modifierKey))
             {
                 if (spotlight.IsTrackingVehicle)
                 {
@@ -75,7 +83,7 @@
                     }
                 }
             }
-            else if (Game.IsKeyDown(trackPedKey))
+            else if (Utility.IsKeyDownWithModifier(trackPedKey, modifierKey))
             {
                 if (spotlight.IsTrackingPed)
                 {
@@ -85,6 +93,7 @@
                 {
                     Ped p = World.GetEntities(Game.LocalPlayer.Character.Position, 130.0f, GetEntitiesFlags.ConsiderHumanPeds | GetEntitiesFlags.ExcludePlayerPed)
                                  .Where(x => !((Ped)x).IsInAnyVehicle(false))
+                                 .OrderBy(x => Vector3.DistanceSquared(x.Position, spotlight.Position))
                                  .FirstOrDefault() as Ped;
                     if (p)
                     {

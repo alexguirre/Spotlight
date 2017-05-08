@@ -11,7 +11,7 @@
         public delegate long DrawCoronaDelegate(long unkPtr, NativeVector3* position, float coronaSize, uint colorARGB, float coronaIntensity, float unk_100, NativeVector3* direction, float unk_1, float innerAngle, float outerAngle, ushort unk_3);
 
         private static DrawCoronaDelegate drawCorona;
-        public static DrawCoronaDelegate DrawCorona
+        public static DrawCoronaDelegate DrawCorona // needs to be called in the frame render event
         {
             get
             {

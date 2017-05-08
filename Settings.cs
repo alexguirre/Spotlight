@@ -16,8 +16,6 @@
     {
         public readonly InitializationFile GeneralSettingsIniFile;
 
-        public readonly Keys ToggleSpotlightKey;
-        
         public readonly ReadOnlyDictionary<Model, Vector3> SpotlightOffsets;
 
         public readonly SpotlightData CarsSpotlightData;
@@ -65,8 +63,6 @@
             CarsSpotlightData = ReadSpotlightDataFromXMLFile(carsSpotlightDataFileName);
             HelicoptersSpotlightData = ReadSpotlightDataFromXMLFile(helicoptersSpotlightDataFileName);
             BoatsSpotlightData = ReadSpotlightDataFromXMLFile(boatsSpotlightDataFileName);
-
-            ToggleSpotlightKey = GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "Toggle", Keys.I);
         }
 
 
@@ -190,9 +186,11 @@
         const string DefaultGeneralSettingsText = @"
 [Controls]
 KeyboardControlsEnabled = true
+ControllerControlsEnabled = true
 
 [Keyboard]
-//** VALID KEYS: https://msdn.microsoft.com/en-us/library/system.windows.forms.keys(v=vs.110).aspx **\\
+; VALID KEYS: https://msdn.microsoft.com/en-us/library/system.windows.forms.keys(v=vs.110).aspx
+Modifier = None
 Toggle = I
 
 Move Left = NumPad4
@@ -204,8 +202,15 @@ Move Down = NumPad2
 TrackPedKey = NumPad1
 TrackVehicleKey = NumPad3
 
-[ControllerButtons]
-//** VALID BUTTONS: http://docs.ragepluginhook.net/html/558BC34.htm **\\
+
+
+[Controller]
+; VALID BUTTONS: http://docs.ragepluginhook.net/html/558BC34.htm
+Modifier = LeftShoulder
+Toggle = X
+
+; Set it to LeftStick, RightStick or DPad, to select what to use
+Method = LeftStick
 
 
 

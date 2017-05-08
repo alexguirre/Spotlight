@@ -47,7 +47,7 @@
 
         private static void Update()
         {
-            if (Game.IsKeyDown(Settings.ToggleSpotlightKey))
+            if (SpotlightControllers.Any(c => c.ShouldToggleSpotlight()))
             {
                 VehicleSpotlight s = GetPlayerCurrentVehicleSpotlight();
 

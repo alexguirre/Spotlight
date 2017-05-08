@@ -11,6 +11,8 @@
         {
         }
 
+        public abstract bool ShouldToggleSpotlight();
+
         public void UpdateControls(VehicleSpotlight spotlight)
         {
             LastUpdatedSpotlight = spotlight;

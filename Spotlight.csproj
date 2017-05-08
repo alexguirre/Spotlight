@@ -74,6 +74,7 @@
     <Compile Include="Engine\Utility.cs" />
     <Compile Include="Engine\XmlColor.cs" />
     <Compile Include="ISpotlight.cs" />
+    <Compile Include="SpotlightControllers\ControllerSpotlightController.cs" />
     <Compile Include="SpotlightControllers\KeyboardSpotlightController.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SpotlightControllers\SpotlightController.cs" />
