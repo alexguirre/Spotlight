@@ -184,11 +184,13 @@
         static readonly string PluginTextTitle = $"Spotlight v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version} by alexguirre{System.Environment.NewLine}";
 
         const string DefaultGeneralSettingsText = @"
-[Controls]
+[Controls] ; Settings to specify which controls are enabled
 KeyboardControlsEnabled = true
 ControllerControlsEnabled = true
+MouseControlsEnabled = true
 
-[Keyboard]
+
+[Keyboard] ; Settings for the keyboard controls
 ; VALID KEYS: https://msdn.microsoft.com/en-us/library/system.windows.forms.keys(v=vs.110).aspx
 Modifier = None
 Toggle = I
@@ -204,7 +206,7 @@ TrackVehicleKey = NumPad3
 
 
 
-[Controller]
+[Controller] ; Settings for the controller controls
 ; VALID BUTTONS: http://docs.ragepluginhook.net/html/558BC34.htm
 Modifier = LeftShoulder
 Toggle = X
@@ -214,7 +216,10 @@ Method = LeftStick
 
 
 
-[MouseControls]
+[Mouse] ; Settings for the mouse controls
+; VALID KEYS: https://msdn.microsoft.com/en-us/library/system.windows.forms.keys(v=vs.110).aspx
+Modifier = LControlKey
+Toggle = I
 ";
 
 

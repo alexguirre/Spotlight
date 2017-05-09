@@ -77,6 +77,7 @@
     <Compile Include="SpotlightControllers\ControllerSpotlightController.cs" />
     <Compile Include="SpotlightControllers\KeyboardSpotlightController.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="SpotlightControllers\MouseSpotlightController.cs" />
     <Compile Include="SpotlightControllers\SpotlightController.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
