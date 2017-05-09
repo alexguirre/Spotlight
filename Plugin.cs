@@ -71,14 +71,20 @@
             }
         }
 
-        private static unsafe void OnFrameRenderDrawCoronas(object sender, GraphicsEventArgs e)
+        private static void OnFrameRenderDrawCoronas(object sender, GraphicsEventArgs e)
         {
             for (int i = 0; i < Spotlights.Count; i++)
             {
                 VehicleSpotlight s = Spotlights[i];
                 if (s.IsActive)
                 {
-                    //Utility.DrawCorona(s.Position, s.Direction, s.Data.Color); //started crashing again
+                    unsafe
+                    {
+                        // wtf? why calling the wrapper method Utility.DrawCorona crashes, but calling it directly it doesn't?
+                        Engine.Memory.NativeVector3 p = s.Position;
+                        Engine.Memory.NativeVector3 d = s.Direction;
+                        Engine.Memory.GameFunctions.DrawCorona(Engine.Memory.GameFunctions.DrawCoronaUnkPtr, &p, 2.25f, unchecked((uint)s.Data.Color.ToArgb()), 80.0f, 100.0f, &d, 1.0f, 10.0f, 65.0f, 2);
+                    }
                 }
             }
         }
