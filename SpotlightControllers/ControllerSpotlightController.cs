@@ -36,35 +36,15 @@
                 case ControllerMethod.LeftStick:
                     if (modifierButton == ControllerButtons.None || Game.IsControllerButtonDownRightNow(modifierButton))
                     {
-                        int leftStickRightToLeft = NativeFunction.Natives.GetControlValue<int>(2, 195);
-                        int leftStickUpToDown = NativeFunction.Natives.GetControlValue<int>(2, 196);
-
-                        if (leftStickRightToLeft <= 120)
-                            yaw += spotlight.Data.MovementSpeed;
-                        else if (leftStickRightToLeft >= 130)
-                            yaw -= spotlight.Data.MovementSpeed;
-
-                        if (leftStickUpToDown <= 120)
-                            pitch += spotlight.Data.MovementSpeed;
-                        else if (leftStickUpToDown >= 130)
-                            pitch -= spotlight.Data.MovementSpeed;
+                        yaw -= NativeFunction.Natives.GetDisabledControlNormal<float>(0, 195) * spotlight.Data.MovementSpeed;
+                        pitch -= NativeFunction.Natives.GetDisabledControlNormal<float>(0, 196) * spotlight.Data.MovementSpeed;
                     }
                     break;
                 case ControllerMethod.RightStick:
                     if (modifierButton == ControllerButtons.None || Game.IsControllerButtonDownRightNow(modifierButton))
                     {
-                        int rightStickRightToLeft = NativeFunction.Natives.GetControlValue<int>(2, 197);
-                        int rightStickUpToDown = NativeFunction.Natives.GetControlValue<int>(2, 198);
-
-                        if (rightStickRightToLeft <= 120)
-                            yaw += spotlight.Data.MovementSpeed;
-                        else if (rightStickRightToLeft >= 130)
-                            yaw -= spotlight.Data.MovementSpeed;
-
-                        if (rightStickUpToDown <= 120)
-                            pitch += spotlight.Data.MovementSpeed;
-                        else if (rightStickUpToDown >= 130)
-                            pitch -= spotlight.Data.MovementSpeed;
+                        yaw -= NativeFunction.Natives.GetDisabledControlNormal<float>(0, 197) * spotlight.Data.MovementSpeed;
+                        pitch -= NativeFunction.Natives.GetDisabledControlNormal<float>(0, 198) * spotlight.Data.MovementSpeed;
                     }
                     break;
                 case ControllerMethod.DPad:

@@ -35,12 +35,12 @@
 
             LoadSpotlightControllers();
 
-            Game.FrameRender += OnRawFrameRenderDrawCoronas;
-            
+            Game.FrameRender += OnFrameRenderDrawCoronas;
+
             while (true)
             {
                 GameFiber.Yield();
-                
+
                 Update();
             }
         }
@@ -71,14 +71,14 @@
             }
         }
 
-        private static unsafe void OnRawFrameRenderDrawCoronas(object sender, GraphicsEventArgs e)
+        private static unsafe void OnFrameRenderDrawCoronas(object sender, GraphicsEventArgs e)
         {
             for (int i = 0; i < Spotlights.Count; i++)
             {
                 VehicleSpotlight s = Spotlights[i];
                 if (s.IsActive)
                 {
-                    Utility.DrawCorona(s.Position, s.Direction, s.Data.Color);
+                    //Utility.DrawCorona(s.Position, s.Direction, s.Data.Color); //started crashing again
                 }
             }
         }
