@@ -16,6 +16,15 @@
                 return;
 
             DrawSpotlight(spotlight.Position, spotlight.Direction, spotlight.Data.Color, spotlight.Data.Shadow, spotlight.Data.Radius, spotlight.Data.Brightness, spotlight.Data.Distance, spotlight.Data.Falloff, spotlight.Data.Roundness);
+
+            unsafe
+            {
+                // wtf? why calling the wrapper method Utility.DrawCorona crashes, but calling it directly it doesn't?
+                // and apparently, now I can call it from a normal gamefiber too, no need for the FrameRender
+                NativeVector3 p = spotlight.Position;
+                NativeVector3 d = spotlight.Direction;
+                GameFunctions.DrawCorona(GameFunctions.DrawCoronaUnkPtr, &p, 2.25f, unchecked((uint)spotlight.Data.Color.ToArgb()), 80.0f, 100.0f, &d, 1.0f, 10.0f, 65.0f, 2);
+            }
         }
 
         public static void DrawSpotlight(Vector3 position, Vector3 direction, Color color, bool shadow, float radius, float brightness, float distance, float falloff, float roundness)
@@ -29,13 +38,6 @@
                                             color.R, color.G, color.B,
                                             distance, brightness, roundness, 
                                             radius, falloff, shadow ? 0.0f : 0);
-        }
-
-        public static unsafe void DrawCorona(Vector3 position, Vector3 direction, Color color)
-        {
-            NativeVector3 p = position;
-            NativeVector3 d = direction;
-            GameFunctions.DrawCorona(GameFunctions.DrawCoronaUnkPtr, &p, 2.25f, unchecked((uint)color.ToArgb()), 80.0f, 100.0f, &d, 1.0f, 10.0f, 65.0f, 2);
         }
 
         public static bool IsKeyDownWithModifier(Keys key, Keys modifier)
