@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Engine\Extensions.cs" />
+    <Compile Include="Engine\Memory\CCoronaDrawQueue.cs" />
     <Compile Include="Engine\Memory\CLightDrawData.cs" />
     <Compile Include="Engine\Memory\NativeColorRGBAFloat.cs" />
     <Compile Include="Engine\Memory\GameFunctions.cs" />

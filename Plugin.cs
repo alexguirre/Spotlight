@@ -35,29 +35,12 @@
                                     true);
 
             LoadSpotlightControllers();
-            
+
             while (true)
             {
                 GameFiber.Yield();
-
                 Update();
             }
-        }
-
-        private static void LogLightDrawData(CLightDrawData d)
-        {
-            Game.Console.Print($"Position: " + (Vector3)d.Position);
-            Game.Console.Print($"Color: " + System.Drawing.Color.FromArgb((int)(d.Color.A * 255), (int)(d.Color.R * 255), (int)(d.Color.G * 255), (int)(d.Color.B * 255)));
-            Game.Console.Print($"VolumeOuterColor: " + System.Drawing.Color.FromArgb((int)(d.VolumeOuterColor.A * 255), (int)(d.VolumeOuterColor.R * 255), (int)(d.VolumeOuterColor.G * 255), (int)(d.VolumeOuterColor.B * 255)));
-            Game.Console.Print($"LightType: " + d.LightType);
-            Game.Console.Print($"Flags: " + d.Flags);
-            Game.Console.Print($"Brightness: " + d.Brightness);
-            Game.Console.Print($"unkTxdDefPoolIndex: " + d.unkTxdDefPoolIndex);
-            Game.Console.Print($"VolumeIntensity: " + d.VolumeIntensity);
-            Game.Console.Print($"VolumeSize: " + d.VolumeSize);
-            Game.Console.Print($"VolumeExponent: " + d.VolumeExponent);
-            Game.Console.Print($"Range: " + d.Range);
-            Game.Console.Print($"FalloffExponent: " + d.FalloffExponent);
         }
 
         private static void Update()
@@ -78,6 +61,7 @@
                 VehicleSpotlight s = Spotlights[i];
                 if (!s.Vehicle || s.Vehicle.IsDead)
                 {
+                    s.IsActive = false;
                     Spotlights.Remove(s);
                     continue;
                 }

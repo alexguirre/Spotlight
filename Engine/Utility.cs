@@ -9,62 +9,8 @@
     using Rage;
     using Rage.Native;
 
-    using Engine.Memory;
-
-    using static Intrin;
-
     internal static class Utility
     {
-        public static unsafe void DrawSpotlight(ISpotlight spotlight)
-        {
-            if (!spotlight.IsActive)
-                return;
-
-            // TODO: add shadows
-            CLightDrawData* drawData = CLightDrawData.New(eLightType.SPOT_LIGHT, eLightFlags.VolumeConeVisible, spotlight.Position, spotlight.Data.Color, spotlight.Data.Brightness);
-            NativeVector3 dir = spotlight.Direction;
-            drawData->Range = spotlight.Data.Distance;
-            drawData->VolumeIntensity = 0.3f;
-            drawData->VolumeExponent = 70.0f;
-            drawData->VolumeSize = 0.1f;
-            drawData->FalloffExponent = spotlight.Data.Falloff;
-
-            // no idea how this works, copied from a game function
-            // not event sure if these functions are the exact equivalents
-            // but at least it works :P
-            NativeVector3 v16 = _mm_andnot_ps(new Vector3(-0.0f, -0.0f, -0.0f), dir);
-            NativeVector3 v17 = _mm_and_ps(_mm_cmple_ps(v16, _mm_shuffle_epi32(v16, -46)), _mm_cmplt_ps(v16, _mm_shuffle_epi32(v16, -55)));
-            NativeVector3 v18 = _mm_and_ps(
-                                    _mm_or_ps(
-                                      _mm_andnot_ps(
-                                        _mm_or_ps(
-                                          _mm_or_ps(_mm_shuffle_epi32(v17, 85), _mm_shuffle_epi32(v17, 0)),
-                                          _mm_shuffle_epi32(v17, -86)),
-                                          new Vector3(Single.NaN, Single.NaN, Single.NaN)),
-                                      v17),
-                                    new Vector3(1.0f, 1.0f, 1.0f));
-            v17 = _mm_shuffle_ps(v18, v18, 85);
-            NativeVector3 v19 = _mm_shuffle_ps(v18, v18, -86);
-
-            Vector3 v = new Vector3();
-            v.X = (v19.X * dir.Y) - (v17.X * dir.Z);
-            v.Y = (v18.X * dir.Z) - (v19.X * dir.X);
-            v.Z = (v17.X * dir.X) - (v18.X * dir.Y);
-            NativeVector3 u = v.ToNormalized();
-
-            GameFunctions.SetLightDrawDataDirection(drawData, &dir, &u);
-            GameFunctions.SetLightDrawDataRoundnessAndRadius(drawData, spotlight.Data.Roundness, spotlight.Data.Radius);
-
-            // wtf? why calling the wrapper method Utility.DrawCorona crashes, but calling it directly it doesn't?
-            // and apparently, now I can call it from a normal gamefiber too, no need for the FrameRender
-            //
-            // and it stopped working again... :‑|
-            //
-            //NativeVector3 p = spotlight.Position;
-            //NativeVector3 d = spotlight.Direction;
-            //GameFunctions.DrawCorona(GameFunctions.DrawCoronaUnkPtr, &p, 2.25f, unchecked((uint)spotlight.Data.Color.ToArgb()), 80.0f, 100.0f, &dir, 1.0f, 5.0f, spotlight.Data.Radius, 3);
-        }
-
         public static void DrawSpotlight(Vector3 position, Vector3 direction, Color color, bool shadow, float radius, float brightness, float distance, float falloff, float roundness)
         {
             const ulong DrawSpotlightNative = 0xd0f64b265c8c8b33;
@@ -286,6 +232,66 @@
             uint z = Select(a, (u & (1 << 5 - 1)));
 
             return new Vector3(GetFloatFromUInt(x), GetFloatFromUInt(y), GetFloatFromUInt(z));
+        }
+
+        public static Vector3 _mm_mul_ps(Vector3 a, Vector3 b)
+        {
+            /*
+                https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_mul_ps
+                FOR j := 0 to 3
+	                i := j*32
+	                dst[i+31:i] := a[i+31:i] * b[i+31:i]
+                ENDFOR
+            */
+
+            return new Vector3(a.X * b.X,
+                               a.Y * b.Y,
+                               a.Z * b.Z);
+        }
+
+        public static Vector3 _mm_add_ps(Vector3 a, Vector3 b)
+        {
+            /*
+                https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_add_ps
+                FOR j := 0 to 3
+	                i := j*32
+	                dst[i+31:i] := a[i+31:i] + b[i+31:i]
+                ENDFOR
+            */
+
+            return new Vector3(a.X + b.X,
+                               a.Y + b.Y,
+                               a.Z + b.Z);
+        }
+
+        public static Vector3 _mm_rsqrt_ps(Vector3 a)
+        {
+            /*
+                https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_rsqrt_ps
+                FOR j := 0 to 3
+	                i := j*32
+	                dst[i+31:i] := APPROXIMATE(1.0 / SQRT(a[i+31:i]))
+                ENDFOR
+            */
+            
+            return new Vector3(1.0f / (float)Math.Sqrt(a.X),
+                               1.0f / (float)Math.Sqrt(a.Y),
+                               1.0f / (float)Math.Sqrt(a.Z));
+        }
+
+        public static Vector3 _mm_sub_ps(Vector3 a, Vector3 b)
+        {
+            /*
+                https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_sub_ps
+                FOR j := 0 to 3
+	                i := j*32
+	                dst[i+31:i] := a[i+31:i] - b[i+31:i]
+                ENDFOR
+            */
+
+            return new Vector3(a.X - b.X,
+                               a.Y - b.Y,
+                               a.Z - b.Z);
         }
     }
 }
