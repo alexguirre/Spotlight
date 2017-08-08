@@ -27,14 +27,14 @@
         [FieldOffset(0x0098)] public float Range;
         [FieldOffset(0x009C)] public float FalloffExponent;
 
-        public static CLightDrawData* New(eLightType type, uint flags, Vector3 position, Color color, float brightness)
+        public static CLightDrawData* New(eLightType type, eLightFlags flags, Vector3 position, Color color, float brightness)
         {
             CLightDrawData* d = GameFunctions.GetFreeLightDrawDataSlotFromPool();
 
             NativeVector3 pos = position;
             NativeColorRGBAFloat col = new NativeColorRGBAFloat { R = color.R / 255f, G = color.G / 255f, B = color.B / 255f, A = color.A / 255f };
 
-            GameFunctions.CreateLightDrawData(d, eLightType.SPOT_LIGHT, flags, &pos, &col, brightness, 0xFFFFFF);
+            GameFunctions.CreateLightDrawData(d, eLightType.SPOT_LIGHT, (uint)flags, &pos, &col, brightness, 0xFFFFFF);
 
             return d;
         }
@@ -46,5 +46,12 @@
         RANGE = 1,
         SPOT_LIGHT = 2,
         RANGE_2 = 4,
+    }
+
+    internal enum eLightFlags : uint
+    {
+        VolumeConeVisible = 0x1000,
+
+        VolumeOuterColorVisible = 0x80000,
     }
 }
