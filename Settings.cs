@@ -226,7 +226,7 @@ Toggle = I
         const string DefaultSpotlightOffsetsText = @"[POLICE]
 X = -0.8
 Y = 1.17
-Z = 0.52
+Z = 0.45
 [POLICE2]
 X = -0.84
 Y = 0.85
@@ -280,25 +280,25 @@ X = -0.9
 Y = 1.2 
 Z = 1.0
 [POLMAV]
-X = -0.78
-Y = 2.4
+X = 0.0
+Y = 2.95
 Z = -1.0
 [CHINO]
 X= -0.8
 Y= 1.17
 Z= 0.52
 [BUZZARD]
-X= -0.1000004
+X= 0.0
 Y= 2.369999
 Z= -0.4799996
 [BUZZARD2]
-X= -0.1000004
+X= 0.0
 Y= 2.369999
 Z= -0.4799996
 [PREDATOR]
-X= -0.03000049
-Y= -0.4299991
-Z= 1.679999
+X= 0.0
+Y= -0.42
+Z= 1.8
 ";
 
         static readonly SpotlightData DefaultCarsSpotlightData = new SpotlightData(

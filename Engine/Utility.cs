@@ -10,12 +10,23 @@
 
     internal static class Utility
     {
-        public static void DrawSpotlight(ISpotlight spotlight)
+        public static unsafe void DrawSpotlight(ISpotlight spotlight)
         {
             if (!spotlight.IsActive)
                 return;
 
-            DrawSpotlight(spotlight.Position, spotlight.Direction, spotlight.Data.Color, spotlight.Data.Shadow, spotlight.Data.Radius, spotlight.Data.Brightness, spotlight.Data.Distance, spotlight.Data.Falloff, spotlight.Data.Roundness);
+            //DrawSpotlight(, , , spotlight.Data.Shadow, );
+            CLightDrawData* drawData = CLightDrawData.New(eLightType.SPOT_LIGHT, 4096, spotlight.Position, spotlight.Data.Color, spotlight.Data.Brightness);
+            NativeVector3 dir = spotlight.Direction;
+            drawData->Range = spotlight.Data.Distance;
+            drawData->VolumeIntensity = 0.3f;
+            drawData->VolumeExponent = 70.0f;
+            drawData->VolumeSize = 0.1f;
+            drawData->VolumeOuterColor = new NativeColorRGBAFloat { R = 1f, G = 0f, B = 0f, A = 1f };
+            drawData->FalloffExponent = spotlight.Data.Falloff;
+            NativeVector3 u = Vector3.WorldUp; // seems to be the direction rotated 90 degrees
+            GameFunctions.SetLightDrawDataDirection(drawData, &dir, &u);
+            GameFunctions.SetLightDrawDataRoundnessAndRadius(drawData, spotlight.Data.Roundness, spotlight.Data.Radius);
 
             unsafe
             {
@@ -23,7 +34,7 @@
                 // and apparently, now I can call it from a normal gamefiber too, no need for the FrameRender
                 NativeVector3 p = spotlight.Position;
                 NativeVector3 d = spotlight.Direction;
-                GameFunctions.DrawCorona(GameFunctions.DrawCoronaUnkPtr, &p, 2.25f, unchecked((uint)spotlight.Data.Color.ToArgb()), 80.0f, 100.0f, &d, 1.0f, 10.0f, 65.0f, 2);
+                GameFunctions.DrawCorona(GameFunctions.DrawCoronaUnkPtr, &p, 2.25f, unchecked((uint)spotlight.Data.Color.ToArgb()), 80.0f, 100.0f, &d, 1.0f, 5.0f, spotlight.Data.Radius, 3);
             }
         }
 
