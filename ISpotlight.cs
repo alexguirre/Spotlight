@@ -23,17 +23,19 @@
         public Vector3 Direction { get; set; }
         public bool IsActive { get; set; }
 
+        private readonly uint shadowId;
+
         internal BaseSpotlight(SpotlightData data)
         {
             Data = data;
+            shadowId = GetNewShadowId();
         }
 
         protected internal unsafe void DrawLight()
         {
             if (!IsActive)
                 return;
-
-            // TODO: add shadows
+            
             CLightDrawData* drawData = CLightDrawData.New(eLightType.SPOT_LIGHT, eLightFlags.VolumeConeVisible, Position, Data.Color, Data.Intensity);
             NativeVector3 dir = Direction;
             drawData->Range = Data.Range;
@@ -68,6 +70,14 @@
             GameFunctions.SetLightDrawDataDirection(drawData, &dir, &u);
             GameFunctions.SetLightDrawDataRoundnessAndRadius(drawData, Data.Roundness, Data.Angle);
 
+            if (Data.CastShadows)
+            {
+                drawData->Flags |= eLightFlags.ShadowsEnabled;
+                drawData->ShadowRenderId = 0x46B9FB69 + shadowId; // 0x46B9FB69 is the value that the original game functions take from the RagePluginHook's CGameScriptId(at least in SocialClub v1103, no idea if it changes between versions)
+                drawData->ShadowUnkValue = GameFunctions.GetValueForLightDrawDataShadowUnkValue(drawData);
+            }
+
+
             // wtf? why calling the wrapper method Utility.DrawCorona crashes, but calling it directly it doesn't?
             // and apparently, now I can call it from a normal gamefiber too, no need for the FrameRender
             //
@@ -87,6 +97,18 @@
             NativeVector3 p = Position;
             NativeVector3 d = Direction;
             GameFunctions.DrawCorona(CCoronaDrawQueue.GetInstance(), &p, Data.CoronaSize, unchecked((uint)Data.Color.ToArgb()), Data.CoronaIntensity, 100f, &d, 1.0f, 0.0f, Data.Angle, 3);
+        }
+
+
+
+        private static uint totalShadowsId = 0;
+        private static uint GetNewShadowId()
+        {
+            totalShadowsId++;
+            if (totalShadowsId > 200) // own limit, I don't know if game has a limit or in case it has, if it's lower
+                totalShadowsId = 1;
+            uint id = totalShadowsId;
+            return id;
         }
     }
 }

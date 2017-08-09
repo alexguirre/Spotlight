@@ -15,7 +15,7 @@
         [FieldOffset(0x0040)] public NativeColorRGBAFloat VolumeOuterColor;
         [FieldOffset(0x0050)] private NativeVector3 unk3;
         [FieldOffset(0x0060)] public eLightType LightType;
-        [FieldOffset(0x0064)] public uint Flags;
+        [FieldOffset(0x0064)] public eLightFlags Flags;
         [FieldOffset(0x0068)] public float Brightness;
 
         [FieldOffset(0x0070)] public int unkTxdDefPoolIndex;
@@ -24,6 +24,8 @@
         [FieldOffset(0x007C)] public float VolumeSize;
         [FieldOffset(0x0080)] public float VolumeExponent;
 
+        [FieldOffset(0x0088)] public uint ShadowRenderId;
+        [FieldOffset(0x0090)] public uint ShadowUnkValue;
         [FieldOffset(0x0098)] public float Range;
         [FieldOffset(0x009C)] public float FalloffExponent;
 
@@ -50,6 +52,13 @@
 
     internal enum eLightFlags : uint
     {
+        ShadowsFlag1 = 0x40, // both needed
+        ShadowsFlag2 = 0x80,
+
+        ShadowsFlag3 = 0x100, // needed, otherwise shadow flickers
+
+        ShadowsEnabled = ShadowsFlag1 | ShadowsFlag2 | ShadowsFlag3,
+
         VolumeConeVisible = 0x1000,
 
         VolumeOuterColorVisible = 0x80000,

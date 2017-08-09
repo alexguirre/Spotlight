@@ -132,5 +132,22 @@
                 return copyLightDrawData;
             }
         }
+
+        public delegate uint GetValueForLightDrawDataShadowUnkValueDelegate(CLightDrawData* data);
+
+        private static GetValueForLightDrawDataShadowUnkValueDelegate getValueForLightDrawDataShadowUnkValue;
+        public static GetValueForLightDrawDataShadowUnkValueDelegate GetValueForLightDrawDataShadowUnkValue
+        {
+            get
+            {
+                if (getValueForLightDrawDataShadowUnkValue == null)
+                {
+                    IntPtr address = Game.FindPattern("4C 8B 81 ?? ?? ?? ?? 33 D2 48 8D 05 ?? ?? ?? ?? 4C 3B 00 74 18");
+                    getValueForLightDrawDataShadowUnkValue = Marshal.GetDelegateForFunctionPointer<GetValueForLightDrawDataShadowUnkValueDelegate>(address);
+                }
+
+                return getValueForLightDrawDataShadowUnkValue;
+            }
+        }
     }
 }
