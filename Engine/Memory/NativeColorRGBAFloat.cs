@@ -3,7 +3,7 @@
     using System.Runtime.InteropServices;
     
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe struct NativeColorRGBAFloat
+    internal unsafe struct NativeColorRGBAFloat
     {
         public float R;
         public float G;

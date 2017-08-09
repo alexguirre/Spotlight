@@ -9,17 +9,21 @@
     using Rage;
 
     [Serializable]
-    public struct SpotlightData
+    public sealed class SpotlightData
     {
         [XmlElement(Type = typeof(Engine.XmlColor))]
-        public Color Color;
-        public bool Shadow;
-        public float Radius;
-        public float Brightness;
-        public float Distance;
-        public float Falloff;
-        public float Roundness;
-        public float MovementSpeed;
+        public Color Color { get; set; }
+        public bool Shadow { get; set; }
+        public float Radius { get; set; }
+        public float Brightness { get; set; }
+        public float Distance { get; set; }
+        public float Falloff { get; set; }
+        public float Roundness { get; set; }
+        public float MovementSpeed { get; set; }
+
+        public SpotlightData() : this(Color.FromArgb(0), false, 0f, 0f, 0f, 0f, 0f, 0f)
+        {
+        }
 
         public SpotlightData(Color color, bool shadow, float radius, float brightness, float distance, float falloff, float roundness, float movementSpeed)
         {

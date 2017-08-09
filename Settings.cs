@@ -12,7 +12,7 @@
     // RPH
     using Rage;
 
-    internal class Settings
+    public sealed class Settings
     {
         public readonly InitializationFile GeneralSettingsIniFile;
 
@@ -22,7 +22,7 @@
         public readonly SpotlightData HelicoptersSpotlightData;
         public readonly SpotlightData BoatsSpotlightData;
 
-        public Settings(string generalSettingsIniFileName, string spotlightOffsetsIniFileName, string carsSpotlightDataFileName, string helicoptersSpotlightDataFileName, string boatsSpotlightDataFileName, bool generateDefaultsIfFileNotFound)
+        internal Settings(string generalSettingsIniFileName, string spotlightOffsetsIniFileName, string carsSpotlightDataFileName, string helicoptersSpotlightDataFileName, string boatsSpotlightDataFileName, bool generateDefaultsIfFileNotFound)
         {
             if (generateDefaultsIfFileNotFound)
             {
@@ -302,7 +302,7 @@ Z= 1.8
 ";
 
         static readonly SpotlightData DefaultCarsSpotlightData = new SpotlightData(
-                                                                                   color: Color.White, 
+                                                                                   color: Color.FromArgb(255, 7, 7, 7), 
                                                                                    shadow: true, 
                                                                                    radius: 10,
                                                                                    brightness: 20,
@@ -313,7 +313,7 @@ Z= 1.8
                                                                                    );
 
         static readonly SpotlightData DefaultHelicoptersSpotlightData = new SpotlightData(
-                                                                                   color: Color.White,
+                                                                                   color: Color.FromArgb(255, 7, 7, 7),
                                                                                    shadow: true,
                                                                                    radius: 12,
                                                                                    brightness: 20,
@@ -324,7 +324,7 @@ Z= 1.8
                                                                                    );
 
         static readonly SpotlightData DefaultBoatsSpotlightData = new SpotlightData(
-                                                                                   color: Color.White,
+                                                                                   color: Color.FromArgb(255, 7, 7, 7),
                                                                                    shadow: true,
                                                                                    radius: 10,
                                                                                    brightness: 20,
