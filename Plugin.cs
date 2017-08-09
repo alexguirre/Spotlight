@@ -8,6 +8,7 @@
     using Rage;
     
     using Spotlight.InputControllers;
+    using Spotlight.Editor;
 
     internal static unsafe class Plugin
     {
@@ -16,6 +17,8 @@
         public static readonly List<VehicleSpotlight> Spotlights = new List<VehicleSpotlight>();
         public static readonly List<SpotlightInputController> SpotlightInputControllers = new List<SpotlightInputController>();
         
+        public static EditorForm Editor { get; private set; }
+
         private static void Main()
         {
             while (Game.IsLoading)
@@ -64,6 +67,18 @@
                 }
 
                 s.Update(SpotlightInputControllers);
+            }
+
+            if ((Editor == null || !Editor.Window.IsVisible) && Game.IsKeyDown(System.Windows.Forms.Keys.F11))
+            {
+                if(Editor != null)
+                {
+                    Editor = null;
+                }
+
+                Editor = new EditorForm();
+                Editor.Show();
+                Editor.Position = new System.Drawing.Point(300, 300);
             }
         }
 

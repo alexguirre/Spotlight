@@ -303,40 +303,46 @@ Z= 1.8
 
         static readonly SpotlightData DefaultCarsSpotlightData = new SpotlightData(
                                                                                    color: Color.FromArgb(255, 7, 7, 7),
-                                                                                   shadow: true,
+                                                                                   castShadows: true,
                                                                                    radius: 10,
-                                                                                   brightness: 20,
-                                                                                   distance: 60,
+                                                                                   intensity: 20,
+                                                                                   range: 60,
                                                                                    falloff: 40,
-                                                                                   roundness: 100,
+                                                                                   roundness: 70,
                                                                                    volumeIntensity: 0.35f,
                                                                                    volumeSize: 0.125f,
+                                                                                   coronaIntensity: 10.0f,
+                                                                                   coronaSize: 1.5f,
                                                                                    movementSpeed: 1
                                                                                    );
 
         static readonly SpotlightData DefaultHelicoptersSpotlightData = new SpotlightData(
                                                                                    color: Color.FromArgb(255, 7, 7, 7),
-                                                                                   shadow: true,
+                                                                                   castShadows: true,
                                                                                    radius: 12,
-                                                                                   brightness: 20,
-                                                                                   distance: 230,
+                                                                                   intensity: 20,
+                                                                                   range: 230,
                                                                                    falloff: 50,
-                                                                                   roundness: 100,
+                                                                                   roundness: 70,
                                                                                    volumeIntensity: 0.35f,
                                                                                    volumeSize: 0.125f,
+                                                                                   coronaIntensity: 10.0f,
+                                                                                   coronaSize: 1.5f,
                                                                                    movementSpeed: 1
                                                                                    );
 
         static readonly SpotlightData DefaultBoatsSpotlightData = new SpotlightData(
                                                                                    color: Color.FromArgb(255, 7, 7, 7),
-                                                                                   shadow: true,
+                                                                                   castShadows: true,
                                                                                    radius: 10,
-                                                                                   brightness: 20,
-                                                                                   distance: 80,
+                                                                                   intensity: 20,
+                                                                                   range: 80,
                                                                                    falloff: 45,
-                                                                                   roundness: 100,
+                                                                                   roundness: 70,
                                                                                    volumeIntensity: 0.35f,
                                                                                    volumeSize: 0.125f,
+                                                                                   coronaIntensity: 10.0f,
+                                                                                   coronaSize: 1.5f,
                                                                                    movementSpeed: 1
                                                                                    );
         #endregion

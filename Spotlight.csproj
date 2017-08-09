@@ -33,6 +33,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Gwen, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Rockstar Games\Grand Theft Auto V\Gwen.dll</HintPath>
+    </Reference>
     <Reference Include="RagePluginHookSDK">
       <HintPath>..\..\..\..\..\Desktop\RagePluginHook\SDK\RagePluginHookSDK.dll</HintPath>
     </Reference>
@@ -58,6 +62,10 @@
     <Compile Include="Core\Memory\NativeVector3.cs" />
     <Compile Include="Core\Utility.cs" />
     <Compile Include="Core\XmlColor.cs" />
+    <Compile Include="Editor\ColorPicker.cs" />
+    <Compile Include="Editor\EditorForm.cs" />
+    <Compile Include="Editor\IntNumericUpDown.cs" />
+    <Compile Include="Editor\NumericUpDownEx.cs" />
     <Compile Include="ISpotlight.cs" />
     <Compile Include="InputControllers\ControllerSpotlightInputController.cs" />
     <Compile Include="InputControllers\KeyboardSpotlightInputController.cs" />

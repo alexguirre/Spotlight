@@ -34,9 +34,9 @@
                 return;
 
             // TODO: add shadows
-            CLightDrawData* drawData = CLightDrawData.New(eLightType.SPOT_LIGHT, eLightFlags.VolumeConeVisible, Position, Data.Color, Data.Brightness);
+            CLightDrawData* drawData = CLightDrawData.New(eLightType.SPOT_LIGHT, eLightFlags.VolumeConeVisible, Position, Data.Color, Data.Intensity);
             NativeVector3 dir = Direction;
-            drawData->Range = Data.Distance;
+            drawData->Range = Data.Range;
             drawData->VolumeIntensity = Data.VolumeIntensity;
             drawData->VolumeExponent = 70.0f; // doesn't seem to have any effect
             drawData->VolumeSize = Data.VolumeSize;
@@ -66,7 +66,7 @@
             NativeVector3 u = v.ToNormalized();
 
             GameFunctions.SetLightDrawDataDirection(drawData, &dir, &u);
-            GameFunctions.SetLightDrawDataRoundnessAndRadius(drawData, Data.Roundness, Data.Radius);
+            GameFunctions.SetLightDrawDataRoundnessAndRadius(drawData, Data.Roundness, Data.Angle);
 
             // wtf? why calling the wrapper method Utility.DrawCorona crashes, but calling it directly it doesn't?
             // and apparently, now I can call it from a normal gamefiber too, no need for the FrameRender
@@ -86,7 +86,7 @@
                 return;
             NativeVector3 p = Position;
             NativeVector3 d = Direction;
-            GameFunctions.DrawCorona(CCoronaDrawQueue.GetInstance(), &p, 1.5f, unchecked((uint)Data.Color.ToArgb()), Data.Brightness * 0.625f, 100f, &d, 1.0f, 0.0f, Data.Radius, 3);
+            GameFunctions.DrawCorona(CCoronaDrawQueue.GetInstance(), &p, Data.CoronaSize, unchecked((uint)Data.Color.ToArgb()), Data.CoronaIntensity, 100f, &d, 1.0f, 0.0f, Data.Angle, 3);
         }
     }
 }
