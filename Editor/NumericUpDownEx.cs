@@ -33,7 +33,7 @@
             base.OnMouseClickedLeft(x, y, down);
             if (down)
             {
-                if (!mouseDown && CanvasPosToLocal(new Point(x, y)).X < 2)
+                if (!mouseDown && CanvasPosToLocal(new Point(x, y)).X < 3) // check if clicked in the left part of the textbox
                 {
                     mouseDownChangeValue = true;
                     InputHandler.MouseFocus = this;

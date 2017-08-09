@@ -192,10 +192,8 @@
         {
             SpotlightData d = GetSpotlightDataForControl(control);
 
-
-
             if (control.Name.Contains(nameof(SpotlightData.Angle))) d.Angle = value;
-            else if (control.Name.Contains(nameof(SpotlightData.Intensity))) d.Intensity = value;
+            else if (control.Name.Contains(nameof(SpotlightData.Intensity)) && !control.Name.Contains("Volume") && !control.Name.Contains("Corona")) d.Intensity = value;
             else if (control.Name.Contains(nameof(SpotlightData.Range))) d.Range = value;
             else if (control.Name.Contains(nameof(SpotlightData.Falloff))) d.Falloff = value;
             else if (control.Name.Contains(nameof(SpotlightData.Roundness))) d.Roundness = value;
@@ -204,8 +202,6 @@
             else if (control.Name.Contains(nameof(SpotlightData.CoronaIntensity))) d.CoronaIntensity = value;
             else if (control.Name.Contains(nameof(SpotlightData.CoronaSize))) d.CoronaSize = value;
             else if (control.Name.Contains(nameof(SpotlightData.MovementSpeed))) d.MovementSpeed = value;
-
-            Game.DisplayHelp($"VolIntensity " + d.VolumeIntensity + " " + value);
         }
 
         private void SetFieldForControl(Base control, bool value)
