@@ -3,10 +3,10 @@
     using System;
 
     using Rage;
+    
+    using Spotlight.Core.Memory;
 
-    using Engine.Memory;
-
-    using static Intrin;
+    using static Core.Intrin;
 
     public interface ISpotlight
     {

@@ -5,6 +5,8 @@
     using Rage;
     using Rage.Native;
 
+    using Spotlight.Core;
+
     internal class MouseSpotlightController : SpotlightController
     {
         public readonly Keys modifierKey;

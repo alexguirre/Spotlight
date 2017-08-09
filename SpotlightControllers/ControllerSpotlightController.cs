@@ -5,6 +5,8 @@
     using Rage;
     using Rage.Native;
 
+    using Spotlight.Core;
+
     internal class ControllerSpotlightController : SpotlightController
     {
         private enum ControllerMethod { LeftStick, RightStick, DPad }

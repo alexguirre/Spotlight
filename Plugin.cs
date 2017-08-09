@@ -10,7 +10,7 @@
     using Rage;
     
     using Spotlight.SpotlightControllers;
-    using Spotlight.Engine.Memory;
+    using Spotlight.Core.Memory;
 
     internal static unsafe class Plugin
     {

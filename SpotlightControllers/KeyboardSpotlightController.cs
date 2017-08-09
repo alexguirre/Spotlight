@@ -1,12 +1,11 @@
 ﻿namespace Spotlight.SpotlightControllers
 {
-    // System
-    using System;
     using System.Linq;
     using System.Windows.Forms;
-
-    // RPH
+    
     using Rage;
+
+    using Spotlight.Core;
 
     internal class KeyboardSpotlightController : SpotlightController
     {

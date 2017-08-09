@@ -1,6 +1,5 @@
-﻿namespace Spotlight.Engine
+﻿namespace Spotlight.Core
 {
-    // System
     using System;
     using System.Drawing;
 

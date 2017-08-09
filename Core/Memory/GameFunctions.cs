@@ -1,4 +1,4 @@
-﻿namespace Spotlight.Engine.Memory
+﻿namespace Spotlight.Core.Memory
 {
     using System;
     using System.Threading;

@@ -51,14 +51,13 @@
   <ItemGroup>
     <Compile Include="API\APISpotlight.cs" />
     <Compile Include="API\Functions.cs" />
-    <Compile Include="Engine\Extensions.cs" />
-    <Compile Include="Engine\Memory\CCoronaDrawQueue.cs" />
-    <Compile Include="Engine\Memory\CLightDrawData.cs" />
-    <Compile Include="Engine\Memory\NativeColorRGBAFloat.cs" />
-    <Compile Include="Engine\Memory\GameFunctions.cs" />
-    <Compile Include="Engine\Memory\NativeVector3.cs" />
-    <Compile Include="Engine\Utility.cs" />
-    <Compile Include="Engine\XmlColor.cs" />
+    <Compile Include="Core\Memory\CCoronaDrawQueue.cs" />
+    <Compile Include="Core\Memory\CLightDrawData.cs" />
+    <Compile Include="Core\Memory\NativeColorRGBAFloat.cs" />
+    <Compile Include="Core\Memory\GameFunctions.cs" />
+    <Compile Include="Core\Memory\NativeVector3.cs" />
+    <Compile Include="Core\Utility.cs" />
+    <Compile Include="Core\XmlColor.cs" />
     <Compile Include="ISpotlight.cs" />
     <Compile Include="SpotlightControllers\ControllerSpotlightController.cs" />
     <Compile Include="SpotlightControllers\KeyboardSpotlightController.cs" />

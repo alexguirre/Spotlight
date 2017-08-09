@@ -1,4 +1,4 @@
-﻿namespace Spotlight.Engine.Memory
+﻿namespace Spotlight.Core.Memory
 {
     using System.Drawing;
     using System.Runtime.InteropServices;

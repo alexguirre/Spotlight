@@ -11,7 +11,7 @@
     [Serializable]
     public sealed class SpotlightData
     {
-        [XmlElement(Type = typeof(Engine.XmlColor))]
+        [XmlElement(Type = typeof(Core.XmlColor))]
         public Color Color { get; set; }
         public bool Shadow { get; set; }
         public float Radius { get; set; }
