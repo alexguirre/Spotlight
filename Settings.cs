@@ -302,13 +302,15 @@ Z= 1.8
 ";
 
         static readonly SpotlightData DefaultCarsSpotlightData = new SpotlightData(
-                                                                                   color: Color.FromArgb(255, 7, 7, 7), 
-                                                                                   shadow: true, 
+                                                                                   color: Color.FromArgb(255, 7, 7, 7),
+                                                                                   shadow: true,
                                                                                    radius: 10,
                                                                                    brightness: 20,
                                                                                    distance: 60,
                                                                                    falloff: 40,
                                                                                    roundness: 100,
+                                                                                   volumeIntensity: 0.35f,
+                                                                                   volumeSize: 0.125f,
                                                                                    movementSpeed: 1
                                                                                    );
 
@@ -320,6 +322,8 @@ Z= 1.8
                                                                                    distance: 230,
                                                                                    falloff: 50,
                                                                                    roundness: 100,
+                                                                                   volumeIntensity: 0.35f,
+                                                                                   volumeSize: 0.125f,
                                                                                    movementSpeed: 1
                                                                                    );
 
@@ -331,6 +335,8 @@ Z= 1.8
                                                                                    distance: 80,
                                                                                    falloff: 45,
                                                                                    roundness: 100,
+                                                                                   volumeIntensity: 0.35f,
+                                                                                   volumeSize: 0.125f,
                                                                                    movementSpeed: 1
                                                                                    );
         #endregion

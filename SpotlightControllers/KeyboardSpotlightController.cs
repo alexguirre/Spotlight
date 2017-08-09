@@ -9,16 +9,16 @@
 
     internal class KeyboardSpotlightController : SpotlightController
     {
-        private readonly Keys moveLeftKey;
-        private readonly Keys moveRightKey;
-        private readonly Keys moveUpKey;
-        private readonly Keys moveDownKey;
+        readonly Keys moveLeftKey;
+        readonly Keys moveRightKey;
+        readonly Keys moveUpKey;
+        readonly Keys moveDownKey;
 
-        private readonly Keys trackPedKey;
-        private readonly Keys trackVehicleKey;
+        readonly Keys trackPedKey;
+        readonly Keys trackVehicleKey;
 
-        public readonly Keys modifierKey;
-        public readonly Keys toggleKey;
+        readonly Keys modifierKey;
+        readonly Keys toggleKey;
 
         protected KeyboardSpotlightController()
         {

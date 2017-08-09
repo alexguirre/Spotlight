@@ -16,7 +16,6 @@
         bool IsActive { get; set; }
     }
 
-
     public abstract class BaseSpotlight : ISpotlight
     {
         public SpotlightData Data { get; }
@@ -38,9 +37,9 @@
             CLightDrawData* drawData = CLightDrawData.New(eLightType.SPOT_LIGHT, eLightFlags.VolumeConeVisible, Position, Data.Color, Data.Brightness);
             NativeVector3 dir = Direction;
             drawData->Range = Data.Distance;
-            drawData->VolumeIntensity = 0.3f;
-            drawData->VolumeExponent = 70.0f;
-            drawData->VolumeSize = 0.1f;
+            drawData->VolumeIntensity = Data.VolumeIntensity;
+            drawData->VolumeExponent = 70.0f; // doesn't seem to have any effect
+            drawData->VolumeSize = Data.VolumeSize;
             drawData->FalloffExponent = Data.Falloff;
 
             // no idea how this works, copied from a game function

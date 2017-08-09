@@ -11,10 +11,10 @@
     {
         private enum ControllerMethod { LeftStick, RightStick, DPad }
 
-        private readonly ControllerMethod method;
+        readonly ControllerMethod method;
 
-        private readonly ControllerButtons modifierButton;
-        private readonly ControllerButtons toggleButton;
+        readonly ControllerButtons modifierButton;
+        readonly ControllerButtons toggleButton;
 
         protected ControllerSpotlightController()
         {

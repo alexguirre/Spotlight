@@ -1,6 +1,5 @@
 ﻿namespace Spotlight.SpotlightControllers
 {
-    // RPH
     using Rage;
     
     internal abstract class SpotlightController

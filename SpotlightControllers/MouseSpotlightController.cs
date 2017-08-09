@@ -9,8 +9,8 @@
 
     internal class MouseSpotlightController : SpotlightController
     {
-        public readonly Keys modifierKey;
-        public readonly Keys toggleKey;
+        readonly Keys modifierKey;
+        readonly Keys toggleKey;
 
         protected MouseSpotlightController()
         {
