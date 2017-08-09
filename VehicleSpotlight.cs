@@ -1,16 +1,10 @@
 ﻿namespace Spotlight
 {
-    // System
-    using System;
-    using System.Linq;
     using System.Collections.Generic;
-    using System.Drawing;
-
-    // RPH
+    
     using Rage;
-    using Rage.Native;
 
-    using SpotlightControllers;
+    using Spotlight.InputControllers;
 
     internal class VehicleSpotlight : BaseSpotlight
     {
@@ -43,7 +37,7 @@
             Game.FrameRender -= OnDrawCoronaFrameRender;
         }
 
-        public void Update(IList<SpotlightController> controllers)
+        public void Update(IList<SpotlightInputController> controllers)
         {
             if (!IsActive)
                 return;

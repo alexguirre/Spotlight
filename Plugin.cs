@@ -1,23 +1,20 @@
 ﻿namespace Spotlight
 {
-    // System
     using System;
     using System.IO;
     using System.Linq;
     using System.Collections.Generic;
-
-    // RPH
+    
     using Rage;
     
-    using Spotlight.SpotlightControllers;
-    using Spotlight.Core.Memory;
+    using Spotlight.InputControllers;
 
     internal static unsafe class Plugin
     {
         public static Settings Settings { get; private set; }
 
         public static readonly List<VehicleSpotlight> Spotlights = new List<VehicleSpotlight>();
-        public static readonly List<SpotlightController> SpotlightControllers = new List<SpotlightController>();
+        public static readonly List<SpotlightInputController> SpotlightInputControllers = new List<SpotlightInputController>();
         
         private static void Main()
         {
@@ -45,7 +42,7 @@
 
         private static void Update()
         {
-            if (SpotlightControllers.Any(c => c.ShouldToggleSpotlight()))
+            if (SpotlightInputControllers.Any(c => c.ShouldToggleSpotlight()))
             {
                 VehicleSpotlight s = GetPlayerCurrentVehicleSpotlight();
 
@@ -66,7 +63,7 @@
                     continue;
                 }
 
-                s.Update(SpotlightControllers);
+                s.Update(SpotlightInputControllers);
             }
         }
 
@@ -111,13 +108,13 @@
 
             foreach (Type type in types)
             {
-                if (!type.IsAbstract && !type.IsInterface && typeof(SpotlightController).IsAssignableFrom(type))
+                if (!type.IsAbstract && !type.IsInterface && typeof(SpotlightInputController).IsAssignableFrom(type))
                 {
-                    string iniKeyName = type.Name.Replace("SpotlightController", "") + "ControlsEnabled";
+                    string iniKeyName = type.Name.Replace("SpotlightInputController", "") + "ControlsEnabled";
                     if (Settings.GeneralSettingsIniFile.DoesKeyExist("Controls", iniKeyName) && Settings.GeneralSettingsIniFile.ReadBoolean("Controls", iniKeyName, false))
                     {
-                        SpotlightController c = (SpotlightController)Activator.CreateInstance(type, true);
-                        SpotlightControllers.Add(c);
+                        SpotlightInputController c = (SpotlightInputController)Activator.CreateInstance(type, true);
+                        SpotlightInputControllers.Add(c);
                     }
                 }
             }

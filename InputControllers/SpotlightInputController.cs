@@ -1,12 +1,12 @@
-﻿namespace Spotlight.SpotlightControllers
+﻿namespace Spotlight.InputControllers
 {
     using Rage;
     
-    internal abstract class SpotlightController
+    internal abstract class SpotlightInputController
     {
         protected VehicleSpotlight LastUpdatedSpotlight { get; private set; }
 
-        protected SpotlightController()
+        protected SpotlightInputController()
         {
         }
 

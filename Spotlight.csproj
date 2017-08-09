@@ -59,11 +59,11 @@
     <Compile Include="Core\Utility.cs" />
     <Compile Include="Core\XmlColor.cs" />
     <Compile Include="ISpotlight.cs" />
-    <Compile Include="SpotlightControllers\ControllerSpotlightController.cs" />
-    <Compile Include="SpotlightControllers\KeyboardSpotlightController.cs" />
+    <Compile Include="InputControllers\ControllerSpotlightInputController.cs" />
+    <Compile Include="InputControllers\KeyboardSpotlightInputController.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="SpotlightControllers\MouseSpotlightController.cs" />
-    <Compile Include="SpotlightControllers\SpotlightController.cs" />
+    <Compile Include="InputControllers\MouseSpotlightInputController.cs" />
+    <Compile Include="InputControllers\SpotlightInputController.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VehicleSpotlight.cs" />

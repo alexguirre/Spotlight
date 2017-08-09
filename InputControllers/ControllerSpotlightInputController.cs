@@ -1,4 +1,4 @@
-﻿namespace Spotlight.SpotlightControllers
+﻿namespace Spotlight.InputControllers
 {
     using System;
 
@@ -7,7 +7,7 @@
 
     using Spotlight.Core;
 
-    internal class ControllerSpotlightController : SpotlightController
+    internal class ControllerSpotlightInputController : SpotlightInputController
     {
         private enum ControllerMethod { LeftStick, RightStick, DPad }
 
@@ -16,7 +16,7 @@
         readonly ControllerButtons modifierButton;
         readonly ControllerButtons toggleButton;
 
-        protected ControllerSpotlightController()
+        protected ControllerSpotlightInputController()
         {
             method = (ControllerMethod)Enum.Parse(typeof(ControllerMethod), Plugin.Settings.GeneralSettingsIniFile.ReadString("Controller", "Method", nameof(ControllerMethod.LeftStick)), true);
 

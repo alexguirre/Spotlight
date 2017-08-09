@@ -1,4 +1,4 @@
-﻿namespace Spotlight.SpotlightControllers
+﻿namespace Spotlight.InputControllers
 {
     using System.Linq;
     using System.Windows.Forms;
@@ -7,7 +7,7 @@
 
     using Spotlight.Core;
 
-    internal class KeyboardSpotlightController : SpotlightController
+    internal class KeyboardSpotlightInputController : SpotlightInputController
     {
         readonly Keys moveLeftKey;
         readonly Keys moveRightKey;
@@ -20,7 +20,7 @@
         readonly Keys modifierKey;
         readonly Keys toggleKey;
 
-        protected KeyboardSpotlightController()
+        protected KeyboardSpotlightInputController()
         {
             moveLeftKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "Move Left", Keys.NumPad4);
             moveRightKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "Move Right", Keys.NumPad6);

@@ -1,4 +1,4 @@
-﻿namespace Spotlight.SpotlightControllers
+﻿namespace Spotlight.InputControllers
 {
     using System.Windows.Forms;
 
@@ -7,12 +7,12 @@
 
     using Spotlight.Core;
 
-    internal class MouseSpotlightController : SpotlightController
+    internal class MouseSpotlightInputController : SpotlightInputController
     {
         readonly Keys modifierKey;
         readonly Keys toggleKey;
 
-        protected MouseSpotlightController()
+        protected MouseSpotlightInputController()
         {
             modifierKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Mouse", "Modifier", Keys.LControlKey);
             toggleKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Mouse", "Toggle", Keys.I);
