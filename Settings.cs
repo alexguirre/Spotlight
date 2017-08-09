@@ -22,6 +22,8 @@
         public readonly SpotlightData HelicoptersSpotlightData;
         public readonly SpotlightData BoatsSpotlightData;
 
+        public readonly Keys EditorKey;
+
         internal Settings(string generalSettingsIniFileName, string spotlightOffsetsIniFileName, string carsSpotlightDataFileName, string helicoptersSpotlightDataFileName, string boatsSpotlightDataFileName, bool generateDefaultsIfFileNotFound)
         {
             if (generateDefaultsIfFileNotFound)
@@ -63,6 +65,8 @@
             CarsSpotlightData = ReadSpotlightDataFromXMLFile(carsSpotlightDataFileName);
             HelicoptersSpotlightData = ReadSpotlightDataFromXMLFile(helicoptersSpotlightDataFileName);
             BoatsSpotlightData = ReadSpotlightDataFromXMLFile(boatsSpotlightDataFileName);
+
+            EditorKey = GeneralSettingsIniFile.ReadEnum<Keys>("Misc", "EditorKey", Keys.F11);
         }
 
 
@@ -184,6 +188,10 @@
         static readonly string PluginTextTitle = $"Spotlight v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version} by alexguirre{System.Environment.NewLine}";
 
         const string DefaultGeneralSettingsText = @"
+[Misc]
+; The key to open the in-game editor
+EditorKey = F11 
+
 [Controls] ; Settings to specify which controls are enabled
 KeyboardControlsEnabled = true
 ControllerControlsEnabled = true
@@ -302,46 +310,46 @@ Z= 1.8
 ";
 
         static readonly SpotlightData DefaultCarsSpotlightData = new SpotlightData(
-                                                                                   color: Color.FromArgb(255, 7, 7, 7),
+                                                                                   color: Color.FromArgb(255, 80, 80, 80),
                                                                                    castShadows: true,
-                                                                                   radius: 10,
-                                                                                   intensity: 20,
-                                                                                   range: 60,
-                                                                                   falloff: 40,
-                                                                                   roundness: 70,
-                                                                                   volumeIntensity: 0.35f,
-                                                                                   volumeSize: 0.125f,
-                                                                                   coronaIntensity: 10.0f,
+                                                                                   angle: 8.25f,
+                                                                                   intensity: 30f,
+                                                                                   range: 45f,
+                                                                                   falloff: 45f,
+                                                                                   roundness: 40f,
+                                                                                   volumeIntensity: 0.06f,
+                                                                                   volumeSize: 0.175f,
+                                                                                   coronaIntensity: 20f,
                                                                                    coronaSize: 1.5f,
                                                                                    movementSpeed: 1
                                                                                    );
 
         static readonly SpotlightData DefaultHelicoptersSpotlightData = new SpotlightData(
-                                                                                   color: Color.FromArgb(255, 7, 7, 7),
+                                                                                   color: Color.FromArgb(255, 80, 80, 80),
                                                                                    castShadows: true,
-                                                                                   radius: 12,
-                                                                                   intensity: 20,
-                                                                                   range: 230,
-                                                                                   falloff: 50,
-                                                                                   roundness: 70,
-                                                                                   volumeIntensity: 0.35f,
+                                                                                   angle: 9f,
+                                                                                   intensity: 35f,
+                                                                                   range: 230f,
+                                                                                   falloff: 50f,
+                                                                                   roundness: 40f,
+                                                                                   volumeIntensity: 0.05f,
                                                                                    volumeSize: 0.125f,
-                                                                                   coronaIntensity: 10.0f,
+                                                                                   coronaIntensity: 20f,
                                                                                    coronaSize: 1.5f,
                                                                                    movementSpeed: 1
                                                                                    );
 
         static readonly SpotlightData DefaultBoatsSpotlightData = new SpotlightData(
-                                                                                   color: Color.FromArgb(255, 7, 7, 7),
+                                                                                   color: Color.FromArgb(255, 80, 80, 80),
                                                                                    castShadows: true,
-                                                                                   radius: 10,
-                                                                                   intensity: 20,
-                                                                                   range: 80,
-                                                                                   falloff: 45,
-                                                                                   roundness: 70,
-                                                                                   volumeIntensity: 0.35f,
+                                                                                   angle: 8.5f,
+                                                                                   intensity: 30f,
+                                                                                   range: 80f,
+                                                                                   falloff: 45f,
+                                                                                   roundness: 40f,
+                                                                                   volumeIntensity: 0.05f,
                                                                                    volumeSize: 0.125f,
-                                                                                   coronaIntensity: 10.0f,
+                                                                                   coronaIntensity: 20f,
                                                                                    coronaSize: 1.5f,
                                                                                    movementSpeed: 1
                                                                                    );

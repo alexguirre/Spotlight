@@ -25,11 +25,11 @@
         {
         }
 
-        public SpotlightData(Color color, bool castShadows, float radius, float intensity, float range, float falloff, float roundness, float volumeIntensity, float volumeSize, float coronaIntensity, float coronaSize, float movementSpeed)
+        public SpotlightData(Color color, bool castShadows, float angle, float intensity, float range, float falloff, float roundness, float volumeIntensity, float volumeSize, float coronaIntensity, float coronaSize, float movementSpeed)
         {
             Color = color;
             CastShadows = castShadows;
-            Angle = radius;
+            Angle = angle;
             Intensity = intensity;
             Range = range;
             Falloff = falloff;

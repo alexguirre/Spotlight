@@ -69,7 +69,7 @@
                 s.Update(SpotlightInputControllers);
             }
 
-            if ((Editor == null || !Editor.Window.IsVisible) && Game.IsKeyDown(System.Windows.Forms.Keys.F11))
+            if ((Editor == null || !Editor.Window.IsVisible) && Game.IsKeyDown(Settings.EditorKey))
             {
                 if(Editor != null)
                 {
