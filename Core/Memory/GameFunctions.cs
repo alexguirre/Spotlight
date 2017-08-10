@@ -82,20 +82,20 @@
             }
         }
 
-        public delegate void SetLightDrawDataRoundnessAndRadiusDelegate(CLightDrawData* data, float roundness, float radius);
+        public delegate void SetLightDrawDataAnglesDelegate(CLightDrawData* data, float innerAngle, float outerAngle);
 
-        private static SetLightDrawDataRoundnessAndRadiusDelegate setLightDrawDataRoundnessAndRadiusDelegate;
-        public static SetLightDrawDataRoundnessAndRadiusDelegate SetLightDrawDataRoundnessAndRadius
+        private static SetLightDrawDataAnglesDelegate setLightDrawDataAngles;
+        public static SetLightDrawDataAnglesDelegate SetLightDrawDataAngles
         {
             get
             {
-                if (setLightDrawDataRoundnessAndRadiusDelegate == null)
+                if (setLightDrawDataAngles == null)
                 {
                     IntPtr address = Game.FindPattern("40 53 48 83 EC 40 0F 29 7C 24 ?? F3 0F 10 3D ?? ?? ?? ?? 48 8B D9 0F 2F D7 44 0F 29 44 24 ?? 73 06 44 0F 28 C7");
-                    setLightDrawDataRoundnessAndRadiusDelegate = Marshal.GetDelegateForFunctionPointer<SetLightDrawDataRoundnessAndRadiusDelegate>(address);
+                    setLightDrawDataAngles = Marshal.GetDelegateForFunctionPointer<SetLightDrawDataAnglesDelegate>(address);
                 }
 
-                return setLightDrawDataRoundnessAndRadiusDelegate;
+                return setLightDrawDataAngles;
             }
         }
 

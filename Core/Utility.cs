@@ -180,7 +180,6 @@
 
             return new Vector3(GetFloatFromUInt(x), GetFloatFromUInt(y), GetFloatFromUInt(z));
         }
-        //x[to:from]
 
         public static Vector3 _mm_shuffle_epi32(Vector3 a, int imm8)
         {

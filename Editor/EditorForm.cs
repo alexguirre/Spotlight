@@ -101,11 +101,11 @@
 
             int y = 5;
             int x = 12;
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Angle)}", nameof(SpotlightData.Angle), 0, 90, 0.5f, sData.Angle);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.OuterAngle)}", nameof(SpotlightData.OuterAngle), 0, 90, 0.5f, sData.OuterAngle);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.InnerAngle)}", nameof(SpotlightData.InnerAngle), 0, 90, 0.5f, sData.InnerAngle);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Intensity)}", nameof(SpotlightData.Intensity), -9999, 9999, 1f, sData.Intensity);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Range)}", nameof(SpotlightData.Range), -9999, 9999, 1f, sData.Range);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Falloff)}", nameof(SpotlightData.Falloff), -9999, 9999, 1f, sData.Falloff);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Roundness)}", nameof(SpotlightData.Roundness), 0, 90, 0.5f, sData.Roundness);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeIntensity)}", "Volume Intensity", -9999, 9999, 0.05f, sData.VolumeIntensity);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeSize)}", "Volume Size", -9999, 9999, 0.05f, sData.VolumeSize);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.MovementSpeed)}", "Movement Speed", 0, 100, 0.5f, sData.MovementSpeed);
@@ -313,11 +313,11 @@
         {
             SpotlightData d = GetSpotlightDataForControl(control);
 
-            if (control.Name.Contains(nameof(SpotlightData.Angle))) d.Angle = value;
+            if (control.Name.Contains(nameof(SpotlightData.OuterAngle))) d.OuterAngle = value;
+            else if (control.Name.Contains(nameof(SpotlightData.InnerAngle))) d.InnerAngle = value;
             else if (control.Name.Contains(nameof(SpotlightData.Intensity)) && !control.Name.Contains("Volume") && !control.Name.Contains("Corona")) d.Intensity = value;
             else if (control.Name.Contains(nameof(SpotlightData.Range))) d.Range = value;
             else if (control.Name.Contains(nameof(SpotlightData.Falloff))) d.Falloff = value;
-            else if (control.Name.Contains(nameof(SpotlightData.Roundness))) d.Roundness = value;
             else if (control.Name.Contains(nameof(SpotlightData.VolumeIntensity))) d.VolumeIntensity = value;
             else if (control.Name.Contains(nameof(SpotlightData.VolumeSize))) d.VolumeSize = value;
             else if (control.Name.Contains(nameof(SpotlightData.CoronaIntensity))) d.CoronaIntensity = value;

@@ -68,7 +68,7 @@
             NativeVector3 u = v.ToNormalized();
 
             GameFunctions.SetLightDrawDataDirection(drawData, &dir, &u);
-            GameFunctions.SetLightDrawDataRoundnessAndRadius(drawData, Data.Roundness, Data.Angle);
+            GameFunctions.SetLightDrawDataAngles(drawData, Data.InnerAngle, Data.OuterAngle);
 
             if (Data.CastShadows)
             {
@@ -96,7 +96,7 @@
                 return;
             NativeVector3 p = Position;
             NativeVector3 d = Direction;
-            GameFunctions.DrawCorona(CCoronaDrawQueue.GetInstance(), &p, Data.CoronaSize, unchecked((uint)Data.Color.ToArgb()), Data.CoronaIntensity, 100f, &d, 1.0f, 0.0f, Data.Angle, 3);
+            GameFunctions.DrawCorona(CCoronaDrawQueue.GetInstance(), &p, Data.CoronaSize, unchecked((uint)Data.Color.ToArgb()), Data.CoronaIntensity, 100f, &d, 1.0f, Data.InnerAngle, Data.OuterAngle, 3);
         }
 
 

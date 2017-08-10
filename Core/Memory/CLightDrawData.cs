@@ -24,11 +24,11 @@
         [FieldOffset(0x007C)] public float VolumeSize;
         [FieldOffset(0x0080)] public float VolumeExponent;
 
-        [FieldOffset(0x0088)] public uint ShadowRenderId;
+        [FieldOffset(0x0088)] public ulong ShadowRenderId;
         [FieldOffset(0x0090)] public uint ShadowUnkValue;
         [FieldOffset(0x0098)] public float Range;
         [FieldOffset(0x009C)] public float FalloffExponent;
-
+        
         public static CLightDrawData* New(eLightType type, eLightFlags flags, Vector3 position, Color color, float brightness)
         {
             CLightDrawData* d = GameFunctions.GetFreeLightDrawDataSlotFromPool();
