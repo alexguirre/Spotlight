@@ -28,7 +28,9 @@
         [FieldOffset(0x0090)] public uint ShadowUnkValue;
         [FieldOffset(0x0098)] public float Range;
         [FieldOffset(0x009C)] public float FalloffExponent;
-        
+
+        [FieldOffset(0x00D4)] public float ShadowNearClip; // default: 0.1
+
         public static CLightDrawData* New(eLightType type, eLightFlags flags, Vector3 position, Color color, float brightness)
         {
             CLightDrawData* d = GameFunctions.GetFreeLightDrawDataSlotFromPool();
