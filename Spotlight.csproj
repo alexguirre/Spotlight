@@ -64,6 +64,7 @@
     <Compile Include="Core\XmlColor.cs" />
     <Compile Include="Editor\ColorPicker.cs" />
     <Compile Include="Editor\EditorForm.cs" />
+    <Compile Include="Editor\InputTextForm.cs" />
     <Compile Include="Editor\IntNumericUpDown.cs" />
     <Compile Include="Editor\NumericUpDownEx.cs" />
     <Compile Include="ISpotlight.cs" />

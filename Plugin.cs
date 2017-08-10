@@ -35,7 +35,7 @@
                                     true);
 
             LoadSpotlightControllers();
-
+            
             while (true)
             {
                 GameFiber.Yield();
@@ -55,7 +55,7 @@
                 }
             }
 
-            
+
             for (int i = Spotlights.Count - 1; i >= 0; i--)
             {
                 VehicleSpotlight s = Spotlights[i];
@@ -71,8 +71,9 @@
 
             if ((Editor == null || !Editor.Window.IsVisible) && Game.IsKeyDown(Settings.EditorKey))
             {
-                if(Editor != null)
+                if (Editor != null)
                 {
+                    Editor?.Window?.Close();
                     Editor = null;
                 }
 

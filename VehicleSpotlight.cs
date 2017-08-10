@@ -10,7 +10,7 @@
     {
         public Vehicle Vehicle { get; }
         
-        public Vector3 Offset { get; }
+        public Vector3 Offset { get; private set; }
         public Rotator RelativeRotation { get; set; }
 
         public bool IsTrackingPed { get { return TrackedPed.Exists(); } }
@@ -30,6 +30,11 @@
                 RelativeRotation = new Rotator(-50.0f, 0.0f, 0.0f);
 
             Game.FrameRender += OnDrawCoronaFrameRender;
+        }
+
+        public void UpdateOffset()
+        {
+            Offset = GetOffsetForModel(Vehicle.Model);
         }
 
         ~VehicleSpotlight()
@@ -82,16 +87,20 @@
         }
 
 
-        private static Vector3 GetOffsetForModel(Model model)
+        internal static Vector3 GetOffsetForModel(Model model)
         {
-            if (Plugin.Settings.SpotlightOffsets.TryGetValue(model, out Vector3 o))
-                return o;
+            foreach (KeyValuePair<string, Vector3> entry in Plugin.Settings.SpotlightOffsets)
+            {
+                if (model == new Model(entry.Key))
+                    return entry.Value;
+            }
+
             Game.LogTrivial("No spotlight offset position loaded for model: " + model.Name);
             Game.LogTrivial("Using default values");
             return new Vector3(-0.8f, 1.17f, 0.52f);
         }
 
-        private static SpotlightData GetSpotlightDataForModel(Model model)
+        internal static SpotlightData GetSpotlightDataForModel(Model model)
         {
             return model.IsCar ? Plugin.Settings.CarsSpotlightData :
                    model.IsBoat ? Plugin.Settings.BoatsSpotlightData :

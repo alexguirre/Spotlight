@@ -2,8 +2,10 @@
 {
     using System;
     using System.IO;
+    using System.Linq;
     using System.Drawing;
     using System.Xml.Serialization;
+    using System.Collections.Generic;
 
     using Rage;
     using Rage.Forms;
@@ -27,13 +29,70 @@
             Window.DisableResizing();
             Window.Padding = new Padding(3, 2, 3, 3);
             DockedTabControl d = new DockedTabControl(Window);
-            CreateTabPageControls(d.AddPage("Cars"), "Cars");
-            CreateTabPageControls(d.AddPage("Boats"), "Boats");
-            CreateTabPageControls(d.AddPage("Helicopters"), "Helicopters");
+            CreateSpotlightDataTabPageControls(d.AddPage("Cars"), "Cars");
+            CreateSpotlightDataTabPageControls(d.AddPage("Boats"), "Boats");
+            CreateSpotlightDataTabPageControls(d.AddPage("Helicopters"), "Helicopters");
+            CreateOffsetsTabPageControls(d.AddPage("Offsets"), "Offsets");
         }
 
+        private void CreateOffsetsTabPageControls(TabButton tab, string name)
+        {
+            Base page = tab.Page;
+            page.Name = $"{name}Page";
 
-        private void CreateTabPageControls(TabButton tab, string name)
+            Label label = new Label(page);
+            label.Name = $"{name}Label";
+            label.Text = "Model";
+            label.SetPosition(12, 5 + 3);
+            label.Alignment = Pos.CenterV | Pos.Left;
+
+            ComboBox comboBox = new ComboBox(page);
+            comboBox.Name = $"{name}ComboBox";
+            comboBox.SetPosition(60, 5);
+            comboBox.Width += 20;
+            comboBox.AddItem("New...", $"{name}ComboBoxItemNew");
+            int j = 1;
+            foreach (KeyValuePair<string, Vector3> entry in Plugin.Settings.SpotlightOffsets)
+            {
+                comboBox.AddItem(entry.Key, $"{name}ComboBoxItem{j++}");
+            }
+            comboBox.SelectByText(Plugin.Settings.SpotlightOffsets.First().Key);
+            comboBox.ItemSelected += OnOffsetsComboBoxItemSelected;
+
+            Vector3 v = Plugin.Settings.SpotlightOffsets.First().Value;
+            string[] vecComponents = "X,Y,Z".Split(',');
+            for (int i = 0; i < vecComponents.Length; i++)
+            {
+                string vecComp = vecComponents[i];
+
+                int x = 250;
+                int y = 5 + 30 * i;
+
+                Label vecCompLabel = new Label(page);
+                vecCompLabel.Name = $"{name}{vecComp}Label";
+                vecCompLabel.Text = vecComp;
+                vecCompLabel.SetPosition(x, y + 3);
+                vecCompLabel.Alignment = Pos.CenterV | Pos.Left;
+
+                NumericUpDownEx upDown = new NumericUpDownEx(page);
+                upDown.Name = $"{name}{vecComp}NumUpDown";
+                upDown.Min = -999;
+                upDown.Max = 999;
+                upDown.Increment = 0.01f;
+                upDown.Value = v[i];
+                upDown.SetPosition(x + 15, y);
+                upDown.ValueChanged += OnOffsetsNumericUpDownValueChanged;
+            }
+
+            Button saveButton = new Button(page);
+            saveButton.Name = $"{name}SaveButton";
+            saveButton.Text = "Save";
+            saveButton.SetPosition(12, 50);
+            saveButton.Clicked += OnOffsetsSaveButtonClicked;
+            saveButton.SetToolTipText("Saves all offsets to Offsets.ini.");
+        }
+
+        private void CreateSpotlightDataTabPageControls(TabButton tab, string name)
         {
             Base page = tab.Page;
             page.Name = $"{name}Page";
@@ -119,9 +178,9 @@
             Button button = new Button(parent);
             button.Name = $"{name}Button";
             button.Text = text;
-            button.SetSize(100, 40);
-            button.SetPosition(x + 110, y);
+            button.SetPosition(x + 110, y + 10);
             button.Clicked += OnSaveButtonClicked;
+            button.SetToolTipText("Saves the current spotlight settings.");
 
             y += 45;
         }
@@ -153,6 +212,68 @@
             }
         }
 
+
+        private void OnOffsetsComboBoxItemSelected(object sender, ItemSelectedEventArgs e)
+        {
+            ComboBox c = ((ComboBox)Window.FindChildByName("OffsetsComboBox", true));
+            MenuItem selectedItem = ((MenuItem)e.SelectedItem);
+
+            if (selectedItem.Name == c.Name + "ItemNew")
+            {
+                GameFiber.StartNew(() =>
+                {
+                    InputTextForm f = new InputTextForm("Enter model name...");
+                    f.Show();
+                    f.Window.MakeModal();
+                    while (f.Window.IsVisible)
+                        GameFiber.Yield();
+                    if (!f.Cancelled)
+                    {
+                        string n = f.Input;
+                        c.SelectedItem = c.AddItem(n);
+                    }
+                    else
+                    {
+                        c.SelectByName(c.Name + "Item1");
+                    }
+                });
+            }
+            else
+            {
+                string selectedModel = selectedItem.Text;
+                Vector3 v = Vector3.Zero;
+                if (Plugin.Settings.SpotlightOffsets.ContainsKey(selectedModel))
+                {
+                    v = Plugin.Settings.SpotlightOffsets[selectedModel];
+                }
+                
+                ((NumericUpDownEx)Window.FindChildByName("OffsetsXNumUpDown", true)).Value = v.X;
+                ((NumericUpDownEx)Window.FindChildByName("OffsetsYNumUpDown", true)).Value = v.Y;
+                ((NumericUpDownEx)Window.FindChildByName("OffsetsZNumUpDown", true)).Value = v.Z;
+            }
+        }
+
+        private void OnOffsetsNumericUpDownValueChanged(object sender, EventArgs args)
+        {
+            string selectedModel = ((ComboBox)Window.FindChildByName("OffsetsComboBox", true)).SelectedItem.Text;
+            Vector3 v = new Vector3(((NumericUpDownEx)Window.FindChildByName("OffsetsXNumUpDown", true)).Value,
+                                    ((NumericUpDownEx)Window.FindChildByName("OffsetsYNumUpDown", true)).Value,
+                                    ((NumericUpDownEx)Window.FindChildByName("OffsetsZNumUpDown", true)).Value);
+
+            Dictionary<string, Vector3> clone = Plugin.Settings.SpotlightOffsets.ToDictionary(e => e.Key, e => e.Value);
+            clone[selectedModel] = v;
+            Plugin.Settings.UpdateOffsets(clone, false);
+            foreach (VehicleSpotlight s in Plugin.Spotlights)
+            {
+                s.UpdateOffset();
+            }
+        }
+
+        private void OnOffsetsSaveButtonClicked(object sender, ClickedEventArgs args)
+        {
+            Dictionary<string, Vector3> clone = Plugin.Settings.SpotlightOffsets.ToDictionary(e => e.Key, e => e.Value);
+            Plugin.Settings.UpdateOffsets(clone, true);
+        }
 
 
 
@@ -233,14 +354,14 @@
 
             private void FiberLoop()
             {
-                while (!Editor.Window.IsVisible)
-                    GameFiber.Yield();
-                
-                while (Editor.Window.IsVisible)
+                while (true)
                 {
                     GameFiber.Yield();
-
-                    NativeFunction.Natives.DisableAllControlActions(0);
+                    
+                    if (Editor.Window.IsVisible)
+                    {
+                        NativeFunction.Natives.DisableAllControlActions(0);
+                    }
                 }
             }
         }

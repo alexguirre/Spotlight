@@ -1,31 +1,41 @@
 ﻿namespace Spotlight
 {
-    // System
     using System.IO;
     using System.Drawing;
+    using System.Globalization;
     using System.Windows.Forms;
     using System.Xml.Serialization;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-
-
-    // RPH
+    
     using Rage;
 
     public sealed class Settings
     {
-        public readonly InitializationFile GeneralSettingsIniFile;
+        public string GeneralSettingsIniFileName { get; }
+        public string SpotlightOffsetsIniFileName { get; }
+        public string CarsSpotlightDataFileName { get; }
+        public string HelicoptersSpotlightDataFileName { get; }
+        public string BoatsSpotlightDataFileName { get; }
 
-        public readonly ReadOnlyDictionary<Model, Vector3> SpotlightOffsets;
+        public InitializationFile GeneralSettingsIniFile { get; }
 
-        public readonly SpotlightData CarsSpotlightData;
-        public readonly SpotlightData HelicoptersSpotlightData;
-        public readonly SpotlightData BoatsSpotlightData;
+        public ReadOnlyDictionary<string, Vector3> SpotlightOffsets { get; private set; }
 
-        public readonly Keys EditorKey;
+        public SpotlightData CarsSpotlightData { get; }
+        public SpotlightData HelicoptersSpotlightData { get; }
+        public SpotlightData BoatsSpotlightData { get; }
+
+        public Keys EditorKey { get; }
 
         internal Settings(string generalSettingsIniFileName, string spotlightOffsetsIniFileName, string carsSpotlightDataFileName, string helicoptersSpotlightDataFileName, string boatsSpotlightDataFileName, bool generateDefaultsIfFileNotFound)
         {
+            GeneralSettingsIniFileName = generalSettingsIniFileName;
+            SpotlightOffsetsIniFileName = spotlightOffsetsIniFileName;
+            CarsSpotlightDataFileName = carsSpotlightDataFileName;
+            HelicoptersSpotlightDataFileName = helicoptersSpotlightDataFileName;
+            BoatsSpotlightDataFileName = boatsSpotlightDataFileName;
+
             if (generateDefaultsIfFileNotFound)
             {
                 if (!File.Exists(generalSettingsIniFileName))
@@ -61,7 +71,7 @@
 
             Game.LogTrivial("Reading settings...");
             GeneralSettingsIniFile = new InitializationFile(generalSettingsIniFileName);
-            SpotlightOffsets = new ReadOnlyDictionary<Model, Vector3>(ReadSpotlightOffsets(new InitializationFile(spotlightOffsetsIniFileName)));
+            SpotlightOffsets = new ReadOnlyDictionary<string, Vector3>(ReadSpotlightOffsets(new InitializationFile(spotlightOffsetsIniFileName)));
             CarsSpotlightData = ReadSpotlightDataFromXMLFile(carsSpotlightDataFileName);
             HelicoptersSpotlightData = ReadSpotlightDataFromXMLFile(helicoptersSpotlightDataFileName);
             BoatsSpotlightData = ReadSpotlightDataFromXMLFile(boatsSpotlightDataFileName);
@@ -69,12 +79,31 @@
             EditorKey = GeneralSettingsIniFile.ReadEnum<Keys>("Misc", "EditorKey", Keys.F11);
         }
 
+        internal void UpdateOffsets(IDictionary<string, Vector3> offsets, bool saveToFile)
+        {
+            SpotlightOffsets = new ReadOnlyDictionary<string, Vector3>(offsets);
 
-        private Dictionary<Model, Vector3> ReadSpotlightOffsets(InitializationFile iniFile)
+            if (saveToFile)
+            {
+                using (StreamWriter writer = new StreamWriter(SpotlightOffsetsIniFileName, false))
+                {
+                    writer.WriteLine(PluginTextTitle);
+                    foreach (KeyValuePair<string, Vector3> item in SpotlightOffsets)
+                    {
+                        writer.WriteLine($"[{item.Key}]");
+                        writer.WriteLine($"X = {item.Value.X.ToString(CultureInfo.InvariantCulture)}");
+                        writer.WriteLine($"Y = {item.Value.Y.ToString(CultureInfo.InvariantCulture)}");
+                        writer.WriteLine($"Z = {item.Value.Z.ToString(CultureInfo.InvariantCulture)}");
+                    }
+                }
+            }
+        }
+
+        private Dictionary<string, Vector3> ReadSpotlightOffsets(InitializationFile iniFile)
         {
             Game.LogTrivial("Loading spotlight offsets...");
 
-            Dictionary<Model, Vector3> dict = new Dictionary<Model, Vector3>();
+            Dictionary<string, Vector3> dict = new Dictionary<string, Vector3>();
 
             foreach (string modelName in iniFile.GetSectionNames())
             {
