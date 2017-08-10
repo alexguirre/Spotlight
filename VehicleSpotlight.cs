@@ -48,17 +48,7 @@
                 return;
             
             Position = Vehicle.GetOffsetPosition(Offset);
-
-            bool isCurrentPlayerVehicleSpotlight = IsCurrentPlayerVehicleSpotlight;
-
-            if (isCurrentPlayerVehicleSpotlight)
-            {
-                for (int i = 0; i < controllers.Count; i++)
-                {
-                    controllers[i].UpdateControls(this);
-                }
-            }
-
+            
             if (IsTrackingVehicle)
             {
                 Direction = (TrackedVehicle.Position - Position).ToNormalized();
@@ -69,10 +59,11 @@
             }
             else
             {
-                if (isCurrentPlayerVehicleSpotlight)
+                if (IsCurrentPlayerVehicleSpotlight)
                 {
                     for (int i = 0; i < controllers.Count; i++)
                     {
+                        controllers[i].UpdateControls(this);
                         if (controllers[i].GetUpdatedRotationDelta(this, out Rotator newRotDelta))
                         {
                             RelativeRotation += newRotDelta;
