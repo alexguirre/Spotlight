@@ -102,18 +102,18 @@
             int y = 5;
             int x = 12;
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Angle)}", nameof(SpotlightData.Angle), 0, 90, 0.5f, sData.Angle);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Intensity)}", nameof(SpotlightData.Intensity), -999, 999, 1f, sData.Intensity);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Range)}", nameof(SpotlightData.Range), -999, 999, 1f, sData.Range);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Falloff)}", nameof(SpotlightData.Falloff), -999, 999, 1f, sData.Falloff);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Intensity)}", nameof(SpotlightData.Intensity), -9999, 9999, 1f, sData.Intensity);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Range)}", nameof(SpotlightData.Range), -9999, 9999, 1f, sData.Range);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Falloff)}", nameof(SpotlightData.Falloff), -9999, 9999, 1f, sData.Falloff);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Roundness)}", nameof(SpotlightData.Roundness), 0, 90, 0.5f, sData.Roundness);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeIntensity)}", "Volume Intensity", -999, 999, 0.05f, sData.VolumeIntensity);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeSize)}", "Volume Size", -999, 999, 0.05f, sData.VolumeSize);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeIntensity)}", "Volume Intensity", -9999, 9999, 0.05f, sData.VolumeIntensity);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeSize)}", "Volume Size", -9999, 9999, 0.05f, sData.VolumeSize);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.MovementSpeed)}", "Movement Speed", 0, 100, 0.5f, sData.MovementSpeed);
 
             y = 5;
             x = 285;
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CoronaIntensity)}", "Corona Intensity", -999, 999, 0.05f, sData.CoronaIntensity);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CoronaSize)}", "Corona Size", -999, 999, 0.05f, sData.CoronaSize);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CoronaIntensity)}", "Corona Intensity", 0, 9999, 0.05f, sData.CoronaIntensity);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CoronaSize)}", "Corona Size", -9999, 9999, 0.05f, sData.CoronaSize);
             CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CastShadows)}", "Cast Shadows", sData.CastShadows);
             CreateColorFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Color)}", "Color ", sData.Color);
             CreateSaveButton(page, x, ref y, $"{name}Save", "Save");
