@@ -16,7 +16,7 @@
         [FieldOffset(0x0050)] private NativeVector3 unk3;
         [FieldOffset(0x0060)] public eLightType LightType;
         [FieldOffset(0x0064)] public eLightFlags Flags;
-        [FieldOffset(0x0068)] public float Brightness;
+        [FieldOffset(0x0068)] public float Intensity;
 
         [FieldOffset(0x0070)] public int unkTxdDefPoolIndex;
 
@@ -31,14 +31,16 @@
 
         [FieldOffset(0x00D4)] public float ShadowNearClip; // default: 0.1
 
-        public static CLightDrawData* New(eLightType type, eLightFlags flags, Vector3 position, Color color, float brightness)
+        public static CLightDrawData* New(eLightType type, eLightFlags flags, Vector3 position, Color color, float intensity)
         {
+            const float ByteToFloatFactor = 1.0f / 255.0f;
+
             CLightDrawData* d = GameFunctions.GetFreeLightDrawDataSlotFromPool();
 
             NativeVector3 pos = position;
-            NativeColorRGBAFloat col = new NativeColorRGBAFloat { R = color.R / 255f, G = color.G / 255f, B = color.B / 255f, A = color.A / 255f };
+            NativeColorRGBAFloat col = new NativeColorRGBAFloat { R = color.R * ByteToFloatFactor, G = color.G * ByteToFloatFactor, B = color.B * ByteToFloatFactor, A = color.A * ByteToFloatFactor };
 
-            GameFunctions.CreateLightDrawData(d, eLightType.SPOT_LIGHT, (uint)flags, &pos, &col, brightness, 0xFFFFFF);
+            GameFunctions.CreateLightDrawData(d, eLightType.SPOT_LIGHT, (uint)flags, &pos, &col, intensity, 0xFFFFFF);
 
             return d;
         }

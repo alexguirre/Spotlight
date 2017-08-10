@@ -23,7 +23,7 @@
         public Vector3 Direction { get; set; }
         public bool IsActive { get; set; }
 
-        private readonly uint shadowId;
+        private readonly ulong shadowId;
 
         internal BaseSpotlight(SpotlightData data)
         {
@@ -73,7 +73,7 @@
             if (Data.CastShadows)
             {
                 drawData->Flags |= eLightFlags.ShadowsEnabled;
-                drawData->ShadowRenderId = 0x46B9FB69 + shadowId; // 0x46B9FB69 is the value that the original game functions take from the RagePluginHook's CGameScriptId(at least in SocialClub v1103, no idea if it changes between versions)
+                drawData->ShadowRenderId = shadowId;
                 drawData->ShadowUnkValue = GameFunctions.GetValueForLightDrawDataShadowUnkValue(drawData);
             }
 
@@ -102,12 +102,12 @@
 
 
         private static uint totalShadowsId = 0;
-        private static uint GetNewShadowId()
+        private static ulong GetNewShadowId()
         {
             totalShadowsId++;
             if (totalShadowsId > 200) // own limit, I don't know if game has a limit or in case it has, if it's lower
                 totalShadowsId = 1;
-            uint id = totalShadowsId;
+            ulong id = 0x46B9FB69 + totalShadowsId;  // 0x46B9FB69 is the value that the original game functions take from the RagePluginHook's CGameScriptId(at least in SocialClub v1103, no idea if it changes between versions)
             return id;
         }
     }

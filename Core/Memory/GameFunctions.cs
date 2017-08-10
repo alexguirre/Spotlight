@@ -48,7 +48,7 @@
         }
 
 
-        public delegate CLightDrawData* CreateLightDrawDataDelegate(CLightDrawData* data, eLightType type, uint flags, NativeVector3* position, NativeColorRGBAFloat* color, float brightness, int unk);
+        public delegate CLightDrawData* CreateLightDrawDataDelegate(CLightDrawData* data, eLightType type, uint flags, NativeVector3* position, NativeColorRGBAFloat* color, float intensity, int unk);
 
         private static CreateLightDrawDataDelegate createLightDrawData;
         public static CreateLightDrawDataDelegate CreateLightDrawData
