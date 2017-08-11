@@ -54,7 +54,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\APISpotlight.cs" />
-    <Compile Include="API\Functions.cs" />
     <Compile Include="Core\Memory\CCoronaDrawQueue.cs" />
     <Compile Include="Core\Memory\CLightDrawData.cs" />
     <Compile Include="Core\Memory\NativeColorRGBAFloat.cs" />

@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spotlight", "Source\Spotlight.csproj", "{3FFAD4EE-304C-47E6-8BDC-1DD20B9C6385}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpotlightAPIExample", "APIExample\SpotlightAPIExample.csproj", "{66DD68B2-A57F-46E5-BA14-73EC741F5E80}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3FFAD4EE-304C-47E6-8BDC-1DD20B9C6385}.Debug|x64.ActiveCfg = Debug|x64
+		{3FFAD4EE-304C-47E6-8BDC-1DD20B9C6385}.Debug|x64.Build.0 = Debug|x64
+		{3FFAD4EE-304C-47E6-8BDC-1DD20B9C6385}.Release|x64.ActiveCfg = Release|x64
+		{3FFAD4EE-304C-47E6-8BDC-1DD20B9C6385}.Release|x64.Build.0 = Release|x64
+		{66DD68B2-A57F-46E5-BA14-73EC741F5E80}.Debug|x64.ActiveCfg = Debug|x64
+		{66DD68B2-A57F-46E5-BA14-73EC741F5E80}.Debug|x64.Build.0 = Debug|x64
+		{66DD68B2-A57F-46E5-BA14-73EC741F5E80}.Release|x64.ActiveCfg = Release|x64
+		{66DD68B2-A57F-46E5-BA14-73EC741F5E80}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

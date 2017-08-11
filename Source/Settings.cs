@@ -10,7 +10,7 @@
     
     using Rage;
 
-    public sealed class Settings
+    internal sealed class Settings
     {
         public string GeneralSettingsIniFileName { get; }
         public string SpotlightOffsetsIniFileName { get; }
