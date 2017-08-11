@@ -29,9 +29,7 @@
 
             Settings = new Settings(@"Plugins\Spotlight Resources\General.ini",
                                     @"Plugins\Spotlight Resources\Offsets.ini",
-                                    @"Plugins\Spotlight Resources\Spotlight Data - Cars.xml",
-                                    @"Plugins\Spotlight Resources\Spotlight Data - Helicopters.xml",
-                                    @"Plugins\Spotlight Resources\Spotlight Data - Boats.xml",
+                                    @"Plugins\Spotlight Resources\VisualSettings.xml",
                                     true);
 
             LoadSpotlightControllers();

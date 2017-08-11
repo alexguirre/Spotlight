@@ -1,7 +1,9 @@
 ﻿namespace Spotlight
 {
     using System.IO;
+    using System.Xml;
     using System.Drawing;
+    using System.Xml.Schema;
     using System.Globalization;
     using System.Windows.Forms;
     using System.Xml.Serialization;
@@ -14,27 +16,21 @@
     {
         public string GeneralSettingsIniFileName { get; }
         public string SpotlightOffsetsIniFileName { get; }
-        public string CarsSpotlightDataFileName { get; }
-        public string HelicoptersSpotlightDataFileName { get; }
-        public string BoatsSpotlightDataFileName { get; }
+        public string VisualSettingsFileName { get; }
 
         public InitializationFile GeneralSettingsIniFile { get; }
 
         public ReadOnlyDictionary<string, Vector3> SpotlightOffsets { get; private set; }
 
-        public SpotlightData CarsSpotlightData { get; }
-        public SpotlightData HelicoptersSpotlightData { get; }
-        public SpotlightData BoatsSpotlightData { get; }
+        public VisualSettings Visual { get; }
 
         public Keys EditorKey { get; }
 
-        internal Settings(string generalSettingsIniFileName, string spotlightOffsetsIniFileName, string carsSpotlightDataFileName, string helicoptersSpotlightDataFileName, string boatsSpotlightDataFileName, bool generateDefaultsIfFileNotFound)
+        internal Settings(string generalSettingsIniFileName, string spotlightOffsetsIniFileName, string visualSettingsFileName, bool generateDefaultsIfFileNotFound)
         {
             GeneralSettingsIniFileName = generalSettingsIniFileName;
             SpotlightOffsetsIniFileName = spotlightOffsetsIniFileName;
-            CarsSpotlightDataFileName = carsSpotlightDataFileName;
-            HelicoptersSpotlightDataFileName = helicoptersSpotlightDataFileName;
-            BoatsSpotlightDataFileName = boatsSpotlightDataFileName;
+            VisualSettingsFileName = visualSettingsFileName;
 
             if (generateDefaultsIfFileNotFound)
             {
@@ -50,31 +46,17 @@
                     CreateDefaultSpotlightOffsetsIniFile(spotlightOffsetsIniFileName);
                 }
 
-                if (!File.Exists(carsSpotlightDataFileName))
+                if (!File.Exists(visualSettingsFileName))
                 {
-                    Game.LogTrivial("Cars spotlight data file doesn't exists, creating default...");
-                    CreateDefaultCarsSpotlightDataXMLFile(carsSpotlightDataFileName);
-                }
-
-                if (!File.Exists(helicoptersSpotlightDataFileName))
-                {
-                    Game.LogTrivial("Helicopters spotlight data file doesn't exists, creating default...");
-                    CreateDefaultHelicoptersSpotlightDataXMLFile(helicoptersSpotlightDataFileName);
-                }
-
-                if (!File.Exists(boatsSpotlightDataFileName))
-                {
-                    Game.LogTrivial("Boats spotlight data file doesn't exists, creating default...");
-                    CreateDefaultBoatsSpotlightDataXMLFile(boatsSpotlightDataFileName);
+                    Game.LogTrivial("Visual settings file doesn't exists, creating default...");
+                    CreateDefaultVisualSettingsXMLFile(visualSettingsFileName);
                 }
             }
 
             Game.LogTrivial("Reading settings...");
             GeneralSettingsIniFile = new InitializationFile(generalSettingsIniFileName);
             SpotlightOffsets = new ReadOnlyDictionary<string, Vector3>(ReadSpotlightOffsets(new InitializationFile(spotlightOffsetsIniFileName)));
-            CarsSpotlightData = ReadSpotlightDataFromXMLFile(carsSpotlightDataFileName);
-            HelicoptersSpotlightData = ReadSpotlightDataFromXMLFile(helicoptersSpotlightDataFileName);
-            BoatsSpotlightData = ReadSpotlightDataFromXMLFile(boatsSpotlightDataFileName);
+            Visual = ReadVisualSettingsFromXMLFile(visualSettingsFileName);
 
             EditorKey = GeneralSettingsIniFile.ReadEnum<Keys>("Misc", "EditorKey", Keys.F11);
         }
@@ -155,28 +137,19 @@
             return dict;
         }
 
-        private SpotlightData ReadSpotlightDataFromXMLFile(string fileName)
+        private VisualSettings ReadVisualSettingsFromXMLFile(string fileName)
         {
             if (!File.Exists(fileName))
                 throw new FileNotFoundException("", fileName);
 
-            SpotlightData d;
-            XmlSerializer ser = new XmlSerializer(typeof(SpotlightData));
+            VisualSettings v;
+            XmlSerializer ser = new XmlSerializer(typeof(VisualSettings));
             using (StreamReader reader = new StreamReader(fileName))
             {
-                d = (SpotlightData)ser.Deserialize(reader);
+                v = (VisualSettings)ser.Deserialize(reader);
             }
 
-            return d;
-        }
-
-        private void WriteSpotlightDataToXMLFile(string fileName, SpotlightData data)
-        {
-            XmlSerializer ser = new XmlSerializer(typeof(SpotlightData));
-            using (StreamWriter writer = new StreamWriter(fileName, false))
-            {
-                ser.Serialize(writer, data);
-            }
+            return v;
         }
 
 
@@ -197,19 +170,20 @@
             }
         }
 
-        private void CreateDefaultCarsSpotlightDataXMLFile(string fileName)
+        private void CreateDefaultVisualSettingsXMLFile(string fileName)
         {
-            WriteSpotlightDataToXMLFile(fileName, DefaultCarsSpotlightData);
-        }
+            VisualSettings v = new VisualSettings()
+            {
+                Default = DefaultDefaultSpotlightData,
+                Helicopter = DefaultHelicopterSpotlightData,
+                Boat = DefaultBoatSpotlightData,
+            };
 
-        private void CreateDefaultHelicoptersSpotlightDataXMLFile(string fileName)
-        {
-            WriteSpotlightDataToXMLFile(fileName, DefaultHelicoptersSpotlightData);
-        }
-
-        private void CreateDefaultBoatsSpotlightDataXMLFile(string fileName)
-        {
-            WriteSpotlightDataToXMLFile(fileName, DefaultBoatsSpotlightData);
+            XmlSerializer ser = new XmlSerializer(typeof(VisualSettings));
+            using (StreamWriter writer = new StreamWriter(fileName, false))
+            {
+                ser.Serialize(writer, v);
+            }
         }
         #endregion
 
@@ -338,7 +312,7 @@ Y= -0.42
 Z= 1.8
 ";
 
-        static readonly SpotlightData DefaultCarsSpotlightData = new SpotlightData(
+        static readonly SpotlightData DefaultDefaultSpotlightData = new SpotlightData(
                                                                                    color: new Core.RGB(80, 80, 80),
                                                                                    castShadows: true,
                                                                                    outerAngle: 8.25f,
@@ -356,7 +330,7 @@ Z= 1.8
                                                                                    movementSpeed: 1
                                                                                    );
 
-        static readonly SpotlightData DefaultHelicoptersSpotlightData = new SpotlightData(
+        static readonly SpotlightData DefaultHelicopterSpotlightData = new SpotlightData(
                                                                                    color: new Core.RGB(80, 80, 80),
                                                                                    castShadows: true,
                                                                                    outerAngle: 9f,
@@ -374,7 +348,7 @@ Z= 1.8
                                                                                    movementSpeed: 1
                                                                                    );
 
-        static readonly SpotlightData DefaultBoatsSpotlightData = new SpotlightData(
+        static readonly SpotlightData DefaultBoatSpotlightData = new SpotlightData(
                                                                                    color: new Core.RGB(80, 80, 80),
                                                                                    castShadows: true,
                                                                                    outerAngle: 8.5f,
@@ -392,5 +366,50 @@ Z= 1.8
                                                                                    movementSpeed: 1
                                                                                    );
         #endregion
+    }
+
+    public sealed class VisualSettings : IXmlSerializable
+    {
+        public SpotlightData Default { get; set; }
+        public SpotlightData Helicopter { get; set; }
+        public SpotlightData Boat { get; set; }
+
+        XmlSchema IXmlSerializable.GetSchema() => null;
+
+        void IXmlSerializable.ReadXml(XmlReader reader)
+        {
+            reader.ReadStartElement();
+            
+            XmlAttributeOverrides attr = new XmlAttributeOverrides();
+
+            attr.Add(typeof(SpotlightData), new XmlAttributes() { XmlType = new XmlTypeAttribute("Default") });
+            Default = (SpotlightData)new XmlSerializer(typeof(SpotlightData), attr).Deserialize(reader);
+
+            attr[typeof(SpotlightData)].XmlType = new XmlTypeAttribute("Helicopter");
+            Helicopter = (SpotlightData)new XmlSerializer(typeof(SpotlightData), attr).Deserialize(reader);
+
+            attr[typeof(SpotlightData)].XmlType = new XmlTypeAttribute("Boat");
+            Boat = (SpotlightData)new XmlSerializer(typeof(SpotlightData), attr).Deserialize(reader);
+
+            reader.ReadEndElement();
+        }
+
+        void IXmlSerializable.WriteXml(XmlWriter writer)
+        {
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
+
+            XmlAttributeOverrides attr = new XmlAttributeOverrides();
+            attr.Add(typeof(SpotlightData), new XmlAttributes());
+
+            attr[typeof(SpotlightData)].XmlType = new XmlTypeAttribute("Default");
+            new XmlSerializer(typeof(SpotlightData), attr).Serialize(writer, Default, ns);
+
+            attr[typeof(SpotlightData)].XmlType = new XmlTypeAttribute("Helicopter");
+            new XmlSerializer(typeof(SpotlightData), attr).Serialize(writer, Helicopter, ns);
+
+            attr[typeof(SpotlightData)].XmlType = new XmlTypeAttribute("Boat");
+            new XmlSerializer(typeof(SpotlightData), attr).Serialize(writer, Boat, ns);
+        }
     }
 }

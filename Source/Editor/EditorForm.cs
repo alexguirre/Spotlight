@@ -18,7 +18,7 @@
     {
         private ControllerFiber Controller { get; }
 
-        public EditorForm() : base("Spotlight Editor", 650, 310)
+        public EditorForm() : base("Spotlight Editor", 650, 325)
         {
             Controller = new ControllerFiber(this);
         }
@@ -27,12 +27,22 @@
         {
             base.InitializeLayout();
             Window.DisableResizing();
-            Window.Padding = new Padding(3, 2, 3, 3);
+            Window.Padding = new Padding(0, 2, 0, 0);
             DockedTabControl d = new DockedTabControl(Window);
-            CreateSpotlightDataTabPageControls(d.AddPage("Cars"), "Cars");
-            CreateSpotlightDataTabPageControls(d.AddPage("Boats"), "Boats");
-            CreateSpotlightDataTabPageControls(d.AddPage("Helicopters"), "Helicopters");
-            CreateOffsetsTabPageControls(d.AddPage("Offsets"), "Offsets");
+            CreateVisualSettingsTabPageControls(d.AddPage("Visual Settings "), "VisualSettings");
+            CreateOffsetsTabPageControls(d.AddPage("Offsets "), "Offsets");
+        }
+
+        private void CreateVisualSettingsTabPageControls(TabButton tab, string name)
+        {
+            Base page = tab.Page;
+            page.Name = $"{name}Page";
+            page.Padding = new Padding(-6, 0, -6, -6);
+
+            DockedTabControl d = new DockedTabControl(page);
+            CreateSpotlightDataTabPageControls(d.AddPage("Default "), $"{name}Default");
+            CreateSpotlightDataTabPageControls(d.AddPage("Boat "), $"{name}Boat");
+            CreateSpotlightDataTabPageControls(d.AddPage("Helicopter "), $"{name}Helicopter");
         }
 
         private void CreateOffsetsTabPageControls(TabButton tab, string name)
@@ -42,7 +52,7 @@
 
             Label label = new Label(page);
             label.Name = $"{name}Label";
-            label.Text = "Model";
+            label.Text = "Model ";
             label.SetPosition(12, 5 + 3);
             label.Alignment = Pos.CenterV | Pos.Left;
 
@@ -86,7 +96,7 @@
 
             Button saveButton = new Button(page);
             saveButton.Name = $"{name}SaveButton";
-            saveButton.Text = "Save";
+            saveButton.Text = "Save ";
             saveButton.Width = 150;
             saveButton.SetPosition(12, 50);
             saveButton.Clicked += OnOffsetsSaveButtonClicked;
@@ -102,26 +112,26 @@
 
             int y = 5;
             int x = 12;
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.OuterAngle)}", nameof(SpotlightData.OuterAngle), 0, 90, 0.5f, sData.OuterAngle);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.InnerAngle)}", nameof(SpotlightData.InnerAngle), 0, 90, 0.5f, sData.InnerAngle);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Intensity)}", nameof(SpotlightData.Intensity), -9999, 9999, 1f, sData.Intensity);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Range)}", nameof(SpotlightData.Range), -9999, 9999, 1f, sData.Range);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Falloff)}", nameof(SpotlightData.Falloff), -9999, 9999, 1f, sData.Falloff);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeIntensity)}", "Volume Intensity", -9999, 9999, 0.05f, sData.VolumeIntensity);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeSize)}", "Volume Size", -9999, 9999, 0.05f, sData.VolumeSize);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.MovementSpeed)}", "Movement Speed", 0, 100, 0.5f, sData.MovementSpeed);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.OuterAngle)}", "Outer Angle ", 0, 90, 0.5f, sData.OuterAngle);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.InnerAngle)}", "Inner Angle ", 0, 90, 0.5f, sData.InnerAngle);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Intensity)}", "Intensity ", -9999, 9999, 1f, sData.Intensity);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Range)}", "Range ", -9999, 9999, 1f, sData.Range);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Falloff)}", "Falloff ", -9999, 9999, 1f, sData.Falloff);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeIntensity)}", "Volume Intensity ", -9999, 9999, 0.05f, sData.VolumeIntensity);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeSize)}", "Volume Size ", -9999, 9999, 0.05f, sData.VolumeSize);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.MovementSpeed)}", "Movement Speed ", 0, 100, 0.5f, sData.MovementSpeed);
 
-            y += 10;
-            CreateSaveButton(page, x, ref y, $"{name}Save", "Save");
+            y += 6;
+            CreateSaveButton(page, x, ref y, $"{name}Save", "Save ");
 
             y = 5;
             x = 285;
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CoronaIntensity)}", "Corona Intensity", 0, 9999, 0.05f, sData.CoronaIntensity);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CoronaSize)}", "Corona Size", -9999, 9999, 0.05f, sData.CoronaSize);
-            CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CastShadows)}", "Cast Shadows", sData.CastShadows);
-            CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Volume)}", "Volume", sData.Volume);
-            CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Corona)}", "Corona", sData.Corona);
-            CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Specular)}", "Specular", sData.Specular);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CoronaIntensity)}", "Corona Intensity ", 0, 9999, 0.05f, sData.CoronaIntensity);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CoronaSize)}", "Corona Size ", -9999, 9999, 0.05f, sData.CoronaSize);
+            CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CastShadows)}", "Cast Shadows ", sData.CastShadows);
+            CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Volume)}", "Volume ", sData.Volume);
+            CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Corona)}", "Corona ", sData.Corona);
+            CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Specular)}", "Specular ", sData.Specular);
             CreateColorFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Color)}", "Color ", sData.Color);
 
         }
@@ -188,7 +198,7 @@
             button.Width = 150;
             button.SetPosition(x, y);
             button.Clicked += OnSaveButtonClicked;
-            button.SetToolTipText("Saves the current spotlight settings.");
+            button.SetToolTipText("Saves the visual settings to VisualSettings.xml.");
 
             y += 25;
         }
@@ -210,13 +220,10 @@
 
         private void OnSaveButtonClicked(object sender, ClickedEventArgs args)
         {
-            string fileName = $@"Plugins\Spotlight Resources\Spotlight Data - {GetSpotlightTypeForControl((Button)sender)}.xml";
-            SpotlightData data = GetSpotlightDataForControl((Button)sender);
-
-            XmlSerializer ser = new XmlSerializer(typeof(SpotlightData));
-            using (StreamWriter writer = new StreamWriter(fileName, false))
+            XmlSerializer ser = new XmlSerializer(typeof(VisualSettings));
+            using (StreamWriter writer = new StreamWriter(Plugin.Settings.VisualSettingsFileName, false))
             {
-                ser.Serialize(writer, data);
+                ser.Serialize(writer, Plugin.Settings.Visual);
             }
         }
 
@@ -287,19 +294,19 @@
 
         private string GetSpotlightTypeForControl(Base control)
         {
-            if (control.Name.Contains("Cars"))
+            if (control.Name.Contains("Default"))
             {
-                return "Cars";
+                return "Default";
             }
 
-            if (control.Name.Contains("Boats"))
+            if (control.Name.Contains("Boat"))
             {
-                return "Boats";
+                return "Boat";
             }
 
-            if (control.Name.Contains("Helicopters"))
+            if (control.Name.Contains("Helicopter"))
             {
-                return "Helicopters";
+                return "Helicopter";
             }
 
             return null;
@@ -309,9 +316,9 @@
         {
             switch (GetSpotlightTypeForControl(control))
             {
-                case "Cars": return Plugin.Settings.CarsSpotlightData;
-                case "Boats": return Plugin.Settings.BoatsSpotlightData;
-                case "Helicopters": return Plugin.Settings.HelicoptersSpotlightData;
+                case "Default": return Plugin.Settings.Visual.Default;
+                case "Boat": return Plugin.Settings.Visual.Boat;
+                case "Helicopter": return Plugin.Settings.Visual.Helicopter;
             }
 
             return null;

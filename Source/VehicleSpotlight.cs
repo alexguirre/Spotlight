@@ -93,9 +93,8 @@
 
         internal static SpotlightData GetSpotlightDataForModel(Model model)
         {
-            return model.IsCar ? Plugin.Settings.CarsSpotlightData :
-                   model.IsBoat ? Plugin.Settings.BoatsSpotlightData :
-                   model.IsHelicopter ? Plugin.Settings.HelicoptersSpotlightData : new SpotlightData();
+            return model.IsBoat ? Plugin.Settings.Visual.Boat :
+                   model.IsHelicopter ? Plugin.Settings.Visual.Helicopter : Plugin.Settings.Visual.Default;
         }
     }
 }
