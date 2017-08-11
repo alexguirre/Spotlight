@@ -3,12 +3,13 @@
     using System;
     using System.Drawing;
     using System.Xml.Serialization;
-    
+
+    using Spotlight.Core;
+
     [Serializable]
     public sealed class SpotlightData
     {
-        [XmlElement(Type = typeof(Core.XmlColor))]
-        public Color Color { get; set; }
+        public RGB Color { get; set; }
         public bool CastShadows { get; set; }
         public float OuterAngle { get; set; }
         public float InnerAngle { get; set; }
@@ -28,7 +29,7 @@
         {
         }
 
-        public SpotlightData(Color color, bool castShadows, float outerAngle, float innerAngle, float intensity, float range, float falloff, float volumeIntensity, float volumeSize, float coronaIntensity, float coronaSize, bool volume, bool corona, bool specular, float movementSpeed)
+        public SpotlightData(RGB color, bool castShadows, float outerAngle, float innerAngle, float intensity, float range, float falloff, float volumeIntensity, float volumeSize, float coronaIntensity, float coronaSize, bool volume, bool corona, bool specular, float movementSpeed)
         {
             Color = color;
             CastShadows = castShadows;

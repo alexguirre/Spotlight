@@ -339,7 +339,7 @@ Z= 1.8
 ";
 
         static readonly SpotlightData DefaultCarsSpotlightData = new SpotlightData(
-                                                                                   color: Color.FromArgb(255, 80, 80, 80),
+                                                                                   color: new Core.RGB(80, 80, 80),
                                                                                    castShadows: true,
                                                                                    outerAngle: 8.25f,
                                                                                    innerAngle: 5f,
@@ -357,7 +357,7 @@ Z= 1.8
                                                                                    );
 
         static readonly SpotlightData DefaultHelicoptersSpotlightData = new SpotlightData(
-                                                                                   color: Color.FromArgb(255, 80, 80, 80),
+                                                                                   color: new Core.RGB(80, 80, 80),
                                                                                    castShadows: true,
                                                                                    outerAngle: 9f,
                                                                                    innerAngle: 6f,
@@ -375,7 +375,7 @@ Z= 1.8
                                                                                    );
 
         static readonly SpotlightData DefaultBoatsSpotlightData = new SpotlightData(
-                                                                                   color: Color.FromArgb(255, 80, 80, 80),
+                                                                                   color: new Core.RGB(80, 80, 80),
                                                                                    castShadows: true,
                                                                                    outerAngle: 8.5f,
                                                                                    innerAngle: 5.5f,

@@ -100,7 +100,7 @@
             
             NativeVector3 p = Position;
             NativeVector3 d = Direction;
-            GameFunctions.DrawCorona(CCoronaDrawQueue.GetInstance(), &p, Data.CoronaSize, Data.Color.ToArgb(), Data.CoronaIntensity, 100.0f, &d, 1.0f, Data.InnerAngle, Data.OuterAngle, 3);
+            GameFunctions.DrawCorona(CCoronaDrawQueue.GetInstance(), &p, Data.CoronaSize, Data.Color.Raw, Data.CoronaIntensity, 100.0f, &d, 1.0f, Data.InnerAngle, Data.OuterAngle, 3);
         }
 
 

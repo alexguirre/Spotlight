@@ -32,14 +32,14 @@
 
         [FieldOffset(0x00D4)] public float ShadowNearClip; // default: 0.1
 
-        public static CLightDrawData* New(eLightType type, eLightFlags flags, Vector3 position, Color color, float intensity)
+        public static CLightDrawData* New(eLightType type, eLightFlags flags, Vector3 position, RGB color, float intensity)
         {
             const float ByteToFloatFactor = 1.0f / 255.0f;
 
             CLightDrawData* d = GameFunctions.GetFreeLightDrawDataSlotFromPool();
 
             NativeVector3 pos = position;
-            NativeColorRGBAFloat col = new NativeColorRGBAFloat { R = color.R * ByteToFloatFactor, G = color.G * ByteToFloatFactor, B = color.B * ByteToFloatFactor, A = color.A * ByteToFloatFactor };
+            NativeColorRGBAFloat col = new NativeColorRGBAFloat { R = color.R * ByteToFloatFactor, G = color.G * ByteToFloatFactor, B = color.B * ByteToFloatFactor };
 
             GameFunctions.CreateLightDrawData(d, eLightType.SPOT_LIGHT, (uint)flags, &pos, &col, intensity, 0xFFFFFF);
 
