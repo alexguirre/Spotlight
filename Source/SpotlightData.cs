@@ -19,15 +19,16 @@
         public float VolumeSize { get; set; }
         public float CoronaIntensity { get; set; }
         public float CoronaSize { get; set; }
-        public bool VolumeVisible { get; set; }
-        public bool CoronaVisible { get; set; }
+        public bool Volume { get; set; }
+        public bool Corona { get; set; }
+        public bool Specular { get; set; }
         public float MovementSpeed { get; set; }
 
         public SpotlightData()
         {
         }
 
-        public SpotlightData(Color color, bool castShadows, float outerAngle, float innerAngle, float intensity, float range, float falloff, float volumeIntensity, float volumeSize, float coronaIntensity, float coronaSize, bool volumeVisible, bool coronaVisible, float movementSpeed)
+        public SpotlightData(Color color, bool castShadows, float outerAngle, float innerAngle, float intensity, float range, float falloff, float volumeIntensity, float volumeSize, float coronaIntensity, float coronaSize, bool volume, bool corona, bool specular, float movementSpeed)
         {
             Color = color;
             CastShadows = castShadows;
@@ -40,8 +41,9 @@
             VolumeSize = volumeSize;
             CoronaIntensity = coronaIntensity;
             CoronaSize = coronaSize;
-            VolumeVisible = true;
-            CoronaVisible = true;
+            Volume = volume;
+            Corona = corona;
+            Specular = specular;
             MovementSpeed = movementSpeed;
         }
     }

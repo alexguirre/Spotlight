@@ -17,8 +17,8 @@ namespace SpotlightAPIExample
         static float h;
         public static void Run()
         {
-            spotlight1 = new APISpotlight(new SpotlightData(Color.FromArgb(255, 240, 5, 5), true, 45f, 30f, 25f, 30f, 50f, 0.025f, 0.05f, 25f, 1.75f, true, true, 480)) { IsActive = true };
-            spotlight2 = new APISpotlight(new SpotlightData(Color.FromArgb(255, 5, 5, 240), true, 45f, 30f, 25f, 30f, 50f, 0.025f, 0.05f, 25f, 1.75f, true, true, 480)) { IsActive = true };
+            spotlight1 = new APISpotlight(new SpotlightData(Color.FromArgb(255, 240, 5, 5), true, 45f, 30f, 25f, 30f, 50f, 0.025f, 0.05f, 25f, 1.75f, true, true, true, 480)) { IsActive = true };
+            spotlight2 = new APISpotlight(new SpotlightData(Color.FromArgb(255, 5, 5, 240), true, 45f, 30f, 25f, 30f, 50f, 0.025f, 0.05f, 25f, 1.75f, true, true, true, 480)) { IsActive = true };
 
             while (true)
             {

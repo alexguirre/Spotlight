@@ -11,7 +11,7 @@
 
     internal static unsafe class GameFunctions
     {
-        public delegate long DrawCoronaDelegate(CCoronaDrawQueue* drawQueue, NativeVector3* position, float coronaSize, int colorARGB, float coronaIntensity, float unk_100, NativeVector3* direction, float unk_1, float innerAngle, float outerAngle, ushort unk_3);
+        public delegate long DrawCoronaDelegate(CCoronaDrawQueue* drawQueue, NativeVector3* position, float coronaSize, int colorARGB, float coronaIntensity, float coronaZBias, NativeVector3* direction, float unk_1, float innerAngle, float outerAngle, ushort unk_3);
 
         private static DrawCoronaDelegate drawCorona;
         public static DrawCoronaDelegate DrawCorona

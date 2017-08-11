@@ -350,8 +350,9 @@ Z= 1.8
                                                                                    volumeSize: 0.175f,
                                                                                    coronaIntensity: 20f,
                                                                                    coronaSize: 1.5f,
-                                                                                   volumeVisible: true,
-                                                                                   coronaVisible: true,
+                                                                                   volume: true,
+                                                                                   corona: true,
+                                                                                   specular: true,
                                                                                    movementSpeed: 1
                                                                                    );
 
@@ -367,8 +368,9 @@ Z= 1.8
                                                                                    volumeSize: 0.125f,
                                                                                    coronaIntensity: 20f,
                                                                                    coronaSize: 1.5f,
-                                                                                   volumeVisible: true,
-                                                                                   coronaVisible: true,
+                                                                                   volume: true,
+                                                                                   corona: true,
+                                                                                   specular: true,
                                                                                    movementSpeed: 1
                                                                                    );
 
@@ -384,8 +386,9 @@ Z= 1.8
                                                                                    volumeSize: 0.125f,
                                                                                    coronaIntensity: 20f,
                                                                                    coronaSize: 1.5f,
-                                                                                   volumeVisible: true,
-                                                                                   coronaVisible: true,
+                                                                                   volume: true,
+                                                                                   corona: true,
+                                                                                   specular: true,
                                                                                    movementSpeed: 1
                                                                                    );
         #endregion

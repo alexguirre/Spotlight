@@ -68,6 +68,7 @@
         ShadowsEnabled = ShadowsFlag1 | ShadowsFlag2 | ShadowsFlag3,
 
         VolumeConeVisible = 0x1000,
+        DisableSpecular = 0x2000,
 
         VolumeOuterColorVisible = 0x80000,
     }

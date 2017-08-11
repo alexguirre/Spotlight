@@ -111,17 +111,19 @@
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeSize)}", "Volume Size", -9999, 9999, 0.05f, sData.VolumeSize);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.MovementSpeed)}", "Movement Speed", 0, 100, 0.5f, sData.MovementSpeed);
 
+            y += 10;
+            CreateSaveButton(page, x, ref y, $"{name}Save", "Save");
+
             y = 5;
             x = 285;
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CoronaIntensity)}", "Corona Intensity", 0, 9999, 0.05f, sData.CoronaIntensity);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CoronaSize)}", "Corona Size", -9999, 9999, 0.05f, sData.CoronaSize);
             CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CastShadows)}", "Cast Shadows", sData.CastShadows);
-            CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeVisible)}", "Volume Visible", sData.VolumeVisible);
-            CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CoronaVisible)}", "Corona Visible", sData.CoronaVisible);
+            CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Volume)}", "Volume", sData.Volume);
+            CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Corona)}", "Corona", sData.Corona);
+            CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Specular)}", "Specular", sData.Specular);
             CreateColorFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Color)}", "Color ", sData.Color);
 
-            y += 10;
-            CreateSaveButton(page, 475, ref y, $"{name}Save", "Save");
         }
 
         private void CreateFloatFieldControl(Base parent, int x, ref int y, string name, string labelText, int min, int max, float increment, float initialValue)
@@ -336,8 +338,9 @@
             SpotlightData d = GetSpotlightDataForControl(control);
 
             if (control.Name.Contains(nameof(SpotlightData.CastShadows))) d.CastShadows = value;
-            else if (control.Name.Contains(nameof(SpotlightData.VolumeVisible))) d.VolumeVisible = value;
-            else if (control.Name.Contains(nameof(SpotlightData.CoronaVisible))) d.CoronaVisible = value;
+            else if (control.Name.Contains(nameof(SpotlightData.Volume))) d.Volume = value;
+            else if (control.Name.Contains(nameof(SpotlightData.Corona))) d.Corona = value;
+            else if (control.Name.Contains(nameof(SpotlightData.Specular))) d.Specular = value;
         }
 
         private void SetFieldForControl(Base control, Color value)

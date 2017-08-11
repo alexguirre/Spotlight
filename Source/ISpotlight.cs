@@ -36,7 +36,7 @@
             if (!IsActive)
                 return;
             
-            CLightDrawData* drawData = CLightDrawData.New(eLightType.SPOT_LIGHT, Data.VolumeVisible ? eLightFlags.VolumeConeVisible : eLightFlags.None, Position, Data.Color, Data.Intensity);
+            CLightDrawData* drawData = CLightDrawData.New(eLightType.SPOT_LIGHT, Data.Volume ? eLightFlags.VolumeConeVisible : eLightFlags.None, Position, Data.Color, Data.Intensity);
             NativeVector3 dir = Direction;
             drawData->Range = Data.Range;
             drawData->VolumeIntensity = Data.VolumeIntensity;
@@ -61,10 +61,9 @@
             v17 = _mm_shuffle_ps(v18, v18, 85);
             NativeVector3 v19 = _mm_shuffle_ps(v18, v18, -86);
 
-            Vector3 v = new Vector3();
-            v.X = (v19.X * dir.Y) - (v17.X * dir.Z);
-            v.Y = (v18.X * dir.Z) - (v19.X * dir.X);
-            v.Z = (v17.X * dir.X) - (v18.X * dir.Y);
+            Vector3 v = new Vector3(x: (v19.X * dir.Y) - (v17.X * dir.Z),
+                                    y: (v18.X * dir.Z) - (v19.X * dir.X),
+                                    z: (v17.X * dir.X) - (v18.X * dir.Y));
             NativeVector3 u = v.ToNormalized();
 
             GameFunctions.SetLightDrawDataDirection(drawData, &dir, &u);
@@ -77,6 +76,10 @@
                 drawData->ShadowUnkValue = GameFunctions.GetValueForLightDrawDataShadowUnkValue(drawData);
             }
 
+            if(!Data.Specular)
+            {
+                drawData->Flags |= eLightFlags.DisableSpecular;
+            }
 
             // wtf? why calling the wrapper method Utility.DrawCorona crashes, but calling it directly it doesn't?
             // and apparently, now I can call it from a normal gamefiber too, no need for the FrameRender
@@ -89,14 +92,15 @@
             //GameFunctions.DrawCorona(CCoronaDrawQueue.GetInstance(), &p, 2.25f, 0xFFFFFFFF, 80.0f, 100.0f, &d, 1.0f, 0.0f, Data.Radius, 3);
         }
 
-
+        
         protected internal unsafe void OnDrawCoronaFrameRender(object sender, GraphicsEventArgs e)
         {
-            if (!IsActive || !Data.CoronaVisible)
+            if (!IsActive || !Data.Corona)
                 return;
+            
             NativeVector3 p = Position;
             NativeVector3 d = Direction;
-            GameFunctions.DrawCorona(CCoronaDrawQueue.GetInstance(), &p, Data.CoronaSize, Data.Color.ToArgb(), Data.CoronaIntensity, 100f, &d, 1.0f, Data.InnerAngle, Data.OuterAngle, 3);
+            GameFunctions.DrawCorona(CCoronaDrawQueue.GetInstance(), &p, Data.CoronaSize, Data.Color.ToArgb(), Data.CoronaIntensity, 100.0f, &d, 1.0f, Data.InnerAngle, Data.OuterAngle, 3);
         }
 
 
