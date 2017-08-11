@@ -7,7 +7,7 @@ using Rage.Attributes;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("alexguirre")]
 [assembly: AssemblyProduct("Spotlight")]
-[assembly: AssemblyCopyright("Copyright ©  2016 alexguirre")]
+[assembly: AssemblyCopyright("Copyright ©  2017 alexguirre")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
