@@ -36,7 +36,7 @@
             if (!IsActive)
                 return;
             
-            CLightDrawData* drawData = CLightDrawData.New(eLightType.SPOT_LIGHT, eLightFlags.VolumeConeVisible, Position, Data.Color, Data.Intensity);
+            CLightDrawData* drawData = CLightDrawData.New(eLightType.SPOT_LIGHT, Data.VolumeVisible ? eLightFlags.VolumeConeVisible : eLightFlags.None, Position, Data.Color, Data.Intensity);
             NativeVector3 dir = Direction;
             drawData->Range = Data.Range;
             drawData->VolumeIntensity = Data.VolumeIntensity;
@@ -92,7 +92,7 @@
 
         protected internal unsafe void OnDrawCoronaFrameRender(object sender, GraphicsEventArgs e)
         {
-            if (!IsActive)
+            if (!IsActive || !Data.CoronaVisible)
                 return;
             NativeVector3 p = Position;
             NativeVector3 d = Direction;

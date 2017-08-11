@@ -1,5 +1,6 @@
 ﻿namespace Spotlight.Core.Memory
 {
+    using System;
     using System.Drawing;
     using System.Runtime.InteropServices;
 
@@ -54,8 +55,11 @@
         RANGE_2 = 4,
     }
 
+    [Flags]
     internal enum eLightFlags : uint
     {
+        None = 0,
+
         ShadowsFlag1 = 0x40, // both needed
         ShadowsFlag2 = 0x80,
 

@@ -342,7 +342,7 @@ Z= 1.8
                                                                                    color: Color.FromArgb(255, 80, 80, 80),
                                                                                    castShadows: true,
                                                                                    outerAngle: 8.25f,
-                                                                                   innerAngle: 40f,
+                                                                                   innerAngle: 5f,
                                                                                    intensity: 30f,
                                                                                    range: 45f,
                                                                                    falloff: 45f,
@@ -350,6 +350,8 @@ Z= 1.8
                                                                                    volumeSize: 0.175f,
                                                                                    coronaIntensity: 20f,
                                                                                    coronaSize: 1.5f,
+                                                                                   volumeVisible: true,
+                                                                                   coronaVisible: true,
                                                                                    movementSpeed: 1
                                                                                    );
 
@@ -357,7 +359,7 @@ Z= 1.8
                                                                                    color: Color.FromArgb(255, 80, 80, 80),
                                                                                    castShadows: true,
                                                                                    outerAngle: 9f,
-                                                                                   innerAngle: 40f,
+                                                                                   innerAngle: 6f,
                                                                                    intensity: 35f,
                                                                                    range: 230f,
                                                                                    falloff: 50f,
@@ -365,6 +367,8 @@ Z= 1.8
                                                                                    volumeSize: 0.125f,
                                                                                    coronaIntensity: 20f,
                                                                                    coronaSize: 1.5f,
+                                                                                   volumeVisible: true,
+                                                                                   coronaVisible: true,
                                                                                    movementSpeed: 1
                                                                                    );
 
@@ -372,7 +376,7 @@ Z= 1.8
                                                                                    color: Color.FromArgb(255, 80, 80, 80),
                                                                                    castShadows: true,
                                                                                    outerAngle: 8.5f,
-                                                                                   innerAngle: 40f,
+                                                                                   innerAngle: 5.5f,
                                                                                    intensity: 30f,
                                                                                    range: 80f,
                                                                                    falloff: 45f,
@@ -380,6 +384,8 @@ Z= 1.8
                                                                                    volumeSize: 0.125f,
                                                                                    coronaIntensity: 20f,
                                                                                    coronaSize: 1.5f,
+                                                                                   volumeVisible: true,
+                                                                                   coronaVisible: true,
                                                                                    movementSpeed: 1
                                                                                    );
         #endregion

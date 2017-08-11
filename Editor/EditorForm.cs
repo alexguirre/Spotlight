@@ -18,7 +18,7 @@
     {
         private ControllerFiber Controller { get; }
 
-        public EditorForm() : base("Spotlight Editor", 650, 300)
+        public EditorForm() : base("Spotlight Editor", 650, 310)
         {
             Controller = new ControllerFiber(this);
         }
@@ -87,6 +87,7 @@
             Button saveButton = new Button(page);
             saveButton.Name = $"{name}SaveButton";
             saveButton.Text = "Save";
+            saveButton.Width = 150;
             saveButton.SetPosition(12, 50);
             saveButton.Clicked += OnOffsetsSaveButtonClicked;
             saveButton.SetToolTipText("Saves all offsets to Offsets.ini.");
@@ -115,8 +116,12 @@
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CoronaIntensity)}", "Corona Intensity", 0, 9999, 0.05f, sData.CoronaIntensity);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CoronaSize)}", "Corona Size", -9999, 9999, 0.05f, sData.CoronaSize);
             CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CastShadows)}", "Cast Shadows", sData.CastShadows);
+            CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeVisible)}", "Volume Visible", sData.VolumeVisible);
+            CreateBoolFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.CoronaVisible)}", "Corona Visible", sData.CoronaVisible);
             CreateColorFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Color)}", "Color ", sData.Color);
-            CreateSaveButton(page, x, ref y, $"{name}Save", "Save");
+
+            y += 10;
+            CreateSaveButton(page, 475, ref y, $"{name}Save", "Save");
         }
 
         private void CreateFloatFieldControl(Base parent, int x, ref int y, string name, string labelText, int min, int max, float increment, float initialValue)
@@ -136,7 +141,7 @@
             upDown.SetPosition(x + 110, y);
             upDown.ValueChanged += OnNumericUpDownValueChanged;
 
-            y += 30;
+            y += 25;
         }
 
         private void CreateColorFieldControl(Base parent, int x, ref int y, string name, string labelText, Color initialValue)
@@ -153,7 +158,7 @@
             colorPicker.Color = initialValue;
             colorPicker.ColorChanged += OnColorChanged;
 
-            y += 85;
+            y += 80;
         }
 
         private void CreateBoolFieldControl(Base parent, int x, ref int y, string name, string labelText, bool initialValue)
@@ -170,7 +175,7 @@
             checkBox.SetPosition(x + 110, y);
             checkBox.CheckChanged += OnCheckboxValueChanged;
 
-            y += 30;
+            y += 25;
         }
 
         private void CreateSaveButton(Base parent, int x, ref int y, string name, string text)
@@ -178,11 +183,12 @@
             Button button = new Button(parent);
             button.Name = $"{name}Button";
             button.Text = text;
-            button.SetPosition(x + 110, y + 10);
+            button.Width = 150;
+            button.SetPosition(x, y);
             button.Clicked += OnSaveButtonClicked;
             button.SetToolTipText("Saves the current spotlight settings.");
 
-            y += 45;
+            y += 25;
         }
 
         private void OnColorChanged(ColorPicker sender, Color color)
@@ -330,6 +336,8 @@
             SpotlightData d = GetSpotlightDataForControl(control);
 
             if (control.Name.Contains(nameof(SpotlightData.CastShadows))) d.CastShadows = value;
+            else if (control.Name.Contains(nameof(SpotlightData.VolumeVisible))) d.VolumeVisible = value;
+            else if (control.Name.Contains(nameof(SpotlightData.CoronaVisible))) d.CoronaVisible = value;
         }
 
         private void SetFieldForControl(Base control, Color value)
