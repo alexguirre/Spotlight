@@ -6,7 +6,8 @@
     using System.Collections.Generic;
     
     using Rage;
-    
+
+    using Spotlight.Core.Memory;
     using Spotlight.InputControllers;
     using Spotlight.Editor;
 
@@ -33,7 +34,38 @@
                                     true);
 
             LoadSpotlightControllers();
-            
+
+            bool gameFnInit = GameFunctions.Init();
+            bool gameMemInit = GameMemory.Init();
+
+            if(gameFnInit)
+                Game.LogTrivial($"Successful {nameof(GameFunctions)} init");
+            if (gameMemInit)
+                Game.LogTrivial($"Successful {nameof(GameMemory)} init");
+
+            if (!gameFnInit || !gameMemInit)
+            {
+                string str = "";
+                if (!gameFnInit)
+                {
+                    str += nameof(GameFunctions);
+
+                    if (!gameMemInit)
+                    {
+                        str += " and ";
+                        str += nameof(GameMemory);
+                    }
+                }
+                else if (!gameMemInit)
+                {
+                    str += nameof(GameMemory);
+                }
+
+                Game.DisplayNotification($"~r~[ERROR] Spotlight: ~s~Failed to initialize {str}, unloading...");
+                Game.LogTrivial($"[ERROR] Failed to initialize {str}, unloading...");
+                Game.UnloadActivePlugin();
+            }
+
             while (true)
             {
                 GameFiber.Yield();

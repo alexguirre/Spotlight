@@ -52,6 +52,7 @@
     <Compile Include="API\APISpotlight.cs" />
     <Compile Include="Core\Memory\CCoronaDrawQueue.cs" />
     <Compile Include="Core\Memory\CLightDrawData.cs" />
+    <Compile Include="Core\Memory\GameMemory.cs" />
     <Compile Include="Core\Memory\NativeColorRGBAFloat.cs" />
     <Compile Include="Core\Memory\GameFunctions.cs" />
     <Compile Include="Core\Memory\NativeVector3.cs" />

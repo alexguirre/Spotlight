@@ -19,19 +19,6 @@
                 return &queue[index];
             }
         }
-
-        private static CCoronaDrawQueue* instance;
-        public static CCoronaDrawQueue* GetInstance()
-        {
-            if(instance == null)
-            {
-                IntPtr address = Game.FindPattern("48 8D 0D ?? ?? ?? ?? F3 0F 11 44 24 ?? F3 0F 11 64 24 ?? E8 ?? ?? ?? ?? 4C 8D 9C 24 ?? ?? ?? ??");
-                address = address + *(int*)(address + 3) + 7;
-                instance = (CCoronaDrawQueue*)address;
-            }
-
-            return instance;
-        }
     }
     [StructLayout(LayoutKind.Explicit, Size = 48)]
     internal unsafe struct CCoronaDrawCall

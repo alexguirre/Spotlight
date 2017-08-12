@@ -80,18 +80,7 @@
             {
                 drawData->Flags |= eLightFlags.DisableSpecular;
             }
-
-            // wtf? why calling the wrapper method Utility.DrawCorona crashes, but calling it directly it doesn't?
-            // and apparently, now I can call it from a normal gamefiber too, no need for the FrameRender
-            //
-            // and it stopped working again... :‑|
-            //
-            // well, calling it from the FrameRender now...
-            //NativeVector3 p = Position;
-            //NativeVector3 d = Direction;
-            //GameFunctions.DrawCorona(CCoronaDrawQueue.GetInstance(), &p, 2.25f, 0xFFFFFFFF, 80.0f, 100.0f, &d, 1.0f, 0.0f, Data.Radius, 3);
         }
-
         
         protected internal unsafe void OnDrawCoronaFrameRender(object sender, GraphicsEventArgs e)
         {
@@ -100,7 +89,7 @@
             
             NativeVector3 p = Position;
             NativeVector3 d = Direction;
-            GameFunctions.DrawCorona(CCoronaDrawQueue.GetInstance(), &p, Data.CoronaSize, Data.Color.Raw, Data.CoronaIntensity, 100.0f, &d, 1.0f, Data.InnerAngle, Data.OuterAngle, 3);
+            GameFunctions.DrawCorona(GameMemory.CoronaDrawQueue, &p, Data.CoronaSize, Data.Color.Raw, Data.CoronaIntensity, 100.0f, &d, 1.0f, Data.InnerAngle, Data.OuterAngle, 3);
         }
 
 

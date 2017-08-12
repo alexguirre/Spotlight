@@ -133,7 +133,7 @@
                 dict.Add(modelName, new Vector3(x, y, z));
             }
 
-            Game.LogTrivial("Finished loading spotlight offsets...");
+            Game.LogTrivial("Finished loading spotlight offsets");
             return dict;
         }
 
