@@ -38,15 +38,15 @@
                 case ControllerMethod.LeftStick:
                     if (modifierButton == ControllerButtons.None || Game.IsControllerButtonDownRightNow(modifierButton))
                     {
-                        yaw -= NativeFunction.Natives.GetDisabledControlNormal<float>(0, 195) * spotlight.Data.MovementSpeed;
-                        pitch -= NativeFunction.Natives.GetDisabledControlNormal<float>(0, 196) * spotlight.Data.MovementSpeed;
+                        yaw -= Utility.GetDisabledControlNormal(GameControl.FrontendAxisX) * spotlight.Data.MovementSpeed;
+                        pitch -= Utility.GetDisabledControlNormal(GameControl.FrontendAxisY) * spotlight.Data.MovementSpeed;
                     }
                     break;
                 case ControllerMethod.RightStick:
                     if (modifierButton == ControllerButtons.None || Game.IsControllerButtonDownRightNow(modifierButton))
                     {
-                        yaw -= NativeFunction.Natives.GetDisabledControlNormal<float>(0, 197) * spotlight.Data.MovementSpeed;
-                        pitch -= NativeFunction.Natives.GetDisabledControlNormal<float>(0, 198) * spotlight.Data.MovementSpeed;
+                        yaw -= Utility.GetDisabledControlNormal(GameControl.FrontendRightAxisX) * spotlight.Data.MovementSpeed;
+                        pitch -= Utility.GetDisabledControlNormal(GameControl.FrontendRightAxisY) * spotlight.Data.MovementSpeed;
                     }
                     break;
                 case ControllerMethod.DPad:
