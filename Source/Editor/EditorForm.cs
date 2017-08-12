@@ -363,7 +363,7 @@
         {
             public EditorForm Editor { get; }
             public GameFiber Fiber { get; }
-
+            
             public ControllerFiber(EditorForm editor)
             {
                 Editor = editor;
@@ -372,14 +372,11 @@
 
             private void FiberLoop()
             {
-                while (true)
+                while (Editor.Window.IsVisible)
                 {
                     GameFiber.Yield();
-                    
-                    if (Editor.Window.IsVisible)
-                    {
-                        NativeFunction.Natives.DisableAllControlActions(0);
-                    }
+
+                    NativeFunction.Natives.DisableAllControlActions(0);
                 }
             }
         }
