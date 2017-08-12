@@ -244,72 +244,68 @@ Y = 0.85
 Z = 0.43
 [POLICE3]
 X = -0.84
-Y = 0.85
-Z = 0.59
+Y = 0.78
+Z = 0.5
 [POLICE4]
 X = -0.8
 Y = 1.17
-Z = 0.52
+Z = 0.45
 [POLICET]
-X = -1.05
-Y = 1.42
-Z = 0.95
+X = -1.1
+Y = 1.37
+Z = 0.94
 [RIOT]
 X = -1.18
-Y = 1.75
+Y = 1.65
 Z = 1.55
 [FBI]
 X = -0.84
-Y = 0.85
-Z = 0.43
+Y = 0.71
+Z = 0.44
 [FBI2]
-X = -0.9
-Y = 1.2
-Z = 1.0
+X = -1.01
+Y = 1.04
+Z = 0.81
 [POLICEOLD1]
-X = -0.85
-Y = 0.89
-Z = 0.78
+X = -0.95
+Y = 0.71
+Z = 0.75
 [POLICEOLD2]
 X = -0.88
-Y = 0.8
-Z = 0.6
+Y = 0.805
+Z = 0.49
 [SHERIFF]
 X = -0.8
 Y = 1.17
-Z = 0.52
+Z = 0.45
 [SHERIFF2]
-X = -0.9
-Y = 1.2 
-Z = 1.0
+X = -0.92
+Y = 1.16
+Z = 0.925
 [PRANGER]
-X = -0.9
-Y = 1.2 
-Z = 1.0
+X = -0.92
+Y = 1.16
+Z = 0.925
 [LGUARD]
-X = -0.9
-Y = 1.2 
-Z = 1.0
+X = -1.01
+Y = 1.04
+Z = 0.81
 [POLMAV]
-X = 0.0
+X = 0
 Y = 2.95
-Z = -1.0
-[CHINO]
-X= -0.8
-Y= 1.17
-Z= 0.52
+Z = -0.95
 [BUZZARD]
-X= 0.0
-Y= 2.369999
-Z= -0.4799996
+X = 0
+Y = 2.34
+Z = -0.36
 [BUZZARD2]
-X= 0.0
-Y= 2.369999
-Z= -0.4799996
+X = 0
+Y = 2.34
+Z = -0.36
 [PREDATOR]
-X= 0.0
-Y= -0.42
-Z= 1.8
+X = 0
+Y = -0.43
+Z = 1.77
 ";
 
         static readonly SpotlightData DefaultDefaultSpotlightData = new SpotlightData(
