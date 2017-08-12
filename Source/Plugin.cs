@@ -91,8 +91,8 @@
                 VehicleSpotlight s = Spotlights[i];
                 if (!s.Vehicle || s.Vehicle.IsDead)
                 {
-                    s.IsActive = false;
-                    Spotlights.Remove(s);
+                    s.Dispose();
+                    Spotlights.RemoveAt(i);
                     continue;
                 }
 
@@ -115,12 +115,10 @@
 
         private static void OnUnload(bool isTerminating)
         {
-            if (!isTerminating)
+            for (int i = 0; i < Spotlights.Count; i++)
             {
-                // native calls: delete entities, blips, etc.
+                Spotlights[i].Dispose();
             }
-
-            // dispose objects
             Spotlights.Clear();
         }
 

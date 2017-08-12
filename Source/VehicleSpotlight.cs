@@ -1,12 +1,13 @@
 ﻿namespace Spotlight
 {
+    using System;
     using System.Collections.Generic;
     
     using Rage;
 
     using Spotlight.InputControllers;
 
-    internal class VehicleSpotlight : BaseSpotlight
+    internal class VehicleSpotlight : BaseSpotlight, IDisposable
     {
         public Vehicle Vehicle { get; }
         
@@ -21,6 +22,8 @@
         
         public bool IsCurrentPlayerVehicleSpotlight { get { return Vehicle == Game.LocalPlayer.Character.CurrentVehicle; } }
 
+        public bool IsDisposed { get; private set; }
+
         public VehicleSpotlight(Vehicle vehicle) : base(GetSpotlightDataForModel(vehicle.Model))
         {
             Vehicle = vehicle;
@@ -32,19 +35,39 @@
             Game.FrameRender += OnDrawCoronaFrameRender;
         }
 
+        ~VehicleSpotlight()
+        {
+            Game.LogTrivial("VehicleSpotlight not disposed!");
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        
+        private void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing)
+                {
+                    IsActive = false;
+                    Game.FrameRender -= OnDrawCoronaFrameRender;
+                }
+            }
+            IsDisposed = true;
+        }
+
         public void UpdateOffset()
         {
             Offset = GetOffsetForModel(Vehicle.Model);
         }
 
-        ~VehicleSpotlight()
-        {
-            Game.FrameRender -= OnDrawCoronaFrameRender;
-        }
-
         public void Update(IList<SpotlightInputController> controllers)
         {
-            if (!IsActive)
+            if (IsDisposed || !IsActive)
                 return;
             
             Position = Vehicle.GetOffsetPosition(Offset);
