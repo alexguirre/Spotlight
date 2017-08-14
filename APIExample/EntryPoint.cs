@@ -13,6 +13,7 @@ namespace SpotlightAPIExample
             Plugin.Run();
         }
 
+        // workaround to load the Spotlight.dll from the plugins folder instead of from the game's directory
         private static Assembly OnAssemblyResolve(object sender, ResolveEventArgs args)
         {
             if (args.Name.StartsWith("Spotlight"))

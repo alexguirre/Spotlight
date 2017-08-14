@@ -36,7 +36,7 @@
             if (!IsActive)
                 return;
             
-            CLightDrawData* drawData = CLightDrawData.New(eLightType.SPOT_LIGHT, Data.Volume ? eLightFlags.VolumeConeVisible : eLightFlags.None, Position, Data.Color, Data.Intensity);
+            CLightDrawData* drawData = CLightDrawData.New(eLightType.SPOT_LIGHT, Data.Volume ? eLightFlags.VolumeEnabled : eLightFlags.None, Position, Data.Color, Data.Intensity);
             NativeVector3 dir = Direction;
             drawData->Range = Data.Range;
             drawData->VolumeIntensity = Data.VolumeIntensity;

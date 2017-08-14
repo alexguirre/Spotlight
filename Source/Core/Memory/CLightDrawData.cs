@@ -62,14 +62,18 @@
 
         ShadowsFlag1 = 0x40, // both needed
         ShadowsFlag2 = 0x80,
-
         ShadowsFlag3 = 0x100, // needed, otherwise shadow flickers
+        ShadowsFlag4 = 0x4000000, // needed, otherwise the shadow doesn't render properly sometimes
 
-        ShadowsEnabled = ShadowsFlag1 | ShadowsFlag2 | ShadowsFlag3,
+        ShadowsEnabled = ShadowsFlag1 | ShadowsFlag2 | ShadowsFlag3 | ShadowsFlag4,
 
-        VolumeConeVisible = 0x1000,
+
+        VolumeEnabled = 0x1000,
+        VolumeOuterColorVisible = 0x80000,
+
+
         DisableSpecular = 0x2000,
 
-        VolumeOuterColorVisible = 0x80000,
+        IgnoreGlass = 0x800000, // if set the light won't affect glass
     }
 }
