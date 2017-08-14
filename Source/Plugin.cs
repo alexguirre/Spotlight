@@ -39,9 +39,9 @@
             bool gameMemInit = GameMemory.Init();
 
             if(gameFnInit)
-                Game.LogTrivial($"Successful {nameof(GameFunctions)} init");
+                Game.LogTrivialDebug($"Successful {nameof(GameFunctions)} init");
             if (gameMemInit)
-                Game.LogTrivial($"Successful {nameof(GameMemory)} init");
+                Game.LogTrivialDebug($"Successful {nameof(GameMemory)} init");
 
             if (!gameFnInit || !gameMemInit)
             {
