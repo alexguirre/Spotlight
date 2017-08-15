@@ -4,6 +4,7 @@
     using System.IO;
     using System.Linq;
     using System.Drawing;
+    using System.Reflection;
     using System.Xml.Serialization;
     using System.Collections.Generic;
 
@@ -40,9 +41,39 @@
             page.Padding = new Padding(-6, 0, -6, -6);
 
             DockedTabControl d = new DockedTabControl(page);
-            CreateSpotlightDataTabPageControls(d.AddPage("Default "), $"{name}Default");
-            CreateSpotlightDataTabPageControls(d.AddPage("Boat "), $"{name}Boat");
-            CreateSpotlightDataTabPageControls(d.AddPage("Helicopter "), $"{name}Helicopter");
+            TabButton defaultButton = d.AddPage("Default ");
+            TabButton boatButton = d.AddPage("Boat ");
+            TabButton heliButton = d.AddPage("Helicopter ");
+            CreateSpotlightDataTabPageControls(defaultButton, $"{name}Default");
+            CreateSpotlightDataTabPageControls(boatButton, $"{name}Boat");
+            CreateSpotlightDataTabPageControls(heliButton, $"{name}Helicopter");
+
+            if (Game.LocalPlayer.Character.IsInAnyVehicle(false))
+            {
+                // doesn't seem to be any TabControl.CurrentButton setter so we're doing it the reflection way
+                FieldInfo currentButtonFieldInfo = typeof(TabControl).GetField("m_CurrentButton", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo pageFieldInfo = typeof(TabButton).GetField("m_Page", BindingFlags.NonPublic | BindingFlags.Instance);
+                Model m = Game.LocalPlayer.Character.CurrentVehicle.Model;
+
+                Base b = (Base)pageFieldInfo.GetValue(d.CurrentButton);
+                b.IsHidden = true;
+
+                if (m.IsHelicopter)
+                {
+                    currentButtonFieldInfo.SetValue(d, heliButton);
+                }
+                else if (m.IsBoat)
+                {
+                    currentButtonFieldInfo.SetValue(d, boatButton);
+                }
+                else
+                {
+                    currentButtonFieldInfo.SetValue(d, defaultButton);
+                }
+
+                b = (Base)pageFieldInfo.GetValue(d.CurrentButton);
+                b.IsHidden = false;
+            }
         }
 
         private void CreateOffsetsTabPageControls(TabButton tab, string name)
@@ -64,7 +95,7 @@
             int j = 1;
             foreach (KeyValuePair<string, Vector3> entry in Plugin.Settings.SpotlightOffsets)
             {
-                comboBox.AddItem(entry.Key, $"{name}ComboBoxItem{j++}");
+                comboBox.AddItem(entry.Key, $"{name}ComboBoxItem{j++}", new Model(entry.Key));
             }
             comboBox.SelectByText(Plugin.Settings.SpotlightOffsets.First().Key);
             comboBox.ItemSelected += OnOffsetsComboBoxItemSelected;
@@ -101,6 +132,14 @@
             saveButton.SetPosition(12, 50);
             saveButton.Clicked += OnOffsetsSaveButtonClicked;
             saveButton.SetToolTipText("Saves all offsets to Offsets.ini.");
+
+
+            if (Game.LocalPlayer.Character.IsInAnyVehicle(false))
+            {
+                Model m = Game.LocalPlayer.Character.CurrentVehicle.Model;
+
+                comboBox.SelectByUserData(m);
+            }
         }
 
         private void CreateSpotlightDataTabPageControls(TabButton tab, string name)
