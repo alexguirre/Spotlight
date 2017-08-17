@@ -8,6 +8,9 @@
     internal static unsafe class GameMemory
     {
         public static CCoronaDrawQueue* CoronaDrawQueue { get; private set; }
+        public static int TlsAllocatorOffset0 { get; private set; }
+        public static int TlsAllocatorOffset1 { get; private set; }
+        public static int TlsAllocatorOffset2 { get; private set; }
 
         public static bool Init()
         {
@@ -16,6 +19,14 @@
             {
                 address = address + *(int*)(address + 3) + 7;
                 CoronaDrawQueue = (CCoronaDrawQueue*)address;
+            }
+
+            address = Game.FindPattern("B8 ?? ?? ?? ?? 48 89 1C 10 B8 ?? ?? ?? ?? 48 89 1C 10 B8 ?? ?? ?? ?? 48 89 1C 10 E8 ?? ?? ?? ?? 48 8D 15 ?? ?? ?? ??");
+            if (AssertAddress(address, "TlsAllocatorOffsets"))
+            {
+                TlsAllocatorOffset0 = *(int*)(address + 1);
+                TlsAllocatorOffset1 = *(int*)(address + 10);
+                TlsAllocatorOffset2 = *(int*)(address + 19);
             }
 
             return !anyAssertFailed;

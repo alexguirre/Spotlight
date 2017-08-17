@@ -21,8 +21,7 @@
         public static readonly List<SpotlightInputController> SpotlightInputControllers = new List<SpotlightInputController>();
         
         public static EditorForm Editor { get; private set; }
-
-
+        
         private static void Main()
         {
             while (Game.IsLoading)
@@ -74,8 +73,8 @@
 
             // when the queue array that the GetFreeLightDrawDataSlotFromQueue function accesses is full,
             // it uses the TLS to get an allocator to allocate memory for a bigger array,
-            // therefore we copy the TLS pointer from the main thread to our current thread.
-            WinFunctions.CopyTlsPointer(WinFunctions.GetProcessMainThreadId(), WinFunctions.GetCurrentThreadId());
+            // therefore we copy the allocator pointers from the main thread TLS to our current thread TLS.
+            WinFunctions.CopyTlsValues(WinFunctions.GetProcessMainThreadId(), WinFunctions.GetCurrentThreadId(), GameMemory.TlsAllocatorOffset0, GameMemory.TlsAllocatorOffset1, GameMemory.TlsAllocatorOffset2);
 
             while (true)
             {

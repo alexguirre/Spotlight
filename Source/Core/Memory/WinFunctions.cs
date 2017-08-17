@@ -1,6 +1,7 @@
 ﻿namespace Spotlight.Core.Memory
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
 
@@ -50,7 +51,8 @@
             return lowestStartTimeThread == null ? -1 : lowestStartTimeThread.Id;
         }
 
-        public static void CopyTlsPointer(IntPtr sourceThreadHandle, IntPtr targetThreadHandle)
+
+        public static void CopyTlsValues(IntPtr sourceThreadHandle, IntPtr targetThreadHandle, params int[] valuesOffsets)
         {
             THREAD_BASIC_INFORMATION sourceThreadInfo = new THREAD_BASIC_INFORMATION();
             THREAD_BASIC_INFORMATION targetThreadInfo = new THREAD_BASIC_INFORMATION();
@@ -72,10 +74,13 @@
             TEB* sourceTeb = (TEB*)sourceThreadInfo.TebBaseAddress;
             TEB* targetTeb = (TEB*)targetThreadInfo.TebBaseAddress;
 
-            targetTeb->ThreadLocalStoragePointer = sourceTeb->ThreadLocalStoragePointer;
+            foreach (int offset in valuesOffsets)
+            {
+                *(long*)(*(byte**)(targetTeb->ThreadLocalStoragePointer) + offset) = *(long*)(*(byte**)(sourceTeb->ThreadLocalStoragePointer) + offset);
+            }
         }
 
-        public static void CopyTlsPointer(int sourceThreadId, int targetThreadId)
+        public static void CopyTlsValues(int sourceThreadId, int targetThreadId, params int[] valuesOffsets)
         {
             IntPtr sourceThreadHandle = IntPtr.Zero, targetThreadHandle = IntPtr.Zero;
             try
@@ -83,7 +88,7 @@
                 sourceThreadHandle = OpenThread(ThreadAccess.QUERY_INFORMATION, false, sourceThreadId);
                 targetThreadHandle = OpenThread(ThreadAccess.QUERY_INFORMATION, false, targetThreadId);
 
-                CopyTlsPointer(sourceThreadHandle, targetThreadHandle);
+                CopyTlsValues(sourceThreadHandle, targetThreadHandle, valuesOffsets);
             }
             finally
             {
@@ -119,7 +124,7 @@
         [StructLayout(LayoutKind.Explicit, Size = 0x1818)]
         public struct TEB
         {
-            [FieldOffset(0x0058)] public void* ThreadLocalStoragePointer;
+            [FieldOffset(0x0058)] public IntPtr ThreadLocalStoragePointer;
         }
     }
 }
