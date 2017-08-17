@@ -16,8 +16,12 @@
         bool IsActive { get; set; }
     }
 
-    public abstract class BaseSpotlight : ISpotlight
+    public abstract unsafe class BaseSpotlight : ISpotlight
     {
+        // these pointers are used with the DrawCorona function
+        internal static NativeVector3* CoronaPositionPtr { get; set; }
+        internal static NativeVector3* CoronaDirectionPtr { get; set; }
+
         public SpotlightData Data { get; }
         public Vector3 Position { get; set; }
         public Vector3 Direction { get; set; }
@@ -31,7 +35,7 @@
             shadowId = GetNewShadowId();
         }
 
-        protected internal unsafe void DrawLight()
+        protected internal void DrawLight()
         {
             if (!IsActive)
                 return;
@@ -76,20 +80,22 @@
                 drawData->ShadowUnkValue = GameFunctions.GetValueForLightDrawDataShadowUnkValue(drawData);
             }
 
-            if(!Data.Specular)
+            if (!Data.Specular)
             {
                 drawData->Flags |= eLightFlags.DisableSpecular;
             }
-        }
-        
-        protected internal unsafe void OnDrawCoronaFrameRender(object sender, GraphicsEventArgs e)
-        {
-            if (!IsActive || !Data.Corona)
-                return;
-            
-            NativeVector3 p = Position;
-            NativeVector3 d = Direction;
-            GameFunctions.DrawCorona(GameMemory.CoronaDrawQueue, &p, Data.CoronaSize, Data.Color.Raw, Data.CoronaIntensity, 100.0f, &d, 1.0f, Data.InnerAngle, Data.OuterAngle, 3);
+
+            if (Data.Corona)
+            {
+                // if using pointers referencing a variable inside the method
+                //      NativeVector3 p = Position;
+                //      DrawCorona(..., &p, ...);
+                // sometimes it crashes, 
+                // so we are using these unmanaged pointers
+                *CoronaPositionPtr = Position;
+                *CoronaDirectionPtr = Direction;
+                GameFunctions.DrawCorona(GameMemory.CoronaDrawQueue, CoronaPositionPtr, Data.CoronaSize, Data.Color.Raw, Data.CoronaIntensity, 100.0f, CoronaDirectionPtr, 1.0f, Data.InnerAngle, Data.OuterAngle, 3);
+            }
         }
 
 

@@ -3,6 +3,8 @@
     using System;
     using System.IO;
     using System.Linq;
+    using System.Diagnostics;
+    using System.Threading;
     using System.Collections.Generic;
     
     using Rage;
@@ -19,6 +21,7 @@
         public static readonly List<SpotlightInputController> SpotlightInputControllers = new List<SpotlightInputController>();
         
         public static EditorForm Editor { get; private set; }
+
 
         private static void Main()
         {
@@ -38,7 +41,7 @@
             bool gameFnInit = GameFunctions.Init();
             bool gameMemInit = GameMemory.Init();
 
-            if(gameFnInit)
+            if (gameFnInit)
                 Game.LogTrivialDebug($"Successful {nameof(GameFunctions)} init");
             if (gameMemInit)
                 Game.LogTrivialDebug($"Successful {nameof(GameMemory)} init");
@@ -66,12 +69,22 @@
                 Game.UnloadActivePlugin();
             }
 
+            BaseSpotlight.CoronaPositionPtr = (NativeVector3*)Game.AllocateMemory(sizeof(NativeVector3) * 2);
+            BaseSpotlight.CoronaDirectionPtr = BaseSpotlight.CoronaPositionPtr++;
+
+            // when the queue array that the GetFreeLightDrawDataSlotFromQueue function accesses is full,
+            // it uses the TLS to get an allocator to allocate memory for a bigger array,
+            // therefore we copy the TLS pointer from the main thread to our current thread.
+            WinFunctions.CopyTlsPointer(WinFunctions.GetProcessMainThreadId(), WinFunctions.GetCurrentThreadId());
+
             while (true)
             {
                 GameFiber.Yield();
+                
                 Update();
             }
         }
+
 
         private static void Update()
         {
@@ -91,7 +104,7 @@
                 VehicleSpotlight s = Spotlights[i];
                 if (!s.Vehicle || s.Vehicle.IsDead)
                 {
-                    s.Dispose();
+                    s.IsActive = false;
                     Spotlights.RemoveAt(i);
                     continue;
                 }
@@ -115,10 +128,13 @@
 
         private static void OnUnload(bool isTerminating)
         {
-            for (int i = 0; i < Spotlights.Count; i++)
+            if (BaseSpotlight.CoronaPositionPtr != null)
             {
-                Spotlights[i].Dispose();
+                Game.FreeMemory((IntPtr)BaseSpotlight.CoronaPositionPtr);
             }
+            BaseSpotlight.CoronaPositionPtr = null;
+            BaseSpotlight.CoronaDirectionPtr = null;
+            
             Spotlights.Clear();
         }
 

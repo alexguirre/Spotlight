@@ -69,7 +69,6 @@
             {
                 using (StreamWriter writer = new StreamWriter(SpotlightOffsetsIniFileName, false))
                 {
-                    writer.WriteLine(PluginTextTitle);
                     foreach (KeyValuePair<string, Vector3> item in SpotlightOffsets)
                     {
                         writer.WriteLine($"[{item.Key}]");
@@ -158,7 +157,7 @@
         {
             using (StreamWriter writer = new StreamWriter(fileName, false))
             {
-                writer.Write(PluginTextTitle + DefaultGeneralSettingsText);
+                writer.Write(DefaultGeneralSettingsText);
             }
         }
 
@@ -166,7 +165,7 @@
         {
             using (StreamWriter writer = new StreamWriter(fileName, false))
             {
-                writer.Write(PluginTextTitle + DefaultSpotlightOffsetsText);
+                writer.Write(DefaultSpotlightOffsetsText);
             }
         }
 
@@ -188,8 +187,6 @@
         #endregion
 
         #region Default Values
-        static readonly string PluginTextTitle = $"Spotlight v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version} by alexguirre{System.Environment.NewLine}";
-
         const string DefaultGeneralSettingsText = @"
 [Misc]
 ; The key to open the in-game editor

@@ -7,15 +7,15 @@
 
     internal static unsafe class GameFunctions
     {
-        public delegate long DrawCoronaDelegate(CCoronaDrawQueue* drawQueue, NativeVector3* position, float coronaSize, int colorARGB, float coronaIntensity, float coronaZBias, NativeVector3* direction, float unk_1, float innerAngle, float outerAngle, ushort unk_3);
-        public delegate CLightDrawData* GetFreeLightDrawDataSlotFromPoolDelegate();
+        public delegate byte DrawCoronaDelegate(CCoronaDrawQueue* drawQueue, NativeVector3* position, float coronaSize, int colorARGB, float coronaIntensity, float coronaZBias, NativeVector3* direction, float unk_1, float innerAngle, float outerAngle, ushort unk_3);
+        public delegate CLightDrawData* GetFreeLightDrawDataSlotFromQueueDelegate();
         public delegate CLightDrawData* InitializeLightDrawDataDelegate(CLightDrawData* data, eLightType type, uint flags, NativeVector3* position, NativeColorRGBAFloat* color, float intensity, int unk);
         public delegate void SetLightDrawDataDirectionDelegate(CLightDrawData* data, NativeVector3* direction, NativeVector3* unkNormalizedVec);
         public delegate void SetLightDrawDataAnglesDelegate(CLightDrawData* data, float innerAngle, float outerAngle);
         public delegate uint GetValueForLightDrawDataShadowUnkValueDelegate(CLightDrawData* data);
 
         public static DrawCoronaDelegate DrawCorona { get; private set; }
-        public static GetFreeLightDrawDataSlotFromPoolDelegate GetFreeLightDrawDataSlotFromPool { get; private set; }
+        public static GetFreeLightDrawDataSlotFromQueueDelegate GetFreeLightDrawDataSlotFromQueue { get; private set; }
         public static InitializeLightDrawDataDelegate InitializeLightDrawData { get; private set; }
         public static SetLightDrawDataDirectionDelegate SetLightDrawDataDirection { get; private set; }
         public static SetLightDrawDataAnglesDelegate SetLightDrawDataAngles { get; private set; }
@@ -30,10 +30,10 @@
             }
 
             address = Game.FindPattern("E8 ?? ?? ?? ?? 48 8B C8 48 8B F8 E8 ?? ?? ?? ?? 48 8D 45 A0 C7 44 24 ?? ?? ?? ?? ??");
-            if (AssertAddress(address, nameof(GetFreeLightDrawDataSlotFromPool)))
+            if (AssertAddress(address, nameof(GetFreeLightDrawDataSlotFromQueue)))
             {
                 address = address + *(int*)(address + 1) + 5;
-                GetFreeLightDrawDataSlotFromPool = Marshal.GetDelegateForFunctionPointer<GetFreeLightDrawDataSlotFromPoolDelegate>(address);
+                GetFreeLightDrawDataSlotFromQueue = Marshal.GetDelegateForFunctionPointer<GetFreeLightDrawDataSlotFromQueueDelegate>(address);
             }
 
             address = Game.FindPattern("48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC 40 83 A1 ?? ?? ?? ?? ?? 66 83 89 ?? ?? ?? ?? ??");

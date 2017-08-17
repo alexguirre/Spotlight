@@ -56,6 +56,7 @@
     <Compile Include="Core\Memory\NativeColorRGBAFloat.cs" />
     <Compile Include="Core\Memory\GameFunctions.cs" />
     <Compile Include="Core\Memory\NativeVector3.cs" />
+    <Compile Include="Core\Memory\WinFunctions.cs" />
     <Compile Include="Core\Utility.cs" />
     <Compile Include="Core\RGB.cs" />
     <Compile Include="Editor\ColorPicker.cs" />

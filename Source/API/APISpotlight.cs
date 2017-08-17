@@ -13,13 +13,13 @@
 
         public APISpotlight(SpotlightData data) : base(data)
         {
-            Game.FrameRender += OnDrawCoronaFrameRender;
+            //Game.FrameRender += OnDrawCoronaFrameRender;
             APISpotlightMgr.AddSpotlight(this);
         }
 
         public void Dispose()
         {
-            Game.FrameRender -= OnDrawCoronaFrameRender;
+            //Game.FrameRender -= OnDrawCoronaFrameRender;
             APISpotlightMgr.RemoveSpotlight(this);
         }
 
@@ -44,10 +44,11 @@
 
 
 
-    internal static class APISpotlightMgr
+    internal static unsafe class APISpotlightMgr
     {
         private static GameFiber fiber;
         private static List<APISpotlight> spotlights;
+        private static StaticFinalizer finalizer;
 
         static APISpotlightMgr()
         {
@@ -75,13 +76,30 @@
                 Game.LogTrivial($"[ERROR] Spotlight: Failed to initialize {str}");
             }
 
+            BaseSpotlight.CoronaPositionPtr = (NativeVector3*)Game.AllocateMemory(sizeof(NativeVector3) * 2);
+            BaseSpotlight.CoronaDirectionPtr = BaseSpotlight.CoronaPositionPtr++;
 
             spotlights = new List<APISpotlight>();
             fiber = GameFiber.StartNew(UpdateSpotlights, "Spotlight API Manager");
+
+            finalizer = new StaticFinalizer(Dispose);
+        }
+
+        static void Dispose()
+        {
+            if (BaseSpotlight.CoronaPositionPtr != null)
+            {
+                Game.FreeMemory((IntPtr)BaseSpotlight.CoronaPositionPtr);
+            }
+            BaseSpotlight.CoronaPositionPtr = null;
+            BaseSpotlight.CoronaDirectionPtr = null;
+            
+            spotlights.Clear();
         }
 
         private static void UpdateSpotlights()
         {
+            WinFunctions.CopyTlsPointer(WinFunctions.GetProcessMainThreadId(), WinFunctions.GetCurrentThreadId());
             while (true)
             {
                 GameFiber.Yield();

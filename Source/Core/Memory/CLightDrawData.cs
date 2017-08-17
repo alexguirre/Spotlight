@@ -35,8 +35,8 @@
         public static CLightDrawData* New(eLightType type, eLightFlags flags, Vector3 position, RGB color, float intensity)
         {
             const float ByteToFloatFactor = 1.0f / 255.0f;
-
-            CLightDrawData* d = GameFunctions.GetFreeLightDrawDataSlotFromPool();
+            
+            CLightDrawData* d = GameFunctions.GetFreeLightDrawDataSlotFromQueue();
 
             NativeVector3 pos = position;
             NativeColorRGBAFloat col = new NativeColorRGBAFloat { R = color.R * ByteToFloatFactor, G = color.G * ByteToFloatFactor, B = color.B * ByteToFloatFactor };
