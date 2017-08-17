@@ -55,6 +55,7 @@
         RANGE_2 = 4,
     }
 
+    // TODO: find why the light is cut inside tunnels, maybe some flag?
     [Flags]
     internal enum eLightFlags : uint
     {
@@ -75,5 +76,7 @@
         DisableSpecular = 0x2000,
 
         IgnoreGlass = 0x800000, // if set the light won't affect glass
+
+        DisableLight = 0x40000000,
     }
 }
