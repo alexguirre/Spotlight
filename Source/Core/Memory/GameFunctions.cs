@@ -29,9 +29,10 @@
                 DrawCorona = Marshal.GetDelegateForFunctionPointer<DrawCoronaDelegate>(address);
             }
 
-            address = Game.FindPattern("E8 ?? ?? ?? ?? 48 8B C8 48 8B F8 E8 ?? ?? ?? ?? 48 8D 45 A0 C7 44 24 ?? ?? ?? ?? ??");
+            address = Game.FindPattern("80 ?? 3A 00 74 07 41 81 CE ?? ?? ?? ?? E8 ?? ?? ?? ??");
             if (AssertAddress(address, nameof(GetFreeLightDrawDataSlotFromQueue)))
             {
+                address += 13;
                 address = address + *(int*)(address + 1) + 5;
                 GetFreeLightDrawDataSlotFromQueue = Marshal.GetDelegateForFunctionPointer<GetFreeLightDrawDataSlotFromQueueDelegate>(address);
             }
