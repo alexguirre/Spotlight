@@ -13,13 +13,11 @@
 
         public APISpotlight(SpotlightData data) : base(data)
         {
-            //Game.FrameRender += OnDrawCoronaFrameRender;
             APISpotlightMgr.AddSpotlight(this);
         }
 
         public void Dispose()
         {
-            //Game.FrameRender -= OnDrawCoronaFrameRender;
             APISpotlightMgr.RemoveSpotlight(this);
         }
 

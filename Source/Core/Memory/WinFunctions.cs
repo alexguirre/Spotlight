@@ -20,18 +20,12 @@
         public static extern int GetCurrentThreadId();
 
         public delegate int NtQueryInformationThreadDelegate(IntPtr threadHandle, uint threadInformationClass, THREAD_BASIC_INFORMATION* outThreadInformation, ulong threadInformationLength, ulong* returnLength);
-        public delegate void RtlAcquirePebLockDelegate();
-        public delegate void RtlReleasePebLockDelegate();
         public static NtQueryInformationThreadDelegate NtQueryInformationThread { get; }
-        public static RtlAcquirePebLockDelegate RtlAcquirePebLock { get; }
-        public static RtlReleasePebLockDelegate RtlReleasePebLock { get; }
 
         static WinFunctions()
         {
             IntPtr ntdllHandle = GetModuleHandle("ntdll.dll");
             NtQueryInformationThread = Marshal.GetDelegateForFunctionPointer<NtQueryInformationThreadDelegate>(GetProcAddress(ntdllHandle, "NtQueryInformationThread"));
-            RtlAcquirePebLock = Marshal.GetDelegateForFunctionPointer<RtlAcquirePebLockDelegate>(GetProcAddress(ntdllHandle, "RtlAcquirePebLock"));
-            RtlReleasePebLock = Marshal.GetDelegateForFunctionPointer<RtlReleasePebLockDelegate>(GetProcAddress(ntdllHandle, "RtlReleasePebLock"));
         }
 
         public static int GetProcessMainThreadId()
