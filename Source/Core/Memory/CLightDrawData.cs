@@ -41,7 +41,7 @@
             NativeVector3 pos = position;
             NativeColorRGBAFloat col = new NativeColorRGBAFloat { R = color.R * ByteToFloatFactor, G = color.G * ByteToFloatFactor, B = color.B * ByteToFloatFactor };
 
-            GameFunctions.InitializeLightDrawData(d, eLightType.SPOT_LIGHT, (uint)flags, &pos, &col, intensity, 0xFFFFFF);
+            GameFunctions.InitializeLightDrawData(d, type, (uint)flags, &pos, &col, intensity, 0xFFFFFF);
 
             return d;
         }
