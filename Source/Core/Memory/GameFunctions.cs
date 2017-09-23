@@ -10,7 +10,7 @@
         public delegate byte DrawCoronaDelegate(CCoronaDrawQueue* drawQueue, NativeVector3* position, float coronaSize, int colorARGB, float coronaIntensity, float coronaZBias, NativeVector3* direction, float unk_1, float innerAngle, float outerAngle, ushort unk_3);
         public delegate CLightDrawData* GetFreeLightDrawDataSlotFromQueueDelegate();
         public delegate CLightDrawData* InitializeLightDrawDataDelegate(CLightDrawData* data, eLightType type, uint flags, NativeVector3* position, NativeColorRGBAFloat* color, float intensity, int unk);
-        public delegate void SetLightDrawDataDirectionDelegate(CLightDrawData* data, NativeVector3* direction, NativeVector3* unkNormalizedVec);
+        public delegate void SetLightDrawDataDirectionDelegate(CLightDrawData* data, NativeVector3* direction, NativeVector3* dirPerpendicular);
         public delegate void SetLightDrawDataAnglesDelegate(CLightDrawData* data, float innerAngle, float outerAngle);
         public delegate uint GetValueForLightDrawDataShadowUnkValueDelegate(CLightDrawData* data);
 
