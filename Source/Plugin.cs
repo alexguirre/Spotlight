@@ -123,13 +123,6 @@
 
         private static void OnUnload(bool isTerminating)
         {
-            if (BaseSpotlight.CoronaPositionPtr != null)
-            {
-                Game.FreeMemory((IntPtr)BaseSpotlight.CoronaPositionPtr);
-            }
-            BaseSpotlight.CoronaPositionPtr = null;
-            BaseSpotlight.CoronaDirectionPtr = null;
-            
             Spotlights.Clear();
         }
 

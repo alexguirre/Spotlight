@@ -64,7 +64,7 @@
 
             if (Data.Corona)
             {
-                GameMemory.Coronas->Draw(Position, Data.CoronaSize, Data.Color.Raw, Data.CoronaIntensity, 100.0f, Direction, 1.0f, Data.InnerAngle, Data.OuterAngle, 3);
+                GameMemory.Coronas->Draw(Position, Data.CoronaSize, Data.Color.Raw, Data.CoronaIntensity, 100.0f, Direction, Data.InnerAngle, Data.OuterAngle, 3);
             }
         }
 

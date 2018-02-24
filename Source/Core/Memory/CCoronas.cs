@@ -21,7 +21,7 @@
             }
         }
 
-        public void Draw(Vector3 position, float size, int color, float intensity, float zBias, Vector3 direction, float a8, float innerAngle, float outerAngle, ushort a11)
+        public void Draw(Vector3 position, float size, int color, float intensity, float zBias, Vector3 direction, float innerAngle, float outerAngle, ushort a11)
         {
             if (size != 0.0 && intensity > 0.0 /*&& !g_IsBlackoutEnabled*/)
             {
