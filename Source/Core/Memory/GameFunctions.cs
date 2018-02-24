@@ -7,14 +7,12 @@
 
     internal static unsafe class GameFunctions
     {
-        public delegate byte DrawCoronaDelegate(CCoronaDrawQueue* drawQueue, NativeVector3* position, float coronaSize, int colorARGB, float coronaIntensity, float coronaZBias, NativeVector3* direction, float unk_1, float innerAngle, float outerAngle, ushort unk_3);
         public delegate CLightDrawData* GetFreeLightDrawDataSlotFromQueueDelegate();
         public delegate CLightDrawData* InitializeLightDrawDataDelegate(CLightDrawData* data, eLightType type, uint flags, NativeVector3* position, NativeColorRGBAFloat* color, float intensity, int unk);
         public delegate void SetLightDrawDataDirectionDelegate(CLightDrawData* data, NativeVector3* direction, NativeVector3* dirPerpendicular);
         public delegate void SetLightDrawDataAnglesDelegate(CLightDrawData* data, float innerAngle, float outerAngle);
         public delegate uint GetValueForLightDrawDataShadowUnkValueDelegate(CLightDrawData* data);
-
-        public static DrawCoronaDelegate DrawCorona { get; private set; }
+        
         public static GetFreeLightDrawDataSlotFromQueueDelegate GetFreeLightDrawDataSlotFromQueue { get; private set; }
         public static InitializeLightDrawDataDelegate InitializeLightDrawData { get; private set; }
         public static SetLightDrawDataDirectionDelegate SetLightDrawDataDirection { get; private set; }
@@ -23,13 +21,7 @@
 
         public static bool Init()
         {
-            IntPtr address = Game.FindPattern("44 89 4C 24 ?? 48 83 EC 28 0F 29 74 24 ?? 0F 57 C0 0F 29 3C 24 4C 8B D2 4C 8B C9 0F 28 FA 0F 2E F8 0F 84 ?? ?? ?? ?? F3 0F 10 74 24 ?? 0F 2F F0");
-            if (AssertAddress(address, nameof(DrawCorona)))
-            {
-                DrawCorona = Marshal.GetDelegateForFunctionPointer<DrawCoronaDelegate>(address);
-            }
-
-            address = Game.FindPattern("80 ?? 3A 00 74 07 41 81 CE ?? ?? ?? ?? E8 ?? ?? ?? ??");
+            IntPtr address = Game.FindPattern("80 ?? 3A 00 74 07 41 81 CE ?? ?? ?? ?? E8 ?? ?? ?? ??");
             if (AssertAddress(address, nameof(GetFreeLightDrawDataSlotFromQueue)))
             {
                 address += 13;

@@ -7,7 +7,7 @@
 
     internal static unsafe class GameMemory
     {
-        public static CCoronaDrawQueue* CoronaDrawQueue { get; private set; }
+        public static CCoronas* Coronas { get; private set; }
         public static int TlsAllocatorOffset0 { get; private set; }
         public static int TlsAllocatorOffset1 { get; private set; }
         public static int TlsAllocatorOffset2 { get; private set; }
@@ -15,10 +15,10 @@
         public static bool Init()
         {
             IntPtr address = Game.FindPattern("48 8D 0D ?? ?? ?? ?? F3 0F 11 44 24 ?? F3 0F 11 64 24 ?? E8 ?? ?? ?? ?? 4C 8D 9C 24 ?? ?? ?? ??");
-            if (AssertAddress(address, nameof(CCoronaDrawQueue)))
+            if (AssertAddress(address, nameof(CCoronas)))
             {
                 address = address + *(int*)(address + 3) + 7;
-                CoronaDrawQueue = (CCoronaDrawQueue*)address;
+                Coronas = (CCoronas*)address;
             }
 
             address = Game.FindPattern("B8 ?? ?? ?? ?? 48 89 1C 10 B8 ?? ?? ?? ?? 48 89 1C 10 B8 ?? ?? ?? ?? 48 89 1C 10 E8 ?? ?? ?? ?? 48 8D 15 ?? ?? ?? ??");

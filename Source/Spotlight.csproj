@@ -33,12 +33,13 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gwen, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Rockstar Games\Grand Theft Auto V\Gwen.dll</HintPath>
+    <Reference Include="Gwen">
+      <HintPath>..\Dependencies\Gwen.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="RagePluginHookSDK">
-      <HintPath>..\..\..\..\..\Desktop\RagePluginHook\SDK\RagePluginHookSDK.dll</HintPath>
+      <HintPath>..\Dependencies\RagePluginHookSDK.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -50,7 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\APISpotlight.cs" />
-    <Compile Include="Core\Memory\CCoronaDrawQueue.cs" />
+    <Compile Include="Core\Memory\CCoronas.cs" />
     <Compile Include="Core\Memory\CLightDrawData.cs" />
     <Compile Include="Core\Memory\GameMemory.cs" />
     <Compile Include="Core\Memory\NativeColorRGBAFloat.cs" />

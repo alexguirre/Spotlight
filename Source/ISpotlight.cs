@@ -16,10 +16,6 @@
 
     public abstract unsafe class BaseSpotlight : ISpotlight
     {
-        // these pointers are used with the DrawCorona function
-        internal static NativeVector3* CoronaPositionPtr { get; set; }
-        internal static NativeVector3* CoronaDirectionPtr { get; set; }
-
         public SpotlightData Data { get; }
         public Vector3 Position { get; set; }
         public Vector3 Direction { get; set; }
@@ -68,14 +64,7 @@
 
             if (Data.Corona)
             {
-                // if using pointers referencing a variable inside the method
-                //      NativeVector3 p = Position;
-                //      DrawCorona(..., &p, ...);
-                // sometimes it crashes, 
-                // so we are using these unmanaged pointers
-                *CoronaPositionPtr = Position;
-                *CoronaDirectionPtr = Direction;
-                GameFunctions.DrawCorona(GameMemory.CoronaDrawQueue, CoronaPositionPtr, Data.CoronaSize, Data.Color.Raw, Data.CoronaIntensity, 100.0f, CoronaDirectionPtr, 1.0f, Data.InnerAngle, Data.OuterAngle, 3);
+                GameMemory.Coronas->Draw(Position, Data.CoronaSize, Data.Color.Raw, Data.CoronaIntensity, 100.0f, Direction, 1.0f, Data.InnerAngle, Data.OuterAngle, 3);
             }
         }
 
@@ -87,7 +76,7 @@
             totalShadowsId++;
             if (totalShadowsId > 200) // own limit, I don't know if game has a limit or in case it has, if it's lower
                 totalShadowsId = 1;
-            ulong id = 0x46B9FB69 + totalShadowsId;  // 0x46B9FB69 is the value that the original game functions take from the RagePluginHook's CGameScriptId(at least in SocialClub v1103, no idea if it changes between versions)
+            ulong id = 0x46B9FB69 + totalShadowsId;  // 0x46B9FB69 is the value that the original game functions take from the RagePluginHook's CGameScriptId (it's JOOAT hash of "RagePluginHook")
             return id;
         }
     }

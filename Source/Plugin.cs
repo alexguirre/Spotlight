@@ -67,10 +67,7 @@
                 Game.LogTrivial($"[ERROR] Failed to initialize {str}, unloading...");
                 Game.UnloadActivePlugin();
             }
-
-            BaseSpotlight.CoronaPositionPtr = (NativeVector3*)Game.AllocateMemory(sizeof(NativeVector3) * 2);
-            BaseSpotlight.CoronaDirectionPtr = BaseSpotlight.CoronaPositionPtr++;
-
+            
             // when the queue array that the GetFreeLightDrawDataSlotFromQueue function accesses is full,
             // it uses the TLS to get an allocator to allocate memory for a bigger array,
             // therefore we copy the allocator pointers from the main thread TLS to our current thread TLS.
@@ -83,7 +80,6 @@
                 Update();
             }
         }
-
 
         private static void Update()
         {
