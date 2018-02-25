@@ -73,10 +73,7 @@
                 
                 Game.LogTrivial($"[ERROR] Spotlight: Failed to initialize {str}");
             }
-
-            BaseSpotlight.CoronaPositionPtr = (NativeVector3*)Game.AllocateMemory(sizeof(NativeVector3) * 2);
-            BaseSpotlight.CoronaDirectionPtr = BaseSpotlight.CoronaPositionPtr++;
-
+            
             spotlights = new List<APISpotlight>();
             fiber = GameFiber.StartNew(UpdateSpotlights, "Spotlight API Manager");
 
@@ -85,13 +82,6 @@
 
         static void Dispose()
         {
-            if (BaseSpotlight.CoronaPositionPtr != null)
-            {
-                Game.FreeMemory((IntPtr)BaseSpotlight.CoronaPositionPtr);
-            }
-            BaseSpotlight.CoronaPositionPtr = null;
-            BaseSpotlight.CoronaDirectionPtr = null;
-            
             spotlights.Clear();
         }
 
