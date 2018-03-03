@@ -51,15 +51,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\APISpotlight.cs" />
-    <Compile Include="Core\Memory\CCoronas.cs" />
-    <Compile Include="Core\Memory\CLightDrawData.cs" />
     <Compile Include="Core\Memory\GameMemory.cs" />
+    <Compile Include="Core\Memory\GameOffsets.cs" />
+    <Compile Include="Core\Memory\GameStructs.cs" />
     <Compile Include="Core\Memory\NativeColorRGBAFloat.cs" />
     <Compile Include="Core\Memory\GameFunctions.cs" />
     <Compile Include="Core\Memory\NativeVector3.cs" />
     <Compile Include="Core\Memory\WinFunctions.cs" />
     <Compile Include="Core\Utility.cs" />
     <Compile Include="Core\RGB.cs" />
+    <Compile Include="Core\VehicleBone.cs" />
+    <Compile Include="Core\XYZ.cs" />
     <Compile Include="Editor\ColorPicker.cs" />
     <Compile Include="Editor\EditorForm.cs" />
     <Compile Include="Editor\InputTextForm.cs" />
@@ -73,6 +75,7 @@
     <Compile Include="InputControllers\SpotlightInputController.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VehicleData.cs" />
     <Compile Include="VehicleSpotlight.cs" />
     <Compile Include="SpotlightData.cs" />
   </ItemGroup>

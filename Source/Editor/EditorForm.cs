@@ -93,14 +93,14 @@
             comboBox.Width += 20;
             comboBox.AddItem("New...", $"{name}ComboBoxItemNew");
             int j = 1;
-            foreach (KeyValuePair<string, Vector3> entry in Plugin.Settings.SpotlightOffsets)
+            foreach (KeyValuePair<string, VehicleData> entry in Plugin.Settings.Vehicles.Data)
             {
                 comboBox.AddItem(entry.Key, $"{name}ComboBoxItem{j++}", new Model(entry.Key));
             }
-            comboBox.SelectByText(Plugin.Settings.SpotlightOffsets.First().Key);
+            comboBox.SelectByText(Plugin.Settings.Vehicles.Data.First().Key);
             comboBox.ItemSelected += OnOffsetsComboBoxItemSelected;
 
-            Vector3 v = Plugin.Settings.SpotlightOffsets.First().Value;
+            Vector3 v = Plugin.Settings.Vehicles.Data.First().Value.Offset;
             string[] vecComponents = "X,Y,Z".Split(',');
             for (int i = 0; i < vecComponents.Length; i++)
             {
@@ -296,9 +296,9 @@
             {
                 string selectedModel = selectedItem.Text;
                 Vector3 v = Vector3.Zero;
-                if (Plugin.Settings.SpotlightOffsets.ContainsKey(selectedModel))
+                if (Plugin.Settings.Vehicles.Data.ContainsKey(selectedModel))
                 {
-                    v = Plugin.Settings.SpotlightOffsets[selectedModel];
+                    v = Plugin.Settings.Vehicles.Data[selectedModel].Offset;
                 }
                 
                 ((NumericUpDownEx)Window.FindChildByName("OffsetsXNumUpDown", true)).Value = v.X;
@@ -314,18 +314,18 @@
                                     ((NumericUpDownEx)Window.FindChildByName("OffsetsYNumUpDown", true)).Value,
                                     ((NumericUpDownEx)Window.FindChildByName("OffsetsZNumUpDown", true)).Value);
 
-            Dictionary<string, Vector3> clone = Plugin.Settings.SpotlightOffsets.ToDictionary(e => e.Key, e => e.Value);
+            Dictionary<string, Vector3> clone = Plugin.Settings.Vehicles.Data.ToDictionary(e => e.Key, e => (Vector3)e.Value.Offset);
             clone[selectedModel] = v;
             Plugin.Settings.UpdateOffsets(clone, false);
             foreach (VehicleSpotlight s in Plugin.Spotlights)
             {
-                s.UpdateOffset();
+                //s.UpdateOffset();
             }
         }
 
         private void OnOffsetsSaveButtonClicked(object sender, ClickedEventArgs args)
         {
-            Dictionary<string, Vector3> clone = Plugin.Settings.SpotlightOffsets.ToDictionary(e => e.Key, e => e.Value);
+            Dictionary<string, Vector3> clone = Plugin.Settings.Vehicles.Data.ToDictionary(e => e.Key, e => (Vector3)e.Value.Offset);
             Plugin.Settings.UpdateOffsets(clone, true);
         }
 

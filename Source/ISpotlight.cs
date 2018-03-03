@@ -5,7 +5,9 @@
     using Rage;
     
     using Spotlight.Core.Memory;
-    
+
+    using static Core.Intrin;
+
     public interface ISpotlight
     {
         SpotlightData Data { get; }
@@ -16,10 +18,10 @@
 
     public abstract unsafe class BaseSpotlight : ISpotlight
     {
-        public SpotlightData Data { get; }
-        public Vector3 Position { get; set; }
-        public Vector3 Direction { get; set; }
-        public bool IsActive { get; set; }
+        public virtual SpotlightData Data { get; }
+        public virtual Vector3 Position { get; set; }
+        public virtual Vector3 Direction { get; set; }
+        public virtual bool IsActive { get; set; }
 
         private readonly ulong shadowId;
 
@@ -42,12 +44,27 @@
             drawData->VolumeSize = Data.VolumeSize;
             drawData->FalloffExponent = Data.Falloff;
             
-            // this doesn't create a vector exactly like the one created in the original game code, but it looks like the game just wants a vector perpendicular
-            // to the direction vector and while testing this seemed to work fine
-            // if any issue arises, revert to the old code
-            NativeVector3 dirPerpendicular = new Vector3(dir.Y - dir.Z, dir.Z - dir.X, -dir.X - dir.Y).ToNormalized();
+            // TODO: figure out how SSE instrinsics work, and what this does
+            NativeVector3 v16 = _mm_andnot_ps(new Vector3(-0.0f, -0.0f, -0.0f), dir);
+            NativeVector3 v17 = _mm_and_ps(_mm_cmple_ps(v16, _mm_shuffle_epi32(v16, -46)), _mm_cmplt_ps(v16, _mm_shuffle_epi32(v16, -55)));
+            NativeVector3 v18 = _mm_and_ps(
+                                    _mm_or_ps(
+                                      _mm_andnot_ps(
+                                        _mm_or_ps(
+                                          _mm_or_ps(_mm_shuffle_epi32(v17, 85), _mm_shuffle_epi32(v17, 0)),
+                                          _mm_shuffle_epi32(v17, -86)),
+                                          new Vector3(Single.NaN, Single.NaN, Single.NaN)),
+                                      v17),
+                                    new Vector3(1.0f, 1.0f, 1.0f));
+            v17 = _mm_shuffle_ps(v18, v18, 85);
+            NativeVector3 v19 = _mm_shuffle_ps(v18, v18, -86);
 
-            GameFunctions.SetLightDrawDataDirection(drawData, &dir, &dirPerpendicular);
+            Vector3 v = new Vector3(x: (v19.X * dir.Y) - (v17.X * dir.Z),
+                                    y: (v18.X * dir.Z) - (v19.X * dir.X),
+                                    z: (v17.X * dir.X) - (v18.X * dir.Y));
+            NativeVector3 u = v.ToNormalized();
+
+            GameFunctions.SetLightDrawDataDirection(drawData, &dir, &u);
             GameFunctions.SetLightDrawDataAngles(drawData, Data.InnerAngle, Data.OuterAngle);
 
             if (Data.CastShadows)

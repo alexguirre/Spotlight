@@ -12,7 +12,7 @@
         public delegate void SetLightDrawDataDirectionDelegate(CLightDrawData* data, NativeVector3* direction, NativeVector3* dirPerpendicular);
         public delegate void SetLightDrawDataAnglesDelegate(CLightDrawData* data, float innerAngle, float outerAngle);
         public delegate uint GetValueForLightDrawDataShadowUnkValueDelegate(CLightDrawData* data);
-        
+
         public static GetFreeLightDrawDataSlotFromQueueDelegate GetFreeLightDrawDataSlotFromQueue { get; private set; }
         public static InitializeLightDrawDataDelegate InitializeLightDrawData { get; private set; }
         public static SetLightDrawDataDirectionDelegate SetLightDrawDataDirection { get; private set; }
@@ -59,7 +59,7 @@
         private static bool anyAssertFailed = false;
         private static bool AssertAddress(IntPtr address, string name)
         {
-            if(address == IntPtr.Zero)
+            if (address == IntPtr.Zero)
             {
                 Game.LogTrivial($"Incompatible game version, couldn't find {name} function address.");
                 anyAssertFailed = true;

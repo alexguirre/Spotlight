@@ -31,7 +31,7 @@
                 Directory.CreateDirectory(@"Plugins\Spotlight Resources\");
 
             Settings = new Settings(@"Plugins\Spotlight Resources\General.ini",
-                                    @"Plugins\Spotlight Resources\Offsets.ini",
+                                    @"Plugins\Spotlight Resources\VehiclesSettings.xml",
                                     @"Plugins\Spotlight Resources\VisualSettings.xml",
                                     true);
 
@@ -123,6 +123,10 @@
 
         private static void OnUnload(bool isTerminating)
         {
+            for (int i = Spotlights.Count - 1; i >= 0; i--)
+            {
+                Spotlights[i].OnUnload();
+            }
             Spotlights.Clear();
         }
 
