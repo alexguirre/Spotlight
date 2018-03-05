@@ -37,8 +37,11 @@
                     if (Vehicle)
                     {
                         CVehicleWeaponMgr* weaponMgr = nativeVehicle->GetWeaponMgr();
-                        weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->baseBoneRefId = nativeTurretBaseBoneRefId;
-                        weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->barrelBoneRefId = nativeTurretBarrelBoneRefId;
+                        if (weaponMgr != null)
+                        {
+                            weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->baseBoneRefId = nativeTurretBaseBoneRefId;
+                            weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->barrelBoneRefId = nativeTurretBarrelBoneRefId;
+                        }
                     }
                 }
 
@@ -155,8 +158,11 @@
             if (enableTurret && Vehicle)
             {
                 CVehicleWeaponMgr* weaponMgr = nativeVehicle->GetWeaponMgr();
-                weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->baseBoneRefId = nativeTurretBaseBoneRefId;
-                weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->barrelBoneRefId = nativeTurretBarrelBoneRefId;
+                if (weaponMgr != null)
+                {
+                    weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->baseBoneRefId = nativeTurretBaseBoneRefId;
+                    weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->barrelBoneRefId = nativeTurretBarrelBoneRefId;
+                }
             }
         }
 
@@ -169,8 +175,11 @@
             {
                 // invalidate turret bones so the game code doesn't reset their rotation
                 CVehicleWeaponMgr* weaponMgr = nativeVehicle->GetWeaponMgr();
-                weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->baseBoneRefId = -1;
-                weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->barrelBoneRefId = -1;
+                if (weaponMgr != null)
+                {
+                    weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->baseBoneRefId = -1;
+                    weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->barrelBoneRefId = -1;
+                }
             }
 
             if (enableTurret)
