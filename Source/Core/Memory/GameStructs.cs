@@ -64,6 +64,10 @@
     {
         [FieldOffset(0x0010)] public int baseBoneRefId;
         [FieldOffset(0x0014)] public int barrelBoneRefId;
+
+        [FieldOffset(0x20)] public Quaternion rot1;
+        [FieldOffset(0x30)] public Quaternion rot2;
+        [FieldOffset(0x40)] public Quaternion rot3;
     }
 
     [StructLayout(LayoutKind.Explicit)]

@@ -45,9 +45,12 @@
                     }
                 }
 
+                justActivated = value;
                 base.IsActive = value;
             }
         }
+
+        private bool justActivated;
 
         // turret stuff
         public VehicleBone WeaponBone { get; }
@@ -177,8 +180,16 @@
                 CVehicleWeaponMgr* weaponMgr = nativeVehicle->GetWeaponMgr();
                 if (weaponMgr != null)
                 {
-                    weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->baseBoneRefId = -1;
-                    weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->barrelBoneRefId = -1;
+                    CTurret* turret = weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex);
+                    turret->baseBoneRefId = -1;
+                    turret->barrelBoneRefId = -1;
+
+                    if (justActivated)
+                    {
+                        // if just activated, take the current turret rotation as the spotlight's rotation 
+                        // so the bone doesn't rotate abruptly
+                        RelativeRotation = turret->rot1.ToRotation();
+                    }
                 }
             }
 
@@ -227,6 +238,17 @@
                     q = RelativeRotation.ToQuaternion();
                 }
 
+                CVehicleWeaponMgr* weaponMgr = nativeVehicle->GetWeaponMgr();
+                if (weaponMgr != null)
+                {
+                    // changes turret rotation so when deactivating the spotlight
+                    // the game code doesn't reset the turret bone rotation
+                    CTurret* turret = weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex);
+                    turret->rot1 = q;
+                    turret->rot2 = q;
+                    turret->rot3 = q;
+                }
+
                 if (TurretBarrelBone == null)
                 {
                     TurretBaseBone.SetRotation(q);
@@ -265,6 +287,8 @@
                     Direction = (Vehicle.Rotation + RelativeRotation).ToVector();
                 }
             }
+
+            justActivated = false;
 
             DrawLight();
         }
