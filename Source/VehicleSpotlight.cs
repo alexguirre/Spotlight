@@ -11,6 +11,8 @@
 
     internal unsafe class VehicleSpotlight : BaseSpotlight
     {
+        private const uint VehicleWeaponSearchlightHash = 0xCDAC517D; // VEHICLE_WEAPON_SEARCHLIGHT
+
         private readonly CVehicle* nativeVehicle;
 
         public Vehicle Vehicle { get; }
@@ -39,8 +41,9 @@
                         CVehicleWeaponMgr* weaponMgr = nativeVehicle->GetWeaponMgr();
                         if (weaponMgr != null)
                         {
-                            weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->baseBoneRefId = nativeTurretBaseBoneRefId;
-                            weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->barrelBoneRefId = nativeTurretBarrelBoneRefId;
+                            CTurret* turret = weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex);
+                            turret->baseBoneRefId = nativeTurretBaseBoneRefId;
+                            turret->barrelBoneRefId = nativeTurretBarrelBoneRefId;
                         }
                     }
                 }
@@ -74,13 +77,12 @@
                 CVehicleWeaponMgr* weaponMgr = nativeVehicle->GetWeaponMgr();
                 if(weaponMgr != null)
                 {
-                    uint searchlightHash = Game.GetHashKey("VEHICLE_WEAPON_SEARCHLIGHT");
                     for (int i = 0; i < weaponMgr->GetMaxWeapons(); i++)
                     {
                         CVehicleWeapon* weapon = weaponMgr->GetWeapon(i);
                         if(weapon != null)
                         {
-                            if (weapon->GetName() == searchlightHash)
+                            if (weapon->GetName() == VehicleWeaponSearchlightHash)
                             {
                                 nativeWeaponIndex = i;
                                 break;
@@ -163,8 +165,9 @@
                 CVehicleWeaponMgr* weaponMgr = nativeVehicle->GetWeaponMgr();
                 if (weaponMgr != null)
                 {
-                    weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->baseBoneRefId = nativeTurretBaseBoneRefId;
-                    weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex)->barrelBoneRefId = nativeTurretBarrelBoneRefId;
+                    CTurret* turret = weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex);
+                    turret->baseBoneRefId = nativeTurretBaseBoneRefId;
+                    turret->barrelBoneRefId = nativeTurretBarrelBoneRefId;
                 }
             }
         }
@@ -193,22 +196,12 @@
                 }
             }
 
-            if (enableTurret)
-            {
-
-                Position = MathHelper.GetOffsetPosition(Vehicle.GetBonePosition(WeaponBone.Index), Vehicle.GetBoneOrientation(WeaponBone.Index), VehicleData.Offset);
-            }
-            else
-            {
-                Position = Vehicle.GetOffsetPosition(Offset);
-            }
-
             if (IsCurrentPlayerVehicleSpotlight)
             {
                 for (int i = 0; i < controllers.Count; i++)
                 {
                     controllers[i].UpdateControls(this);
-                    if (!IsTrackingVehicle && !IsTrackingPed &&controllers[i].GetUpdatedRotationDelta(this, out Rotator newRotDelta))
+                    if (!IsTrackingVehicle && !IsTrackingPed && controllers[i].GetUpdatedRotationDelta(this, out Rotator newRotDelta))
                     {
                         RelativeRotation += newRotDelta;
                         break;
@@ -216,12 +209,20 @@
                 }
             }
 
-
             if (enableTurret)
-            {
-                // TODO: fix turret rotation
-                //  Sometimes for a tick the spotlight has the wrong direction when tracking
-                //  and, rarely, the turret bone disappears, probably due to an invalid rotation
+            {                
+                // GetBoneOrientation sometimes seems to return an non-normalized quaternion, such as [X:-8 Y:8 Z:-8 W:0], or 
+                // a quaternion with NaN values, which fucks up the bone transform and makes it disappear
+                // not sure if it's an issue with my code for changing the bone rotation or if the issue is in GetBoneOrientation
+                Quaternion boneRot = Vehicle.GetBoneOrientation(WeaponBone.Index);
+                boneRot.Normalize();
+                if (Single.IsNaN(boneRot.X) || Single.IsNaN(boneRot.Y) || Single.IsNaN(boneRot.Z) || Single.IsNaN(boneRot.W))
+                {
+                    boneRot = Quaternion.Identity;
+                }
+
+                Position = MathHelper.GetOffsetPosition(Vehicle.GetBonePosition(WeaponBone.Index), boneRot, VehicleData.Offset);
+
                 Quaternion q = Quaternion.Identity;
                 if (IsTrackingVehicle)
                 {
@@ -237,6 +238,8 @@
                 {
                     q = RelativeRotation.ToQuaternion();
                 }
+
+                q.Normalize();
 
                 CVehicleWeaponMgr* weaponMgr = nativeVehicle->GetWeaponMgr();
                 if (weaponMgr != null)
@@ -274,6 +277,8 @@
             }
             else
             {
+                Position = Vehicle.GetOffsetPosition(Offset);
+
                 if (IsTrackingVehicle)
                 {
                     Direction = (TrackedVehicle.Position - Position).ToNormalized();

@@ -269,7 +269,6 @@
         RANGE_2 = 4,
     }
 
-    // TODO: find why the light is cut inside tunnels, maybe some flag?
     [Flags]
     internal enum eLightFlags : uint
     {
