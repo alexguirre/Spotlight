@@ -275,22 +275,24 @@
     {
         None = 0,
 
-        ShadowsFlag1 = 0x40, // both needed
-        ShadowsFlag2 = 0x80,
+        CanRenderUnderground = 0x8, // if not set the light won't render in underground parts of the map, such as tunnels
+
+        ShadowsFlag1 = 0x40, // needed
+        ShadowsFlag2 = 0x80, // needed
         ShadowsFlag3 = 0x100, // needed, otherwise shadow flickers
         ShadowsFlag4 = 0x4000000, // needed, otherwise the shadow doesn't render properly sometimes
 
-        ShadowsEnabled = ShadowsFlag1 | ShadowsFlag2 | ShadowsFlag3 | ShadowsFlag4,
+        EnableShadows = ShadowsFlag1 | ShadowsFlag2 | ShadowsFlag3 | ShadowsFlag4,
 
 
-        VolumeEnabled = 0x1000,
-        VolumeOuterColorVisible = 0x80000,
+        EnableVolume = 0x1000,
+        UseVolumeOuterColor = 0x80000,
 
 
         DisableSpecular = 0x2000,
 
         IgnoreGlass = 0x800000, // if set the light won't affect glass
 
-        DisableLight = 0x40000000,
+        DisableLight = 0x40000000, // if set the light isn't rendered, can be used to draw only the volume
     }
 }

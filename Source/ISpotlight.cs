@@ -35,8 +35,27 @@
         {
             if (!IsActive)
                 return;
-            
-            CLightDrawData* drawData = CLightDrawData.New(eLightType.SPOT_LIGHT, Data.Volume ? eLightFlags.VolumeEnabled : eLightFlags.None, Position, Data.Color, Data.Intensity);
+
+            eLightFlags lightFlags = eLightFlags.CanRenderUnderground;
+
+            if (Data.Volume)
+            {
+                lightFlags |= eLightFlags.EnableVolume;
+            }
+
+            if (!Data.Specular)
+            {
+                lightFlags |= eLightFlags.DisableSpecular;
+            }
+
+            if (Data.CastShadows)
+            {
+                // shadows aren't casted in underground areas, such as tunnels, 
+                // not sure how to fix this as the game's CSearchLight has the same issue
+                lightFlags |= eLightFlags.EnableShadows;
+            }
+
+            CLightDrawData* drawData = CLightDrawData.New(eLightType.SPOT_LIGHT, lightFlags, Position, Data.Color, Data.Intensity);
             NativeVector3 dir = Direction;
             drawData->Range = Data.Range;
             drawData->VolumeIntensity = Data.VolumeIntensity;
@@ -69,14 +88,8 @@
 
             if (Data.CastShadows)
             {
-                drawData->Flags |= eLightFlags.ShadowsEnabled;
                 drawData->ShadowRenderId = shadowId;
                 drawData->ShadowUnkValue = GameFunctions.GetValueForLightDrawDataShadowUnkValue(drawData);
-            }
-
-            if (!Data.Specular)
-            {
-                drawData->Flags |= eLightFlags.DisableSpecular;
             }
 
             if (Data.Corona)
@@ -93,7 +106,7 @@
             totalShadowsId++;
             if (totalShadowsId > 200) // own limit, I don't know if game has a limit or in case it has, if it's lower
                 totalShadowsId = 1;
-            ulong id = 0x46B9FB69 + totalShadowsId;  // 0x46B9FB69 is the value that the original game functions take from the RagePluginHook's CGameScriptId (it's JOOAT hash of "RagePluginHook")
+            ulong id = 0xE79C9874 + totalShadowsId;  // 0xE79C9874 is JOAAT hash of "alexguirre", just a random base id for the shadow ids, game uses the script name hash for this 
             return id;
         }
     }
