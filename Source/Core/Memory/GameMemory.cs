@@ -1,7 +1,6 @@
 ﻿namespace Spotlight.Core.Memory
 {
     using System;
-    using System.Runtime.InteropServices;
 
     using Rage;
 

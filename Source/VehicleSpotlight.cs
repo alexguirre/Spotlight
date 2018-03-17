@@ -18,7 +18,6 @@
         public Vehicle Vehicle { get; }
         public VehicleData VehicleData { get; }
         
-        public Vector3 Offset { get => VehicleData.Offset; }
         public Rotator RelativeRotation { get; set; }
 
         public bool IsTrackingPed { get { return TrackedPed.Exists(); } }
@@ -277,7 +276,7 @@
             }
             else
             {
-                Position = Vehicle.GetOffsetPosition(Offset);
+                Position = Vehicle.GetOffsetPosition(VehicleData.Offset);
 
                 if (IsTrackingVehicle)
                 {

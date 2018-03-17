@@ -18,7 +18,7 @@
         public static Settings Settings { get; private set; }
 
         public static readonly List<VehicleSpotlight> Spotlights = new List<VehicleSpotlight>();
-        public static readonly List<SpotlightInputController> SpotlightInputControllers = new List<SpotlightInputController>();
+        public static readonly List<SpotlightInputController> InputControllers = new List<SpotlightInputController>();
         
         public static EditorForm Editor { get; private set; }
         
@@ -83,7 +83,7 @@
 
         private static void Update()
         {
-            if (SpotlightInputControllers.Any(c => c.ShouldToggleSpotlight()))
+            if (InputControllers.Any(c => c.ShouldToggleSpotlight()))
             {
                 VehicleSpotlight s = GetPlayerCurrentVehicleSpotlight();
 
@@ -104,7 +104,7 @@
                     continue;
                 }
 
-                s.Update(SpotlightInputControllers);
+                s.Update(InputControllers);
             }
 
             if ((Editor == null || !Editor.Window.IsVisible) && Game.IsKeyDown(Settings.EditorKey))
@@ -166,7 +166,7 @@
                     if (Settings.GeneralSettingsIniFile.DoesKeyExist("Controls", iniKeyName) && Settings.GeneralSettingsIniFile.ReadBoolean("Controls", iniKeyName, false))
                     {
                         SpotlightInputController c = (SpotlightInputController)Activator.CreateInstance(type, true);
-                        SpotlightInputControllers.Add(c);
+                        InputControllers.Add(c);
                     }
                 }
             }

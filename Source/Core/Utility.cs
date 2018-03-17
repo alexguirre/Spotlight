@@ -44,24 +44,6 @@
             return NativeFunction.Natives.GetDisabledControlNormal<float>(0, (int)control);
         }
 
-        //public static unsafe int GetBoneIndex(Vehicle vehicle, string boneName)
-        //{
-        //    if (!vehicle)
-        //        throw new Rage.Exceptions.InvalidHandleableException(vehicle);
-
-        //    CVehicle* veh = (CVehicle*)vehicle.MemoryAddress;
-        //    crSkeletonData* skelData = veh->inst->archetype->skeleton->skeletonData;
-        //    uint boneCount = skelData->bonesCount;
-
-        //    for (uint i = 0; i < boneCount; i++)
-        //    {
-        //        if (skelData->GetBoneNameForIndex(i) == boneName)
-        //            return unchecked((int)i);
-        //    }
-
-        //    return -1;
-        //}
-
         public static unsafe Vector3 GetBoneOriginalTranslation(Vehicle vehicle, int index)
         {
             CVehicle* veh = (CVehicle*)vehicle.MemoryAddress;
