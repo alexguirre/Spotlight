@@ -71,7 +71,7 @@
             Vehicle = vehicle;
             nativeVehicle = (CVehicle*)vehicle.MemoryAddress;
             VehicleData = GetVehicleDataForModel(vehicle.Model);
-            if (VehicleData.EnableTurret)
+            if (!VehicleData.DisableTurret)
             {
                 CVehicleWeaponMgr* weaponMgr = nativeVehicle->GetWeaponMgr();
                 if(weaponMgr != null)
@@ -148,6 +148,11 @@
                             }
 
                             enableTurret = true;
+
+                            if (!Plugin.Settings.Vehicles.Data.ContainsValue(VehicleData))
+                            {
+                                VehicleData.Offset = new XYZ(0.0f, 0.0f, 0.0f);
+                            }
                         }
                     }
                 }
@@ -304,24 +309,9 @@
                 if (model == new Model(entry.Key))
                     return entry.Value;
             }
-
-            Game.LogTrivial("No spotlight offset position loaded for model: " + model.Name);
-            Game.LogTrivial("Using default values");
+            
             return VehicleData.Default;
         }
-
-        //internal static Vector3 GetOffsetForModel(Model model)
-        //{
-        //    foreach (KeyValuePair<string, VehicleData> entry in Plugin.Settings.Vehicles.Data)
-        //    {
-        //        if (model == new Model(entry.Key))
-        //            return entry.Value.Offset;
-        //    }
-
-        //    Game.LogTrivial("No spotlight offset position loaded for model: " + model.Name);
-        //    Game.LogTrivial("Using default values");
-        //    return new Vector3(-0.8f, 1.17f, 0.52f);
-        //}
 
         internal static SpotlightData GetSpotlightDataForModel(Model model)
         {

@@ -29,9 +29,16 @@
 
             if (!Directory.Exists(@"Plugins\Spotlight Resources\"))
                 Directory.CreateDirectory(@"Plugins\Spotlight Resources\");
+            
+            string vehSettingsFile = @"Plugins\Spotlight Resources\VehiclesSettings.xml";
+            if (!File.Exists(vehSettingsFile) && File.Exists(@"Plugins\Spotlight Resources\Offsets.ini"))
+            {
+                // legacy
+                vehSettingsFile = @"Plugins\Spotlight Resources\Offsets.ini";
+            }
 
             Settings = new Settings(@"Plugins\Spotlight Resources\General.ini",
-                                    @"Plugins\Spotlight Resources\VehiclesSettings.xml",
+                                    vehSettingsFile,
                                     @"Plugins\Spotlight Resources\VisualSettings.xml",
                                     true);
 

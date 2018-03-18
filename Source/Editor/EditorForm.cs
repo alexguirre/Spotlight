@@ -50,7 +50,7 @@
 
             if (Game.LocalPlayer.Character.IsInAnyVehicle(false))
             {
-                // doesn't seem to be any TabControl.CurrentButton setter so we're doing it the reflection way
+                // there isn't any TabControl.CurrentButton setter so we're doing it the reflection way
                 FieldInfo currentButtonFieldInfo = typeof(TabControl).GetField("m_CurrentButton", BindingFlags.NonPublic | BindingFlags.Instance);
                 FieldInfo pageFieldInfo = typeof(TabButton).GetField("m_Page", BindingFlags.NonPublic | BindingFlags.Instance);
                 Model m = Game.LocalPlayer.Character.CurrentVehicle.Model;
@@ -131,7 +131,7 @@
             saveButton.Width = 150;
             saveButton.SetPosition(12, 50);
             saveButton.Clicked += OnOffsetsSaveButtonClicked;
-            saveButton.SetToolTipText("Saves all offsets to Offsets.ini.");
+            saveButton.SetToolTipText("Saves all offsets to the vehicle settings file");
 
 
             if (Game.LocalPlayer.Character.IsInAnyVehicle(false))
@@ -316,17 +316,21 @@
 
             Dictionary<string, Vector3> clone = Plugin.Settings.Vehicles.Data.ToDictionary(e => e.Key, e => (Vector3)e.Value.Offset);
             clone[selectedModel] = v;
-            Plugin.Settings.UpdateOffsets(clone, false);
+            Plugin.Settings.UpdateVehicleOffsets(clone, false);
+            Model m = selectedModel;
             foreach (VehicleSpotlight s in Plugin.Spotlights)
             {
-                //s.UpdateOffset();
+                if(s.Vehicle.Model == m)
+                {
+                    s.VehicleData.Offset = v;
+                }
             }
         }
 
         private void OnOffsetsSaveButtonClicked(object sender, ClickedEventArgs args)
         {
             Dictionary<string, Vector3> clone = Plugin.Settings.Vehicles.Data.ToDictionary(e => e.Key, e => (Vector3)e.Value.Offset);
-            Plugin.Settings.UpdateOffsets(clone, true);
+            Plugin.Settings.UpdateVehicleOffsets(clone, true);
         }
 
 

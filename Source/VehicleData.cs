@@ -7,19 +7,22 @@
     [Serializable]
     public sealed class VehicleData
     {
+        public const float DefaultOffsetX = -0.8f, DefaultOffsetY = 1.17f, DefaultOffsetZ = 0.52f;
+
         public XYZ Offset { get; set; }
-        public bool EnableTurret { get; set; }
+        public bool DisableTurret { get; set; }
+        public bool DisableTurretSpecified { get => DisableTurret == true; }
 
         public VehicleData()
         {
         }
 
-        public VehicleData(XYZ offset, bool enableTurret = false)
+        public VehicleData(XYZ offset, bool disableTurret = false)
         {
             Offset = offset;
-            EnableTurret = enableTurret;
+            DisableTurret = disableTurret;
         }
 
-        public static VehicleData Default => new VehicleData(new XYZ(-0.8f, 1.17f, 0.52f));
+        public static VehicleData Default => new VehicleData(new XYZ(DefaultOffsetX, DefaultOffsetY, DefaultOffsetZ));
     }
 }

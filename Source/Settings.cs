@@ -16,7 +16,7 @@
 
     internal sealed class Settings
     {
-        public string GeneralSettingsIniFileName { get; }
+        public string GeneralSettingsFileName { get; }
         public string VehiclesSettingsFileName { get; }
         public string VisualSettingsFileName { get; }
 
@@ -27,18 +27,18 @@
 
         public Keys EditorKey { get; }
 
-        internal Settings(string generalSettingsIniFileName, string vehiclesSettingsFileName, string visualSettingsFileName, bool generateDefaultsIfFileNotFound)
+        internal Settings(string generalSettingsFileName, string vehiclesSettingsFileName, string visualSettingsFileName, bool generateDefaultsIfFileNotFound)
         {
-            GeneralSettingsIniFileName = generalSettingsIniFileName;
+            GeneralSettingsFileName = generalSettingsFileName;
             VehiclesSettingsFileName = vehiclesSettingsFileName;
             VisualSettingsFileName = visualSettingsFileName;
 
             if (generateDefaultsIfFileNotFound)
             {
-                if (!File.Exists(generalSettingsIniFileName))
+                if (!File.Exists(generalSettingsFileName))
                 {
                     Game.LogTrivial("General settings file doesn't exists, creating default...");
-                    CreateDefaultGeneralSettingsIniFile(generalSettingsIniFileName);
+                    CreateDefaultGeneralSettingsIniFile(generalSettingsFileName);
                 }
 
                 if (!File.Exists(vehiclesSettingsFileName))
@@ -55,38 +55,62 @@
             }
 
             Game.LogTrivial("Reading settings...");
-            GeneralSettingsIniFile = new InitializationFile(generalSettingsIniFileName);
-            Vehicles = ReadVehiclesSettingsFromXMLFile(vehiclesSettingsFileName);
+            GeneralSettingsIniFile = new InitializationFile(generalSettingsFileName);
+            Vehicles = ReadVehiclesSettings(vehiclesSettingsFileName);
             Visual = ReadVisualSettingsFromXMLFile(visualSettingsFileName);
 
             EditorKey = GeneralSettingsIniFile.ReadEnum<Keys>("Misc", "EditorKey", Keys.F11);
         }
 
-        internal void UpdateOffsets(IDictionary<string, Vector3> offsets, bool saveToFile)
+        internal void UpdateVehicleOffsets(IDictionary<string, Vector3> offsets, bool saveToFile)
         {
-            // TODO: implement Settings.UpdateOffsets
-            //SpotlightOffsets = new ReadOnlyDictionary<string, Vector3>(offsets);
+            foreach (KeyValuePair<string, Vector3> item in offsets)
+            {
+                if (Vehicles.Data.ContainsKey(item.Key))
+                {
+                    Vehicles.Data[item.Key].Offset = item.Value;
+                }
+                else
+                {
+                    Vehicles.Data.Add(item.Key, new VehicleData(item.Value));
+                }
+            }
 
             if (saveToFile)
             {
-                //using (StreamWriter writer = new StreamWriter(SpotlightOffsetsIniFileName, false))
-                //{
-                //    foreach (KeyValuePair<string, Vector3> item in SpotlightOffsets)
-                //    {
-                //        writer.WriteLine($"[{item.Key}]");
-                //        writer.WriteLine($"X = {item.Value.X.ToString(CultureInfo.InvariantCulture)}");
-                //        writer.WriteLine($"Y = {item.Value.Y.ToString(CultureInfo.InvariantCulture)}");
-                //        writer.WriteLine($"Z = {item.Value.Z.ToString(CultureInfo.InvariantCulture)}");
-                //    }
-                //}
+                if (Vehicles.IsLegacy)
+                {
+                    Vehicles.WriteLegacy(VehiclesSettingsFileName);
+                }
+                else
+                {
+                    XmlSerializer ser = new XmlSerializer(typeof(VehiclesSettings));
+                    using (StreamWriter writer = new StreamWriter(VehiclesSettingsFileName, false))
+                    {
+                        ser.Serialize(writer, Vehicles);
+                    }
+                }
             }
         }
 
-        private VehiclesSettings ReadVehiclesSettingsFromXMLFile(string fileName)
+        private VehiclesSettings ReadVehiclesSettings(string fileName)
         {
             if (!File.Exists(fileName))
                 throw new FileNotFoundException("", fileName);
 
+            if (fileName.EndsWith(".xml"))
+            {
+                return ReadVehiclesSettingsFromXMLFile(fileName);
+            }
+            else if (fileName.EndsWith(".ini"))
+            {
+                return ReadVehiclesSettingsFromIniFile(fileName);
+            }
+            return null;
+        }
+
+        private VehiclesSettings ReadVehiclesSettingsFromXMLFile(string fileName)
+        {
             VehiclesSettings v;
             XmlSerializer ser = new XmlSerializer(typeof(VehiclesSettings));
             using (StreamReader reader = new StreamReader(fileName))
@@ -94,6 +118,13 @@
                 v = (VehiclesSettings)ser.Deserialize(reader);
             }
 
+            return v;
+        }
+
+        private VehiclesSettings ReadVehiclesSettingsFromIniFile(string fileName)
+        {
+            VehiclesSettings v = new VehiclesSettings();
+            v.ReadLegacy(fileName);
             return v;
         }
 
@@ -142,7 +173,7 @@
                     { "SHERIFF2",   new VehicleData(new XYZ(-0.92f, 1.16f, 0.925f)) },
                     { "PRANGER",    new VehicleData(new XYZ(-0.92f, 1.16f, 0.925f)) },
                     { "LGUARD",     new VehicleData(new XYZ(-1.01f, 1.04f, 0.81f)) },
-                    { "POLMAV",     new VehicleData(new XYZ(0.0f, 0.0f, 0.0f), true) },
+                    { "POLMAV",     new VehicleData(new XYZ(0.0f, 0.0f, 0.0f)) },
                     { "BUZZARD",    new VehicleData(new XYZ(0.0f, 2.34f, -0.36f)) },
                     { "BUZZARD2",   new VehicleData(new XYZ(0.0f, 2.34f, -0.36f)) },
                     { "PREDATOR",   new VehicleData(new XYZ(0.0f, -0.43f, 1.77f)) },
@@ -312,11 +343,85 @@ Toggle = I
     public sealed class VehiclesSettings : IXmlSerializable
     {
         public Dictionary<string, VehicleData> Data { get; set; }
+        public bool IsLegacy { get; private set; }
+
+        public void ReadLegacy(string iniFile)
+        {
+            IsLegacy = true;
+
+            InitializationFile ini = new InitializationFile(iniFile);
+            Data = new Dictionary<string, VehicleData>();
+
+            string[] sections = ini.GetSectionNames();
+            if (sections != null)
+            {
+                foreach (string modelName in sections)
+                {
+                    float x = 0.0f, y = 0.0f, z = 0.0f;
+
+                    bool success = false;
+                    System.Exception exc = null;
+                    try
+                    {
+                        if (ini.DoesSectionExist(modelName))
+                        {
+                            if (ini.DoesKeyExist(modelName, "X") &&
+                                ini.DoesKeyExist(modelName, "Y") &&
+                                ini.DoesKeyExist(modelName, "Z"))
+                            {
+
+                                x = ini.ReadSingle(modelName, "X", -0.8f);
+                                y = ini.ReadSingle(modelName, "Y", 1.17f);
+                                z = ini.ReadSingle(modelName, "Z", 0.52f);
+
+                                success = true;
+                            }
+                        }
+
+                    }
+                    catch (System.Exception ex)
+                    {
+                        exc = ex;
+                    }
+
+                    if (!success)
+                    {
+                        if (exc != null)
+                        {
+                            Game.LogTrivial($"  <WARNING> Failed to load spotlight offset position settings for vehicle model: {modelName}");
+                            Game.LogTrivial($"  <WARNING> {exc}");
+                        }
+
+                        x = VehicleData.DefaultOffsetX;
+                        y = VehicleData.DefaultOffsetY;
+                        z = VehicleData.DefaultOffsetZ;
+                    }
+
+                    Data.Add(modelName, new VehicleData(new XYZ(x, y, z)));
+                }
+            }
+        }
+
+        public void WriteLegacy(string iniFile)
+        {
+            using (StreamWriter writer = new StreamWriter(iniFile, false))
+            {
+                foreach (KeyValuePair<string, VehicleData> item in Data)
+                {
+                    writer.WriteLine($"[{item.Key}]");
+                    writer.WriteLine($"X = {item.Value.Offset.X.ToString(CultureInfo.InvariantCulture)}");
+                    writer.WriteLine($"Y = {item.Value.Offset.Y.ToString(CultureInfo.InvariantCulture)}");
+                    writer.WriteLine($"Z = {item.Value.Offset.Z.ToString(CultureInfo.InvariantCulture)}");
+                }
+            }
+        }
 
         XmlSchema IXmlSerializable.GetSchema() => null;
 
         void IXmlSerializable.ReadXml(XmlReader reader)
         {
+            IsLegacy = false;
+
             XmlAttributeOverrides attr = new XmlAttributeOverrides();
             attr.Add(typeof(VehicleData), new XmlAttributes());
 
