@@ -38,7 +38,7 @@
 
         void IXmlSerializable.WriteXml(XmlWriter writer)
         {
-            writer.WriteAttributeString("X", Z.ToString(CultureInfo.InvariantCulture));
+            writer.WriteAttributeString("X", X.ToString(CultureInfo.InvariantCulture));
             writer.WriteAttributeString("Y", Y.ToString(CultureInfo.InvariantCulture));
             writer.WriteAttributeString("Z", Z.ToString(CultureInfo.InvariantCulture));
         }
