@@ -82,10 +82,17 @@
             fixed (CVehicleWeapon* v = &this)
             {
                 IntPtr weapon = *(IntPtr*)((IntPtr)v + 0x18);
-                IntPtr info = *(IntPtr*)(weapon + 0x40);
-                uint name = *(uint*)(info + 0x10);
-                return name;
+                if (weapon != IntPtr.Zero)
+                {
+                    IntPtr info = *(IntPtr*)(weapon + 0x40);
+                    if (info != IntPtr.Zero)
+                    {
+                        uint name = *(uint*)(info + 0x10);
+                        return name;
+                    }
+                }
             }
+            return 0xFFFFFFFF;
         }
     }
 
