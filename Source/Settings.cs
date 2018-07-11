@@ -1,14 +1,13 @@
 ﻿namespace Spotlight
 {
+    using System;
     using System.IO;
     using System.Xml;
-    using System.Drawing;
     using System.Xml.Schema;
     using System.Globalization;
     using System.Windows.Forms;
     using System.Xml.Serialization;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     
     using Rage;
 
@@ -37,19 +36,19 @@
             {
                 if (!File.Exists(generalSettingsFileName))
                 {
-                    Game.LogTrivial("General settings file doesn't exists, creating default...");
+                    Game.LogTrivial($"'{Path.GetFileName(generalSettingsFileName)}' file doesn't exists, creating default...");
                     CreateDefaultGeneralSettingsIniFile(generalSettingsFileName);
                 }
 
                 if (!File.Exists(vehiclesSettingsFileName))
                 {
-                    Game.LogTrivial("Vehicle settings file doesn't exists, creating default...");
-                    CreateDefaultVehiclesSettingsXMLFile(vehiclesSettingsFileName);
+                    Game.LogTrivial($"'{Path.GetFileName(vehiclesSettingsFileName)}' file doesn't exists, creating default...");
+                    CreateDefaultVehiclesSettingsFile(vehiclesSettingsFileName, true);
                 }
 
                 if (!File.Exists(visualSettingsFileName))
                 {
-                    Game.LogTrivial("Visual settings file doesn't exists, creating default...");
+                    Game.LogTrivial($"'{Path.GetFileName(visualSettingsFileName)}' file doesn't exists, creating default...");
                     CreateDefaultVisualSettingsXMLFile(visualSettingsFileName);
                 }
             }
@@ -62,17 +61,18 @@
             EditorKey = GeneralSettingsIniFile.ReadEnum<Keys>("Misc", "EditorKey", Keys.F11);
         }
 
-        internal void UpdateVehicleOffsets(IDictionary<string, Vector3> offsets, bool saveToFile)
+        internal void UpdateVehicleSettings(IDictionary<string, Tuple<Vector3, bool>> settingsByModelName, bool saveToFile)
         {
-            foreach (KeyValuePair<string, Vector3> item in offsets)
+            foreach (KeyValuePair<string, Tuple<Vector3, bool>> item in settingsByModelName)
             {
                 if (Vehicles.Data.ContainsKey(item.Key))
                 {
-                    Vehicles.Data[item.Key].Offset = item.Value;
+                    Vehicles.Data[item.Key].Offset = item.Value.Item1;
+                    Vehicles.Data[item.Key].DisableTurret = item.Value.Item2;
                 }
                 else
                 {
-                    Vehicles.Data.Add(item.Key, new VehicleData(item.Value));
+                    Vehicles.Data.Add(item.Key, new VehicleData(item.Value.Item1, item.Value.Item2));
                 }
             }
 
@@ -98,15 +98,17 @@
             if (!File.Exists(fileName))
                 throw new FileNotFoundException("", fileName);
 
-            if (fileName.EndsWith(".xml"))
-            {
-                return ReadVehiclesSettingsFromXMLFile(fileName);
-            }
-            else if (fileName.EndsWith(".ini"))
-            {
-                return ReadVehiclesSettingsFromIniFile(fileName);
-            }
-            return null;
+            return ReadVehiclesSettingsFromIniFile(fileName);
+
+            //if (fileName.EndsWith(".xml"))
+            //{
+            //    return ReadVehiclesSettingsFromXMLFile(fileName);
+            //}
+            //else if (fileName.EndsWith(".ini"))
+            //{
+            //    return ReadVehiclesSettingsFromIniFile(fileName);
+            //}
+            //return null;
         }
 
         private VehiclesSettings ReadVehiclesSettingsFromXMLFile(string fileName)
@@ -153,7 +155,7 @@
             }
         }
 
-        private void CreateDefaultVehiclesSettingsXMLFile(string fileName)
+        private void CreateDefaultVehiclesSettingsFile(string fileName, bool legacy)
         {
             VehiclesSettings v = new VehiclesSettings
             {
@@ -180,10 +182,22 @@
                 }
             };
 
-            XmlSerializer ser = new XmlSerializer(typeof(VehiclesSettings));
-            using (StreamWriter writer = new StreamWriter(fileName, false))
+            if (legacy)
             {
-                ser.Serialize(writer, v);
+                File.WriteAllLines(fileName, new[] 
+                {
+                    // TODO: explain requirements for turret movement and DisableTurret option
+                    "",
+                });
+                v.WriteLegacy(fileName);
+            }
+            else
+            {
+                XmlSerializer ser = new XmlSerializer(typeof(VehiclesSettings));
+                using (StreamWriter writer = new StreamWriter(fileName, false))
+                {
+                    ser.Serialize(writer, v);
+                }
             }
         }
 
@@ -357,27 +371,28 @@ Toggle = I
             {
                 foreach (string modelName in sections)
                 {
-                    float x = 0.0f, y = 0.0f, z = 0.0f;
+                    float x = VehicleData.DefaultOffsetX, y = VehicleData.DefaultOffsetY, z = VehicleData.DefaultOffsetZ;
+                    bool disableTurret = VehicleData.DefaultDisableTurret;
 
                     bool success = false;
                     System.Exception exc = null;
                     try
                     {
-                        if (ini.DoesSectionExist(modelName))
+                        if (ini.DoesKeyExist(modelName, VehicleData.IniKeyX) &&
+                            ini.DoesKeyExist(modelName, VehicleData.IniKeyY) &&
+                            ini.DoesKeyExist(modelName, VehicleData.IniKeyZ))
                         {
-                            if (ini.DoesKeyExist(modelName, "X") &&
-                                ini.DoesKeyExist(modelName, "Y") &&
-                                ini.DoesKeyExist(modelName, "Z"))
+
+                            x = ini.ReadSingle(modelName, VehicleData.IniKeyX, VehicleData.DefaultOffsetX);
+                            y = ini.ReadSingle(modelName, VehicleData.IniKeyY, VehicleData.DefaultOffsetY);
+                            z = ini.ReadSingle(modelName, VehicleData.IniKeyZ, VehicleData.DefaultOffsetZ);
+                            if (ini.DoesKeyExist(modelName, VehicleData.IniKeyDisableTurret))
                             {
-
-                                x = ini.ReadSingle(modelName, "X", -0.8f);
-                                y = ini.ReadSingle(modelName, "Y", 1.17f);
-                                z = ini.ReadSingle(modelName, "Z", 0.52f);
-
-                                success = true;
+                                disableTurret = ini.ReadBoolean(modelName, VehicleData.IniKeyDisableTurret, VehicleData.DefaultDisableTurret);
                             }
-                        }
 
+                            success = true;
+                        }
                     }
                     catch (System.Exception ex)
                     {
@@ -395,25 +410,45 @@ Toggle = I
                         x = VehicleData.DefaultOffsetX;
                         y = VehicleData.DefaultOffsetY;
                         z = VehicleData.DefaultOffsetZ;
+                        disableTurret = VehicleData.DefaultDisableTurret;
                     }
 
-                    Data.Add(modelName, new VehicleData(new XYZ(x, y, z)));
+                    Data.Add(modelName, new VehicleData(new XYZ(x, y, z), disableTurret));
                 }
             }
         }
 
         public void WriteLegacy(string iniFile)
         {
-            using (StreamWriter writer = new StreamWriter(iniFile, false))
+            InitializationFile ini = new InitializationFile(iniFile, CultureInfo.InvariantCulture, false);
+            foreach (KeyValuePair<string, VehicleData> item in Data)
             {
-                foreach (KeyValuePair<string, VehicleData> item in Data)
+                // Write overloads don't use the format provider passed in the constructor, so use ToString instead
+                ini.Write(item.Key, VehicleData.IniKeyX, item.Value.Offset.X.ToString(CultureInfo.InvariantCulture));
+                ini.Write(item.Key, VehicleData.IniKeyY, item.Value.Offset.Y.ToString(CultureInfo.InvariantCulture));
+                ini.Write(item.Key, VehicleData.IniKeyZ, item.Value.Offset.Z.ToString(CultureInfo.InvariantCulture));
+                if (item.Value.DisableTurretSpecified)
                 {
-                    writer.WriteLine($"[{item.Key}]");
-                    writer.WriteLine($"X = {item.Value.Offset.X.ToString(CultureInfo.InvariantCulture)}");
-                    writer.WriteLine($"Y = {item.Value.Offset.Y.ToString(CultureInfo.InvariantCulture)}");
-                    writer.WriteLine($"Z = {item.Value.Offset.Z.ToString(CultureInfo.InvariantCulture)}");
+                    ini.Write(item.Key, VehicleData.IniKeyDisableTurret, item.Value.DisableTurret.ToString(CultureInfo.InvariantCulture));
                 }
             }
+            ini.Layout();
+
+            //using (StreamWriter writer = new StreamWriter(iniFile, false))
+            //{
+            //    foreach (KeyValuePair<string, VehicleData> item in Data)
+            //    {
+            //        writer.WriteLine($"[{item.Key}]");
+            //        writer.WriteLine($"{VehicleData.IniKeyX} = {item.Value.Offset.X.ToString(CultureInfo.InvariantCulture)}");
+            //        writer.WriteLine($"{VehicleData.IniKeyY} = {item.Value.Offset.Y.ToString(CultureInfo.InvariantCulture)}");
+            //        writer.WriteLine($"{VehicleData.IniKeyZ} = {item.Value.Offset.Z.ToString(CultureInfo.InvariantCulture)}");
+            //        if (item.Value.DisableTurretSpecified)
+            //        {
+            //            writer.WriteLine($"{VehicleData.IniKeyDisableTurret} = {item.Value.DisableTurret.ToString(CultureInfo.InvariantCulture)}");
+            //        }
+            //        writer.WriteLine();
+            //    }
+            //}
         }
 
         XmlSchema IXmlSerializable.GetSchema() => null;

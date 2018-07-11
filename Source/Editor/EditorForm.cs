@@ -314,9 +314,9 @@
                                     ((NumericUpDownEx)Window.FindChildByName("OffsetsYNumUpDown", true)).Value,
                                     ((NumericUpDownEx)Window.FindChildByName("OffsetsZNumUpDown", true)).Value);
 
-            Dictionary<string, Vector3> clone = Plugin.Settings.Vehicles.Data.ToDictionary(e => e.Key, e => (Vector3)e.Value.Offset);
-            clone[selectedModel] = v;
-            Plugin.Settings.UpdateVehicleOffsets(clone, false);
+            Dictionary<string, Tuple<Vector3, bool>> clone = Plugin.Settings.Vehicles.Data.ToDictionary(e => e.Key, e => Tuple.Create((Vector3)e.Value.Offset, e.Value.DisableTurret));
+            clone[selectedModel] = Tuple.Create(v, (clone.ContainsKey(selectedModel) ? clone[selectedModel].Item2 : VehicleData.DefaultDisableTurret)); // TODO: add option to edit DisableTurret in editor
+            Plugin.Settings.UpdateVehicleSettings(clone, false);
             Model m = selectedModel;
             foreach (VehicleSpotlight s in Plugin.Spotlights)
             {
@@ -329,8 +329,8 @@
 
         private void OnOffsetsSaveButtonClicked(object sender, ClickedEventArgs args)
         {
-            Dictionary<string, Vector3> clone = Plugin.Settings.Vehicles.Data.ToDictionary(e => e.Key, e => (Vector3)e.Value.Offset);
-            Plugin.Settings.UpdateVehicleOffsets(clone, true);
+            Dictionary<string, Tuple<Vector3, bool>> clone = Plugin.Settings.Vehicles.Data.ToDictionary(e => e.Key, e => Tuple.Create((Vector3)e.Value.Offset, e.Value.DisableTurret));
+            Plugin.Settings.UpdateVehicleSettings(clone, true);
         }
 
 
