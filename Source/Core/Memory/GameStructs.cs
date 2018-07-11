@@ -5,6 +5,20 @@
 
     using Rage;
 
+    internal enum eBoneRefId : int
+    {
+        // TODO: see if there are any more turret bones
+        turret_1base = 281,
+        turret_2base = 283,
+        turret_3base = 285,
+        turret_4base = 287,
+        
+        turret_1barrel = 282,
+        turret_2barrel = 284,
+        turret_3barrel = 286,
+        turret_4barrel = 288,
+    }
+
     [StructLayout(LayoutKind.Explicit)]
     internal unsafe struct CVehicle
     {
@@ -32,11 +46,19 @@
                 return (byte*)boneRefs;
             }
         }
+
+        public byte GetBoneIndex(eBoneRefId boneRefId)
+        {
+            return GetBoneRefsArray()[(int)boneRefId];
+        }
     }
 
     [StructLayout(LayoutKind.Explicit)]
     internal unsafe struct CVehicleWeaponMgr
     {
+        [FieldOffset(0x110)] public int TurretCount;
+        [FieldOffset(0x114)] public int WeaponCount;
+
         public int GetMaxTurrets() { return 6; }
         public int GetMaxWeapons() { return 6; }
 
@@ -62,8 +84,8 @@
     [StructLayout(LayoutKind.Explicit)]
     internal unsafe struct CTurret
     {
-        [FieldOffset(0x0010)] public int baseBoneRefId;
-        [FieldOffset(0x0014)] public int barrelBoneRefId;
+        [FieldOffset(0x0010)] public eBoneRefId baseBoneRefId;
+        [FieldOffset(0x0014)] public eBoneRefId barrelBoneRefId;
 
         [FieldOffset(0x20)] public Quaternion rot1;
         [FieldOffset(0x30)] public Quaternion rot2;
@@ -73,8 +95,7 @@
     [StructLayout(LayoutKind.Explicit)]
     internal unsafe struct CVehicleWeapon
     {
-        [FieldOffset(0x0014)] public int turretIndex;
-        [FieldOffset(0x0020)] public int boneRefId;
+        [FieldOffset(0x0020)] public eBoneRefId weaponBoneRefId;
 
         public uint GetName()
         {

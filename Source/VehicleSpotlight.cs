@@ -1,6 +1,7 @@
 ﻿namespace Spotlight
 {
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     
     using Rage;
@@ -11,6 +12,7 @@
 
     internal unsafe class VehicleSpotlight : BaseSpotlight
     {
+        private const eBoneRefId InvalidBoneRefId = (eBoneRefId)(-1);
         private const uint VehicleWeaponSearchlightHash = 0xCDAC517D; // VEHICLE_WEAPON_SEARCHLIGHT
 
         private readonly CVehicle* nativeVehicle;
@@ -40,7 +42,7 @@
                         CVehicleWeaponMgr* weaponMgr = nativeVehicle->GetWeaponMgr();
                         if (weaponMgr != null)
                         {
-                            CTurret* turret = weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex);
+                            CTurret* turret = weaponMgr->GetTurret(nativeTurretIndex);
                             turret->baseBoneRefId = nativeTurretBaseBoneRefId;
                             turret->barrelBoneRefId = nativeTurretBarrelBoneRefId;
                         }
@@ -63,9 +65,10 @@
         private readonly bool enableTurret = false;
 
         private readonly int nativeWeaponIndex = -1;
-        private readonly int nativeTurretBaseBoneRefId = -1;
-        private readonly int nativeTurretBarrelBoneRefId = -1;
+        private readonly int nativeTurretIndex = -1;
+        private readonly eBoneRefId nativeTurretBaseBoneRefId = InvalidBoneRefId, nativeTurretBarrelBoneRefId = InvalidBoneRefId;
 
+        // TODO: small lag when executing for the first time, probably due to JIT compilation, figure out if there's a fix
         public VehicleSpotlight(Vehicle vehicle) : base(GetSpotlightDataForModel(vehicle.Model))
         {
             Vehicle = vehicle;
@@ -73,10 +76,15 @@
             VehicleData = GetVehicleDataForModel(vehicle.Model);
             if (!VehicleData.DisableTurret)
             {
+#if DEBUG
+                System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+                sw.Start();
+#endif
+
                 CVehicleWeaponMgr* weaponMgr = nativeVehicle->GetWeaponMgr();
                 if(weaponMgr != null)
                 {
-                    for (int i = 0; i < weaponMgr->GetMaxWeapons(); i++)
+                    for (int i = 0; i < weaponMgr->WeaponCount; i++)
                     {
                         CVehicleWeapon* weapon = weaponMgr->GetWeapon(i);
                         if(weapon != null)
@@ -93,69 +101,163 @@
                         }
                     }
 
+                    Game.LogTrivialDebug($"[Weapon Search] Index -> {nativeWeaponIndex}");
+#if DEBUG
+                    Game.LogTrivial($"[Weapon Search Time] {sw.Elapsed} | {sw.ElapsedMilliseconds} | {sw.ElapsedTicks}");
+#endif
+
                     if (nativeWeaponIndex != -1)
                     {
-                        int turretIndex = weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex;
-                        CTurret* turret = null;
-                        if (turretIndex >= 0 && turretIndex < weaponMgr->GetMaxTurrets())
+                        eBoneRefId GetTurretBoneRefIdForIndex(ushort boneIndex)
                         {
-                            turret = weaponMgr->GetTurret(turretIndex);
+                            eBoneRefId[] ids = new[]
+                            {
+                                eBoneRefId.turret_1base, eBoneRefId.turret_2base, eBoneRefId.turret_3base, eBoneRefId.turret_4base,
+                                eBoneRefId.turret_1barrel, eBoneRefId.turret_2barrel, eBoneRefId.turret_3barrel, eBoneRefId.turret_4barrel,
+                            };
+
+                            foreach (eBoneRefId i in ids)
+                            {
+                                if (nativeVehicle->GetBoneIndex(i) == boneIndex)
+                                {
+                                    return i;
+                                }
+                            }
+                            return InvalidBoneRefId;
                         }
 
-                        if (turret != null)
+                        bool IsTurretBaseBone(ushort boneIndex)
                         {
-                            int nativeWeaponBoneRefId = weaponMgr->GetWeapon(nativeWeaponIndex)->boneRefId;
-                            nativeTurretBaseBoneRefId = turret->baseBoneRefId;
-                            nativeTurretBarrelBoneRefId = turret->barrelBoneRefId;
+                            eBoneRefId id = GetTurretBoneRefIdForIndex(boneIndex);
+                            return Array.Exists(new[] { eBoneRefId.turret_1base, eBoneRefId.turret_2base, eBoneRefId.turret_3base, eBoneRefId.turret_4base }, (e) => e == id);
+                        }
 
-                            if (nativeWeaponBoneRefId != -1)
+                        bool IsTurretBarrelBone(ushort boneIndex)
+                        {
+                            eBoneRefId id = GetTurretBoneRefIdForIndex(boneIndex);
+                            return Array.Exists(new[] { eBoneRefId.turret_1barrel, eBoneRefId.turret_2barrel, eBoneRefId.turret_3barrel, eBoneRefId.turret_4barrel }, (e) => e == id);
+                        }
+
+                        eBoneRefId nativeWeaponBoneRefId = weaponMgr->GetWeapon(nativeWeaponIndex)->weaponBoneRefId;
+                        crSkeletonData* skel = nativeVehicle->inst->archetype->skeleton->skeletonData;
+                        crSkeletonBoneData* weaponBoneData = &skel->bones[nativeVehicle->GetBoneIndex(nativeWeaponBoneRefId)];
+
+                        crSkeletonBoneData* currentBoneData = weaponBoneData;
+                        eBoneRefId turretBaseBoneRefId = InvalidBoneRefId;
+                        eBoneRefId turretBarrelBoneRefId = InvalidBoneRefId;
+                        do
+                        {
+                            if (currentBoneData->parentIndex == 0)
                             {
-                                byte i = nativeVehicle->GetBoneRefsArray()[nativeWeaponBoneRefId];
-                                if(i != 0xFF)
+                                break;
+                            }
+                            else
+                            {
+                                ushort parentIndex = currentBoneData->parentIndex;
+
+                                if(turretBaseBoneRefId == InvalidBoneRefId)
                                 {
-                                    int nativeWeaponBoneIndex = i;
-                                    if (!VehicleBone.TryGetForVehicle(Vehicle, nativeWeaponBoneIndex, out VehicleBone weaponBone))
+                                    if (IsTurretBaseBone(parentIndex))
                                     {
-                                        throw new InvalidOperationException($"The model \"{vehicle.Model.Name}\" doesn't have the bone of index {nativeWeaponBoneIndex} for the CVehicleWeapon Bone");
+                                        turretBaseBoneRefId = GetTurretBoneRefIdForIndex(parentIndex);
+                                        break;
                                     }
-                                    WeaponBone = weaponBone;
-                                }
-                            }
-
-                            if (nativeTurretBaseBoneRefId != -1)
-                            {
-                                byte i = nativeVehicle->GetBoneRefsArray()[nativeTurretBaseBoneRefId];
-                                if (i != 0xFF)
-                                {
-                                    int nativeTurretBaseBoneIndex = i;
-                                    if (!VehicleBone.TryGetForVehicle(Vehicle, nativeTurretBaseBoneIndex, out VehicleBone baseBone))
+                                    else if (turretBarrelBoneRefId == InvalidBoneRefId && IsTurretBarrelBone(parentIndex))
                                     {
-                                        throw new InvalidOperationException($"The model \"{vehicle.Model.Name}\" doesn't have the bone of index {nativeTurretBaseBoneIndex} for the CTurret Base Bone");
+                                        turretBarrelBoneRefId = GetTurretBoneRefIdForIndex(parentIndex);
                                     }
-                                    TurretBaseBone = baseBone;
                                 }
-                            }
 
-                            if (nativeTurretBarrelBoneRefId != -1)
+                                currentBoneData = &skel->bones[parentIndex];
+                            }
+                        }
+                        while (turretBaseBoneRefId == InvalidBoneRefId);
+
+                        Game.LogTrivialDebug($"[Bone Search] Weapon -> {(int)nativeWeaponBoneRefId}, Turret Base -> {(int)turretBaseBoneRefId}, Turret Barrel -> {(int)turretBarrelBoneRefId}");
+#if DEBUG
+                        Game.LogTrivial($"[Bone Search Time] {sw.Elapsed} | {sw.ElapsedMilliseconds} | {sw.ElapsedTicks}");
+#endif
+
+                        if (turretBaseBoneRefId != InvalidBoneRefId)
+                        {
+                            nativeTurretIndex = -1;
+                            for (int i = 0; i < weaponMgr->TurretCount; i++)
                             {
-                                byte i = nativeVehicle->GetBoneRefsArray()[nativeTurretBarrelBoneRefId];
-                                if (i != 0xFF)
+                                CTurret* t = weaponMgr->GetTurret(i);
+                                if(t != null)
                                 {
-                                    int nativeTurretBarrelBoneIndex = i;
-                                    VehicleBone.TryGetForVehicle(Vehicle, nativeTurretBarrelBoneIndex, out VehicleBone barrelBone);
-                                    TurretBarrelBone = barrelBone;
+                                    if(t->baseBoneRefId == turretBaseBoneRefId)
+                                    {
+                                        nativeTurretIndex = i;
+                                        break;
+                                    }
                                 }
                             }
 
-                            enableTurret = true;
+                            Game.LogTrivialDebug($"[Turret Search] Index -> {nativeTurretIndex}");
+#if DEBUG
+                            Game.LogTrivial($"[Turret Search Time] {sw.Elapsed} | {sw.ElapsedMilliseconds} | {sw.ElapsedTicks}");
+#endif
 
-                            if (!Plugin.Settings.Vehicles.Data.ContainsValue(VehicleData))
+                            if (nativeTurretIndex != -1)
                             {
-                                VehicleData.Offset = new XYZ(0.0f, 0.0f, 0.0f);
+                                nativeTurretBaseBoneRefId = turretBaseBoneRefId;
+                                nativeTurretBarrelBoneRefId = turretBarrelBoneRefId;
+
+                                if (nativeWeaponBoneRefId != InvalidBoneRefId)
+                                {
+                                    byte i = nativeVehicle->GetBoneIndex(nativeWeaponBoneRefId);
+                                    if (i != 0xFF)
+                                    {
+                                        int nativeWeaponBoneIndex = i;
+                                        if (!VehicleBone.TryGetForVehicle(Vehicle, nativeWeaponBoneIndex, out VehicleBone weaponBone))
+                                        {
+                                            throw new InvalidOperationException($"The model \"{vehicle.Model.Name}\" doesn't have the bone of index {nativeWeaponBoneIndex} for the CVehicleWeapon Bone");
+                                        }
+                                        WeaponBone = weaponBone;
+                                    }
+                                }
+
+                                if (nativeTurretBaseBoneRefId != InvalidBoneRefId)
+                                {
+                                    byte i = nativeVehicle->GetBoneIndex(nativeTurretBaseBoneRefId);
+                                    if (i != 0xFF)
+                                    {
+                                        int nativeTurretBaseBoneIndex = i;
+                                        if (!VehicleBone.TryGetForVehicle(Vehicle, nativeTurretBaseBoneIndex, out VehicleBone baseBone))
+                                        {
+                                            throw new InvalidOperationException($"The model \"{vehicle.Model.Name}\" doesn't have the bone of index {nativeTurretBaseBoneIndex} for the CTurret Base Bone");
+                                        }
+                                        TurretBaseBone = baseBone;
+                                    }
+                                }
+
+                                if (nativeTurretBarrelBoneRefId != InvalidBoneRefId)
+                                {
+                                    byte i = nativeVehicle->GetBoneIndex(nativeTurretBarrelBoneRefId);
+                                    if (i != 0xFF)
+                                    {
+                                        int nativeTurretBarrelBoneIndex = i;
+                                        VehicleBone.TryGetForVehicle(Vehicle, nativeTurretBarrelBoneIndex, out VehicleBone barrelBone);
+                                        TurretBarrelBone = barrelBone;
+                                    }
+                                }
+
+                                enableTurret = true;
+
+                                if (!Plugin.Settings.Vehicles.Data.ContainsValue(VehicleData))
+                                {
+                                    VehicleData.Offset = new XYZ(0.0f, 0.0f, 0.0f);
+                                }
                             }
                         }
                     }
                 }
+
+#if DEBUG
+                sw.Stop();
+                Game.LogTrivial($"[Turret Stuff Time] {sw.Elapsed} | {sw.ElapsedMilliseconds} | {sw.ElapsedTicks}");
+#endif
             }
 
             if (vehicle.Model.IsHelicopter)
@@ -169,7 +271,7 @@
                 CVehicleWeaponMgr* weaponMgr = nativeVehicle->GetWeaponMgr();
                 if (weaponMgr != null)
                 {
-                    CTurret* turret = weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex);
+                    CTurret* turret = weaponMgr->GetTurret(nativeTurretIndex);
                     turret->baseBoneRefId = nativeTurretBaseBoneRefId;
                     turret->barrelBoneRefId = nativeTurretBarrelBoneRefId;
                 }
@@ -187,9 +289,9 @@
                 CVehicleWeaponMgr* weaponMgr = nativeVehicle->GetWeaponMgr();
                 if (weaponMgr != null)
                 {
-                    CTurret* turret = weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex);
-                    turret->baseBoneRefId = -1;
-                    turret->barrelBoneRefId = -1;
+                    CTurret* turret = weaponMgr->GetTurret(nativeTurretIndex);
+                    turret->baseBoneRefId = InvalidBoneRefId;
+                    turret->barrelBoneRefId = InvalidBoneRefId;
 
                     if (justActivated)
                     {
@@ -250,7 +352,7 @@
                 {
                     // changes turret rotation so when deactivating the spotlight
                     // the game code doesn't reset the turret bone rotation
-                    CTurret* turret = weaponMgr->GetTurret(weaponMgr->GetWeapon(nativeWeaponIndex)->turretIndex);
+                    CTurret* turret = weaponMgr->GetTurret(nativeTurretIndex);
                     turret->rot1 = q;
                     turret->rot2 = q;
                     turret->rot3 = q;
