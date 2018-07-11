@@ -14,4 +14,4 @@ using Rage.Attributes;
 [assembly: Guid("3ffad4ee-304c-47e6-8bdc-1dd20b9c6385")]
 [assembly: AssemblyVersion("1.3.0.*")]
 [assembly: AssemblyFileVersion("1.3.0.0")]
-[assembly: Plugin("Spotlight", Author = "alexguirre", PrefersSingleInstance = true)]
+[assembly: Plugin("Spotlight", Author = "alexguirre", PrefersSingleInstance = true, ShouldTickInPauseMenu = true)]

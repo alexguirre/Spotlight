@@ -91,6 +91,14 @@
 
         private static void Update()
         {
+            if (Core.Utility.IsPauseMenuActive)
+            {
+                // with ShouldTickInPauseMenu set the spotlight is still visible in the pause menu 
+                // without needing to do anything else, so if the pause menu is active don't do anything
+                return;
+            }
+
+
             if (InputControllers.Any(c => c.ShouldToggleSpotlight()))
             {
                 VehicleSpotlight s = GetPlayerCurrentVehicleSpotlight();
@@ -114,6 +122,7 @@
 
                 s.Update(InputControllers);
             }
+            
 
             if ((Editor == null || !Editor.Window.IsVisible) && Game.IsKeyDown(Settings.EditorKey))
             {

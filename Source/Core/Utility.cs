@@ -19,6 +19,8 @@
             GetDisabledControlNormal((GameControl)0);
         }
 
+        public static bool IsPauseMenuActive => NativeFunction.Natives.IsPauseMenuActive<bool>();
+
         public static bool IsKeyDownWithModifier(Keys key, Keys modifier)
         {
             return modifier == Keys.None ? Game.IsKeyDown(key) : (Game.IsKeyDownRightNow(modifier) && Game.IsKeyDown(key));

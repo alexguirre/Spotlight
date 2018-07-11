@@ -173,7 +173,7 @@
                         }
                         while (turretBaseBoneRefId == InvalidBoneRefId);
 
-                        Game.LogTrivialDebug($"[Bone Search] Weapon -> {(int)nativeWeaponBoneRefId}, Turret Base -> {(int)turretBaseBoneRefId}, Turret Barrel -> {(int)turretBarrelBoneRefId}");
+                        Game.LogTrivialDebug($"[Bone Search] Weapon -> {(int)nativeWeaponBoneRefId}, Turret Base -> {turretBaseBoneRefId.ToString()} ({(int)turretBaseBoneRefId}), Turret Barrel -> {turretBarrelBoneRefId.ToString()} ({(int)turretBarrelBoneRefId})");
 #if DEBUG
                         Game.LogTrivial($"[Bone Search Time] {sw.Elapsed} | {sw.ElapsedMilliseconds} | {sw.ElapsedTicks}");
 #endif
