@@ -122,14 +122,25 @@
                 upDown.Increment = 0.01f;
                 upDown.Value = v[i];
                 upDown.SetPosition(x + 15, y);
-                upDown.ValueChanged += OnOffsetsNumericUpDownValueChanged;
+                upDown.ValueChanged += OnOffsetsValueChanged;
             }
+
+            Label disableTurretLabel = new Label(page);
+            disableTurretLabel.Name = $"{name}DisableTurretLabel";
+            disableTurretLabel.Text = "Disable Turret";
+            disableTurretLabel.SetPosition(430, 5);
+            disableTurretLabel.Alignment = Pos.CenterV | Pos.Left;
+
+            CheckBox disableTurretCheckBox = new CheckBox(page);
+            disableTurretCheckBox.Name = $"{name}DisableTurretCheckBox";
+            disableTurretCheckBox.SetPosition(500, 5);
+            disableTurretCheckBox.CheckChanged += OnOffsetsValueChanged;
 
             Button saveButton = new Button(page);
             saveButton.Name = $"{name}SaveButton";
             saveButton.Text = "Save ";
             saveButton.Width = 150;
-            saveButton.SetPosition(12, 50);
+            saveButton.SetPosition(12, 65);
             saveButton.Clicked += OnOffsetsSaveButtonClicked;
             saveButton.SetToolTipText("Saves all offsets to the vehicle settings file");
 
@@ -296,26 +307,32 @@
             {
                 string selectedModel = selectedItem.Text;
                 Vector3 v = Vector3.Zero;
+                bool b = false;
                 if (Plugin.Settings.Vehicles.Data.ContainsKey(selectedModel))
                 {
                     v = Plugin.Settings.Vehicles.Data[selectedModel].Offset;
+                    b = Plugin.Settings.Vehicles.Data[selectedModel].DisableTurret;
                 }
                 
                 ((NumericUpDownEx)Window.FindChildByName("OffsetsXNumUpDown", true)).Value = v.X;
                 ((NumericUpDownEx)Window.FindChildByName("OffsetsYNumUpDown", true)).Value = v.Y;
                 ((NumericUpDownEx)Window.FindChildByName("OffsetsZNumUpDown", true)).Value = v.Z;
+                ((CheckBox)Window.FindChildByName("OffsetsDisableTurretCheckBox", true)).IsChecked = b;
             }
         }
 
-        private void OnOffsetsNumericUpDownValueChanged(object sender, EventArgs args)
+        private void OnOffsetsValueChanged(object sender, EventArgs args)
         {
             string selectedModel = ((ComboBox)Window.FindChildByName("OffsetsComboBox", true)).SelectedItem.Text;
             Vector3 v = new Vector3(((NumericUpDownEx)Window.FindChildByName("OffsetsXNumUpDown", true)).Value,
                                     ((NumericUpDownEx)Window.FindChildByName("OffsetsYNumUpDown", true)).Value,
                                     ((NumericUpDownEx)Window.FindChildByName("OffsetsZNumUpDown", true)).Value);
+            bool b = ((CheckBox)Window.FindChildByName("OffsetsDisableTurretCheckBox", true)).IsChecked;
 
             Dictionary<string, Tuple<Vector3, bool>> clone = Plugin.Settings.Vehicles.Data.ToDictionary(e => e.Key, e => Tuple.Create((Vector3)e.Value.Offset, e.Value.DisableTurret));
-            clone[selectedModel] = Tuple.Create(v, (clone.ContainsKey(selectedModel) ? clone[selectedModel].Item2 : VehicleData.DefaultDisableTurret)); // TODO: add option to edit DisableTurret in editor
+
+            bool disableTurretChanged = b != clone[selectedModel].Item2;
+            clone[selectedModel] = Tuple.Create(v, b);
             Plugin.Settings.UpdateVehicleSettings(clone, false);
             Model m = selectedModel;
             foreach (VehicleSpotlight s in Plugin.Spotlights)
@@ -323,6 +340,11 @@
                 if(s.Vehicle.Model == m)
                 {
                     s.VehicleData.Offset = v;
+                    s.VehicleData.DisableTurret = b;
+                    if (disableTurretChanged)
+                    {
+                        s.OnDisableTurretChanged();
+                    }
                 }
             }
         }

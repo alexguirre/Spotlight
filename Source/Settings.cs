@@ -427,9 +427,14 @@ Toggle = I
                 ini.Write(item.Key, VehicleData.IniKeyX, item.Value.Offset.X.ToString(CultureInfo.InvariantCulture));
                 ini.Write(item.Key, VehicleData.IniKeyY, item.Value.Offset.Y.ToString(CultureInfo.InvariantCulture));
                 ini.Write(item.Key, VehicleData.IniKeyZ, item.Value.Offset.Z.ToString(CultureInfo.InvariantCulture));
+
                 if (item.Value.DisableTurretSpecified)
                 {
                     ini.Write(item.Key, VehicleData.IniKeyDisableTurret, item.Value.DisableTurret.ToString(CultureInfo.InvariantCulture));
+                }
+                else if(ini.DoesKeyExist(item.Key, VehicleData.IniKeyDisableTurret))
+                {
+                    ini.DeleteKey(item.Key, VehicleData.IniKeyDisableTurret);
                 }
             }
             ini.Layout();
