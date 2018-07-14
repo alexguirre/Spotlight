@@ -331,7 +331,7 @@
 
             Dictionary<string, Tuple<Vector3, bool>> clone = Plugin.Settings.Vehicles.Data.ToDictionary(e => e.Key, e => Tuple.Create((Vector3)e.Value.Offset, e.Value.DisableTurret));
 
-            bool disableTurretChanged = b != clone[selectedModel].Item2;
+            bool disableTurretChanged = b != (clone.ContainsKey(selectedModel) ? clone[selectedModel].Item2 : false);
             clone[selectedModel] = Tuple.Create(v, b);
             Plugin.Settings.UpdateVehicleSettings(clone, false);
             Model m = selectedModel;
