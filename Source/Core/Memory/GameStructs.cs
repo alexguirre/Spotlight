@@ -7,7 +7,6 @@
 
     internal enum eBoneRefId : int
     {
-        // TODO: see if there are any more turret bones
         turret_1base = 281,
         turret_2base = 283,
         turret_3base = 285,

@@ -176,7 +176,7 @@
                     { "PRANGER",    new VehicleData(new XYZ(-0.92f, 1.16f, 0.925f)) },
                     { "LGUARD",     new VehicleData(new XYZ(-1.01f, 1.04f, 0.81f)) },
                     { "POLMAV",     new VehicleData(new XYZ(0.0f, 0.0f, 0.0f)) },
-                    { "BUZZARD",    new VehicleData(new XYZ(0.0f, 2.34f, -0.36f)) },
+                    { "BUZZARD",    new VehicleData(new XYZ(0.0f, 0.0f, 0.0f)) },
                     { "BUZZARD2",   new VehicleData(new XYZ(0.0f, 2.34f, -0.36f)) },
                     { "PREDATOR",   new VehicleData(new XYZ(0.0f, -0.43f, 1.77f)) },
                 }
