@@ -363,28 +363,61 @@
                     turret->rot3 = q;
                 }
 
+                // TODO: optimize CalculateRotationMatrix
+                void CalculateRotationMatrix(out Matrix rotationMatrix)
+                {
+                    List<ushort> indices = new List<ushort>();
+                    ushort idx = (ushort)WeaponBone.Index;
+                    do
+                    {
+                        indices.Add(idx);
+
+                        ushort parent = nativeVehicle->inst->archetype->skeleton->skeletonData->bones[idx].parentIndex;
+                        if(parent == 0xFFFF)
+                        {
+                            break;
+                        }
+
+                        idx = parent;
+                    } while (true);
+
+
+                    rotationMatrix = *nativeVehicle->inst->archetype->skeleton->entityTransform;
+                    for (int i = indices.Count - 1; i >= 0; i--)
+                    {
+                        Matrix left = nativeVehicle->inst->archetype->skeleton->desiredBonesTransformsArray[indices[i]];
+                        left.M14 = 0.0f;
+                        left.M24 = 0.0f;
+                        left.M34 = 0.0f;
+                        left.M44 = 1.0f;
+
+                        Matrix right = rotationMatrix;
+                        right.M14 = 0.0f;
+                        right.M24 = 0.0f;
+                        right.M34 = 0.0f;
+                        right.M44 = 1.0f;
+
+                        rotationMatrix = Matrix.Multiply(left, right);
+                    }
+                }
+
+                // TODO: turret doesn't aim correctly using new mouse controls when heli isn't flat
                 if (TurretBarrelBone == null)
                 {
                     TurretBaseBone.SetRotation(q);
-
-                    Matrix m = Matrix.Multiply(TurretBaseBone.Transform, *nativeVehicle->inst->archetype->skeleton->entityTransform);
-                    m.Decompose(out _, out q, out _);
-
-                    Direction = q.ToVector();
                 }
                 else
                 {
-
+                    // TODO: turret with barrel doesn't track entities correctly when heli isn't flat
                     Rotator rot = q.ToRotation();
                     TurretBaseBone.SetRotation(new Rotator(0.0f, 0.0f, rot.Yaw).ToQuaternion());
                     TurretBarrelBone.SetRotation(new Rotator(rot.Pitch, 0.0f, 0.0f).ToQuaternion());
-
-                    Matrix m = Matrix.Multiply(TurretBaseBone.Transform, *nativeVehicle->inst->archetype->skeleton->entityTransform);
-                    m = Matrix.Multiply(TurretBarrelBone.Transform, m);
-                    m.Decompose(out _, out q, out _);
-
-                    Direction = q.ToVector();
                 }
+
+                CalculateRotationMatrix(out Matrix m);
+                m.Decompose(out _, out q, out _);
+
+                Direction = q.ToVector();
             }
             else
             {

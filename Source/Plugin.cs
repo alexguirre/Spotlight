@@ -81,10 +81,38 @@
             // therefore we copy the allocator pointers from the main thread TLS to our current thread TLS.
             WinFunctions.CopyTlsValues(WinFunctions.GetProcessMainThreadId(), WinFunctions.GetCurrentThreadId(), GameMemory.TlsAllocatorOffset0, GameMemory.TlsAllocatorOffset1, GameMemory.TlsAllocatorOffset2);
 
+            bool f = false;
             while (true)
             {
                 GameFiber.Yield();
-                
+
+#if DEBUG
+                if (Game.LocalPlayer.Character.CurrentVehicle)
+                {
+                    if (Game.IsKeyDown(System.Windows.Forms.Keys.Y))
+                    {
+                        Game.LocalPlayer.Character.CurrentVehicle.IsPositionFrozen = !f;
+                        f = !f;
+                    }
+                    else if (Game.IsKeyDown(System.Windows.Forms.Keys.D7))
+                    {
+                        Game.LocalPlayer.Character.CurrentVehicle.Rotation = new Rotator(45.0f, 0.0f, 0.0f);
+                    }
+                    else if (Game.IsKeyDown(System.Windows.Forms.Keys.D8))
+                    {
+                        Game.LocalPlayer.Character.CurrentVehicle.Rotation = new Rotator(0.0f, 45.0f, 0.0f);
+                    }
+                    else if (Game.IsKeyDown(System.Windows.Forms.Keys.D9))
+                    {
+                        Game.LocalPlayer.Character.CurrentVehicle.Rotation = new Rotator(0.0f, 0.0f, 45.0f);
+                    }
+                    else if (Game.IsKeyDown(System.Windows.Forms.Keys.D0))
+                    {
+                        Game.LocalPlayer.Character.CurrentVehicle.Rotation = Rotator.Zero;
+                    }
+                }
+#endif
+
                 Update();
             }
         }
