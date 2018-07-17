@@ -58,6 +58,7 @@
         private int nativeWeaponIndex = -1;
         private int nativeTurretIndex = -1;
         private eBoneRefId nativeTurretBaseBoneRefId = InvalidBoneRefId, nativeTurretBarrelBoneRefId = InvalidBoneRefId;
+        private ushort[] weaponBoneHierarchy;
 
         // TODO: small lag when executing for the first time, probably due to JIT compilation, figure out if there's a fix
         public VehicleSpotlight(Vehicle vehicle) : base(GetSpotlightDataForModel(vehicle.Model))
@@ -238,6 +239,18 @@
                                 }
                             }
 
+
+                            List<ushort> weaponBoneHierarchyList = new List<ushort>();
+                            ushort idx = (ushort)WeaponBone.Index;
+                            do
+                            {
+                                weaponBoneHierarchyList.Add(idx);
+                                ushort parent = nativeVehicle->inst->archetype->skeleton->skeletonData->bones[idx].parentIndex;
+                                idx = parent;
+                            } while (idx != 0xFFFF);
+                            weaponBoneHierarchy = weaponBoneHierarchyList.ToArray();
+                            Game.LogTrivialDebug("[Weapon Bone Hierarchy] " + String.Join(" -> ", weaponBoneHierarchyList));
+
                             enableTurret = true;
 
                             if (!Plugin.Settings.Vehicles.Data.ContainsValue(VehicleData))
@@ -362,30 +375,13 @@
                     turret->rot2 = q;
                     turret->rot3 = q;
                 }
-
-                // TODO: optimize CalculateRotationMatrix
+                
                 void CalculateRotationMatrix(out Matrix rotationMatrix)
                 {
-                    List<ushort> indices = new List<ushort>();
-                    ushort idx = (ushort)WeaponBone.Index;
-                    do
-                    {
-                        indices.Add(idx);
-
-                        ushort parent = nativeVehicle->inst->archetype->skeleton->skeletonData->bones[idx].parentIndex;
-                        if(parent == 0xFFFF)
-                        {
-                            break;
-                        }
-
-                        idx = parent;
-                    } while (true);
-
-
                     rotationMatrix = *nativeVehicle->inst->archetype->skeleton->entityTransform;
-                    for (int i = indices.Count - 1; i >= 0; i--)
+                    for (int i = weaponBoneHierarchy.Length - 1; i >= 0; i--)
                     {
-                        Matrix left = nativeVehicle->inst->archetype->skeleton->desiredBonesTransformsArray[indices[i]];
+                        Matrix left = nativeVehicle->inst->archetype->skeleton->desiredBonesTransformsArray[weaponBoneHierarchy[i]];
                         left.M14 = 0.0f;
                         left.M24 = 0.0f;
                         left.M34 = 0.0f;
