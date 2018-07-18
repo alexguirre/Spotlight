@@ -14,6 +14,11 @@
     {
         private const eBoneRefId InvalidBoneRefId = (eBoneRefId)(-1);
         private const uint VehicleWeaponSearchlightHash = 0xCDAC517D; // VEHICLE_WEAPON_SEARCHLIGHT
+        private const float SearchModeSpeed = 0.365f;
+        private static readonly Quaternion HeliSearchModeStart = Quaternion.FromRotation(new Rotator(-32.5f, 0.0f, -40.0f));
+        private static readonly Quaternion HeliSearchModeEnd = Quaternion.FromRotation(new Rotator(-32.5f, 0.0f, 40.0f));
+        private static readonly Quaternion DefaultSearchModeStart = Quaternion.FromRotation(new Rotator(-3.25f, 0.0f, -40.0f));
+        private static readonly Quaternion DefaultSearchModeEnd = Quaternion.FromRotation(new Rotator(-3.25f, 0.0f, 40.0f));
 
         private readonly CVehicle* nativeVehicle;
 
@@ -28,6 +33,10 @@
         public bool IsTrackingVehicle { get { return TrackedVehicle.Exists(); } }
         public Vehicle TrackedVehicle { get; set; }
         
+        public bool IsInSearchMode { get; set; }
+        private float searchModePercentage;
+        private bool searchModeDir;
+
         public bool IsCurrentPlayerVehicleSpotlight { get { return Vehicle == Game.LocalPlayer.Character.CurrentVehicle; } }
 
         public override bool IsActive
@@ -291,6 +300,23 @@
             }
         }
 
+        private Quaternion GetSearchModeRotation()
+        {
+            bool isHeli = Vehicle.IsHelicopter;
+            Quaternion q = Quaternion.Slerp(isHeli ? HeliSearchModeStart : DefaultSearchModeStart,
+                                            isHeli ? HeliSearchModeEnd : DefaultSearchModeEnd, 
+                                            searchModePercentage);
+
+            searchModePercentage += SearchModeSpeed * Game.FrameTime * (searchModeDir ? 1.0f : -1.0f);
+            if((searchModeDir && searchModePercentage >= 1.0f) ||
+                (!searchModeDir && searchModePercentage <= 0.0f))
+            {
+                searchModeDir = !searchModeDir;
+            }
+
+            return q;
+        }
+
         public void OnUnload()
         {
             RestoreNativeTurret();
@@ -300,7 +326,7 @@
         {
             if (!IsActive)
                 return;
-
+            
             if (enableTurret)
             {
                 // invalidate turret bones so the game code doesn't reset their rotation
@@ -325,7 +351,7 @@
                 for (int i = 0; i < controllers.Count; i++)
                 {
                     controllers[i].UpdateControls(this);
-                    if (!IsTrackingVehicle && !IsTrackingPed && controllers[i].GetUpdatedRotationDelta(this, out Rotator newRotDelta))
+                    if (!IsTrackingVehicle && !IsTrackingPed && !IsInSearchMode && controllers[i].GetUpdatedRotationDelta(this, out Rotator newRotDelta))
                     {
                         RelativeRotation += newRotDelta;
                         break;
@@ -357,6 +383,10 @@
                 {
                     Vector3 dir = (TrackedPed.Position - Position).ToNormalized();
                     q = (dir.ToQuaternion() * Quaternion.Invert(Vehicle.Orientation));
+                }
+                else if (IsInSearchMode)
+                {
+                    q = GetSearchModeRotation();
                 }
                 else
                 {
@@ -426,6 +456,10 @@
                 else if (IsTrackingPed)
                 {
                     Direction = (TrackedPed.Position - Position).ToNormalized();
+                }
+                else if (IsInSearchMode)
+                {
+                    Direction = (GetSearchModeRotation() * Vehicle.Orientation).ToVector();
                 }
                 else
                 {

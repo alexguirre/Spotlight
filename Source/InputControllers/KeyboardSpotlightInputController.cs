@@ -16,6 +16,7 @@
 
         readonly Keys trackPedKey;
         readonly Keys trackVehicleKey;
+        readonly Keys searchModeKey;
 
         readonly Keys modifierKey;
         readonly Keys toggleKey;
@@ -29,6 +30,7 @@
 
             trackPedKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "TrackPedKey", Keys.NumPad1);
             trackVehicleKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "TrackVehicleKey", Keys.NumPad3);
+            searchModeKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "SearchModeKey", Keys.Decimal);
 
             modifierKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "Modifier", Keys.None);
             toggleKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "Toggle", Keys.I);
@@ -99,6 +101,10 @@
                         spotlight.TrackedPed = p;
                     }
                 }
+            }
+            else if(Utility.IsKeyDownWithModifier(searchModeKey, modifierKey))
+            {
+                spotlight.IsInSearchMode = !spotlight.IsInSearchMode;
             }
 
 
