@@ -71,37 +71,34 @@
 
             if (Utility.IsKeyDownWithModifier(trackVehicleKey, modifierKey))
             {
-                if (spotlight.IsTrackingVehicle)
+                if (spotlight.IsTrackingEntity)
                 {
-                    spotlight.TrackedVehicle = null;
+                    spotlight.TrackedEntity = null;
                 }
                 else
                 {
-                    Vehicle v = World.GetClosestEntity(spotlight.Position, 130.0f, GetEntitiesFlags.ConsiderAllVehicles | GetEntitiesFlags.ExcludeEmergencyVehicles | GetEntitiesFlags.ExcludePlayerVehicle) as Vehicle;
-                    if (v)
+                    Entity e = GetClosestEntityToSpotlight(spotlight, true, true);
+                    if (e)
                     {
-                        spotlight.TrackedVehicle = v;
+                        spotlight.TrackedEntity = e;
                     }
                 }
             }
-            else if (Utility.IsKeyDownWithModifier(trackPedKey, modifierKey))
-            {
-                if (spotlight.IsTrackingPed)
-                {
-                    spotlight.TrackedPed = null;
-                }
-                else
-                {
-                    Ped p = World.GetEntities(Game.LocalPlayer.Character.Position, 130.0f, GetEntitiesFlags.ConsiderHumanPeds | GetEntitiesFlags.ExcludePlayerPed)
-                                 .Where(x => !((Ped)x).IsInAnyVehicle(false))
-                                 .OrderBy(x => Vector3.DistanceSquared(x.Position, spotlight.Position))
-                                 .FirstOrDefault() as Ped;
-                    if (p)
-                    {
-                        spotlight.TrackedPed = p;
-                    }
-                }
-            }
+            //else if (Utility.IsKeyDownWithModifier(trackPedKey, modifierKey))
+            //{
+            //    if (spotlight.IsTrackingPed)
+            //    {
+            //        spotlight.TrackedPed = null;
+            //    }
+            //    else
+            //    {
+            //        Ped p = GetClosestEntityToSpotlight(spotlight, true, false) as Ped;
+            //        if (p)
+            //        {
+            //            spotlight.TrackedPed = p;
+            //        }
+            //    }
+            //}
             else if(Utility.IsKeyDownWithModifier(searchModeKey, modifierKey))
             {
                 spotlight.IsInSearchMode = !spotlight.IsInSearchMode;
@@ -116,6 +113,20 @@
         {
             rotation = rotationDelta;
             return hasMoved;
+        }
+
+        private Entity GetClosestEntityToSpotlight(VehicleSpotlight spotlight, bool peds, bool vehicles)
+        {
+            HitResult result = World.TraceCapsule(spotlight.Position, spotlight.Position + spotlight.Direction * 2000.0f, 
+                                                    6.5f, 
+                                                    (peds ? TraceFlags.IntersectPedsSimpleCollision : TraceFlags.None) | (vehicles ? TraceFlags.IntersectVehicles : TraceFlags.None),
+                                                    spotlight.Vehicle);
+            if (result.Hit)
+            {
+                return result.HitEntity;
+            }
+
+            return null;
         }
     }
 }

@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     
     using Rage;
+    using Rage.Native;
 
     using Spotlight.Core;
     using Spotlight.Core.Memory;
@@ -21,17 +22,26 @@
         private static readonly Quaternion DefaultSearchModeEnd = Quaternion.FromRotation(new Rotator(-3.25f, 0.0f, 40.0f));
 
         private readonly CVehicle* nativeVehicle;
+        private Entity trackedEntity;
 
         public Vehicle Vehicle { get; }
         public VehicleData VehicleData { get; }
         
         public Rotator RelativeRotation { get; set; }
 
-        public bool IsTrackingPed { get { return TrackedPed.Exists(); } }
-        public Ped TrackedPed { get; set; }
-
-        public bool IsTrackingVehicle { get { return TrackedVehicle.Exists(); } }
-        public Vehicle TrackedVehicle { get; set; }
+        public bool IsTrackingEntity { get { return TrackedEntity.Exists(); } }
+        public Entity TrackedEntity
+        {
+            get => trackedEntity;
+            set
+            {
+                if(value != trackedEntity)
+                {
+                    trackedEntity = value;
+                    OnTrackedEntityChanged();
+                }
+            }
+        }
         
         public bool IsInSearchMode { get; set; }
         private float searchModePercentage;
@@ -351,7 +361,7 @@
                 for (int i = 0; i < controllers.Count; i++)
                 {
                     controllers[i].UpdateControls(this);
-                    if (!IsTrackingVehicle && !IsTrackingPed && !IsInSearchMode && controllers[i].GetUpdatedRotationDelta(this, out Rotator newRotDelta))
+                    if (!IsTrackingEntity && !IsInSearchMode && controllers[i].GetUpdatedRotationDelta(this, out Rotator newRotDelta))
                     {
                         RelativeRotation += newRotDelta;
                         break;
@@ -374,14 +384,9 @@
                 Position = MathHelper.GetOffsetPosition(Vehicle.GetBonePosition(WeaponBone.Index), boneRot, VehicleData.Offset);
 
                 Quaternion q = Quaternion.Identity;
-                if (IsTrackingVehicle)
+                if (IsTrackingEntity)
                 {
-                    Vector3 dir = (TrackedVehicle.Position - Position).ToNormalized();
-                    q = (dir.ToQuaternion() * Quaternion.Invert(Vehicle.Orientation));
-                }
-                else if (IsTrackingPed)
-                {
-                    Vector3 dir = (TrackedPed.Position - Position).ToNormalized();
+                    Vector3 dir = (TrackedEntity.Position - Position).ToNormalized();
                     q = (dir.ToQuaternion() * Quaternion.Invert(Vehicle.Orientation));
                 }
                 else if (IsInSearchMode)
@@ -449,13 +454,9 @@
             {
                 Position = Vehicle.GetOffsetPosition(VehicleData.Offset);
 
-                if (IsTrackingVehicle)
+                if (IsTrackingEntity)
                 {
-                    Direction = (TrackedVehicle.Position - Position).ToNormalized();
-                }
-                else if (IsTrackingPed)
-                {
-                    Direction = (TrackedPed.Position - Position).ToNormalized();
+                    Direction = (TrackedEntity.Position - Position).ToNormalized();
                 }
                 else if (IsInSearchMode)
                 {
@@ -470,6 +471,94 @@
             justActivated = false;
 
             DrawLight();
+        }
+
+        static string TrackerVersionNumber;
+        private void OnTrackedEntityChanged()
+        {
+            const string NotificationTitle = "~h~Spotlight Tracker";
+            if (TrackerVersionNumber == null)
+            {
+                // generate random version number that increases over time
+                DateTime now = DateTime.UtcNow;
+                uint major = (uint)(now.Year - 2017);
+                uint minor = (uint)(now.Month - 1);
+                uint revision = (uint)(new DateTime(now.Year, now.Month, now.Day > 16 ? 16 : 1).DayOfYear * now.Month * 1.345f);
+                TrackerVersionNumber = $"~b~v{major}.{minor}.{revision}";
+            }
+
+
+            Entity e = TrackedEntity;
+            if (e)
+            {
+                if (e is Vehicle veh)
+                {
+                    string text = "Tracking vehicle.";
+                    CVehicle* vehPtr = (CVehicle*)veh.MemoryAddress;
+                    IntPtr makeNamePtr = vehPtr->GetMakeName();
+                    IntPtr gameNamePtr = vehPtr->GetGameName();
+                    string makeName = Utility.IsStringEmpty(makeNamePtr) ? null : Utility.GetLocalizedString(makeNamePtr);
+                    string gameName = Utility.IsStringEmpty(gameNamePtr) ? null : Utility.GetLocalizedString(gameNamePtr);
+                    text += "~n~Model: " + makeName + " " + gameName;
+                    if(veh.LicensePlateType != LicensePlateType.None)
+                    {
+                    text += "~n~License Plate: " + veh.LicensePlate;
+                    }
+                    text += "~n~Distance: " + ((int)Vehicle.DistanceTo(e)) + "m";
+
+
+                    string txd = "mpcarhud";
+                    string txn = "transport_car_icon";
+                    if (veh.IsBicycle)
+                    {
+                        txn = "transport_bicycle_icon";
+                    }
+                    else if (veh.IsBike)
+                    {
+                        txn = "transport_bike_icon";
+                    }
+                    else if (veh.IsBoat)
+                    {
+                        txn = "transport_boat_icon";
+                    }
+                    else if (veh.IsHelicopter)
+                    {
+                        txn = "transport_heli_icon";
+                    }
+                    else if (veh.IsPlane)
+                    {
+                        txn = "transport_plane_icon";
+                    }
+
+                    Game.DisplayNotification(txd, txn, NotificationTitle, TrackerVersionNumber, text);
+                }
+                else if (e is Ped ped)
+                {
+                    GameFiber.StartNew(() =>
+                    {
+                        uint headshotHandle = NativeFunction.Natives.RegisterPedheadshot<uint>(ped);
+                        int startTime = Environment.TickCount;
+                        while ((Environment.TickCount - startTime) < 10000) // max wait is 10 seconds
+                        {
+                            if (NativeFunction.Natives.IsPedheadshotReady<bool>(headshotHandle))
+                            {
+                                string text = "Tracking suspect.";
+                                text += "~n~Distance: " + ((int)Vehicle.DistanceTo(e)) + "m";
+
+                                string txd = NativeFunction.Natives.GetPedheadshotTxdString<string>(headshotHandle);
+                                Game.DisplayNotification(txd, txd, NotificationTitle, TrackerVersionNumber, text);
+                                break;
+                            }
+                            GameFiber.Sleep(5);
+                        }
+                        NativeFunction.Natives.UnregisterPedheadshot<uint>(headshotHandle);
+                    });
+                }
+            }
+            else
+            {
+                Game.DisplayNotification("timerbar_sr", "timer_cross", NotificationTitle, TrackerVersionNumber, "Stopped tracking.");
+            }
         }
 
         internal static VehicleData GetVehicleDataForModel(Model model)

@@ -50,6 +50,26 @@
         {
             return GetBoneRefsArray()[(int)boneRefId];
         }
+
+        public IntPtr GetMakeName()
+        {
+            fixed (CVehicle* v = &this)
+            {
+                IntPtr modelInfo = *(IntPtr*)((IntPtr)v + 0x20);
+                IntPtr makeName = modelInfo + GameMemory.CVehicleModelInfoVehicleMakeNameOffset;
+                return makeName;
+            }
+        }
+
+        public IntPtr GetGameName()
+        {
+            fixed (CVehicle* v = &this)
+            {
+                IntPtr modelInfo = *(IntPtr*)((IntPtr)v + 0x20);
+                IntPtr gameName = modelInfo + GameMemory.CVehicleModelInfoGameNameOffset;
+                return gameName;
+            }
+        }
     }
 
     [StructLayout(LayoutKind.Explicit)]

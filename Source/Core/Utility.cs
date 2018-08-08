@@ -106,6 +106,16 @@
             Quaternion.RotationMatrix(ref rotationmatrix, out rotation);
             return true;
         }
+
+        public static string GetLocalizedString(IntPtr stringPtr)
+        {
+            return NativeFunction.Natives.x7B5280EBA9840C72<string>(stringPtr); //_GET_LABEL_TEXT
+        }
+
+        public static unsafe bool IsStringEmpty(IntPtr stringPtr)
+        {
+            return *(byte*)stringPtr == 0;
+        }
     }
 
 
