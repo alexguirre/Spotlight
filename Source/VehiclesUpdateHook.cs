@@ -47,9 +47,12 @@
 
         public static unsafe void Unhook()
         {
-            for (int i = 0; i < FuncCount; i++)
+            if (replacedFuncLocations != null && replacedFuncs != null)
             {
-                *(IntPtr*)replacedFuncLocations[i] = replacedFuncs[i];
+                for (int i = 0; i < FuncCount; i++)
+                {
+                    *(IntPtr*)replacedFuncLocations[i] = replacedFuncs[i];
+                }
             }
 
             replacedFuncLocations = null;
