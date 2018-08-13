@@ -13,9 +13,8 @@
         readonly Keys moveRightKey;
         readonly Keys moveUpKey;
         readonly Keys moveDownKey;
-
-        readonly Keys trackPedKey;
-        readonly Keys trackVehicleKey;
+        
+        readonly Keys toggleTrackingKey;
         readonly Keys searchModeKey;
 
         readonly Keys modifierKey;
@@ -28,8 +27,7 @@
             moveUpKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "Move Up", Keys.NumPad8);
             moveDownKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "Move Down", Keys.NumPad2);
 
-            trackPedKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "TrackPedKey", Keys.NumPad1);
-            trackVehicleKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "TrackVehicleKey", Keys.NumPad3);
+            toggleTrackingKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "ToggleTrackingKey", Keys.NumPad3);
             searchModeKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "SearchModeKey", Keys.Decimal);
 
             modifierKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "Modifier", Keys.None);
@@ -69,7 +67,7 @@
             }
 
 
-            if (Utility.IsKeyDownWithModifier(trackVehicleKey, modifierKey))
+            if (Utility.IsKeyDownWithModifier(toggleTrackingKey, modifierKey))
             {
                 if (spotlight.IsTrackingEntity)
                 {

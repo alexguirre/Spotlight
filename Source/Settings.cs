@@ -288,9 +288,8 @@ Move Right = NumPad6
 Move Up = NumPad8
 Move Down = NumPad2
 
-TrackPedKey = NumPad1
-TrackVehicleKey = NumPad3
-
+ToggleTrackingKey = NumPad3
+SearchModeKey = Decimal
 
 
 [Controller] ; Settings for the controller controls
