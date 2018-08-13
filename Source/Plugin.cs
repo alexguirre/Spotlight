@@ -75,13 +75,26 @@
                 Game.LogTrivial($"[ERROR] Failed to initialize {str}, unloading...");
                 Game.UnloadActivePlugin();
             }
-            
+
+            if (Settings.EnableLightEmissives)
+            {
+                VehiclesUpdateHook.Hook();
+            }
+
             // when the queue array that the GetFreeLightDrawDataSlotFromQueue function accesses is full,
             // it uses the TLS to get an allocator to allocate memory for a bigger array,
             // therefore we copy the allocator pointers from the main thread TLS to our current thread TLS.
             WinFunctions.CopyTlsValues(WinFunctions.GetProcessMainThreadId(), WinFunctions.GetCurrentThreadId(), GameMemory.TlsAllocatorOffset0, GameMemory.TlsAllocatorOffset1, GameMemory.TlsAllocatorOffset2);
+            
+            if (Settings.EnableLightEmissives)
+            {
+                VehiclesUpdateHook.VehiclesUpdate += OnVehiclesUpdate;
 
+            }
+
+#if DEBUG
             bool f = false;
+#endif
             while (true)
             {
                 GameFiber.Yield();
@@ -91,8 +104,7 @@
                 {
                     if (Game.IsKeyDown(System.Windows.Forms.Keys.Y))
                     {
-                        Game.LocalPlayer.Character.CurrentVehicle.IsPositionFrozen = !f;
-                        f = !f;
+                        Game.LocalPlayer.Character.CurrentVehicle.IsPositionFrozen = f = !f;
                     }
                     else if (Game.IsKeyDown(System.Windows.Forms.Keys.D7))
                     {
@@ -166,8 +178,21 @@
             }
         }
 
+        private static void OnVehiclesUpdate()
+        {
+            for (int i = Spotlights.Count - 1; i >= 0; i--)
+            {
+                Spotlights[i].SetExtraLightEmissive();
+            }
+        }
+
         private static void OnUnload(bool isTerminating)
         {
+            if (Settings.EnableLightEmissives)
+            {
+                VehiclesUpdateHook.Unhook();
+            }
+
             for (int i = Spotlights.Count - 1; i >= 0; i--)
             {
                 Spotlights[i].OnUnload();

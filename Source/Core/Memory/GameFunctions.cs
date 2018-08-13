@@ -12,12 +12,14 @@
         public delegate void SetLightDrawDataDirectionDelegate(CLightDrawData* data, NativeVector3* direction, NativeVector3* dirPerpendicular);
         public delegate void SetLightDrawDataAnglesDelegate(CLightDrawData* data, float innerAngle, float outerAngle);
         public delegate uint GetValueForLightDrawDataShadowUnkValueDelegate(CLightDrawData* data);
+        public delegate int GetLightEmissiveIndexForBoneDelegate(eBoneRefId bone);
 
         public static GetFreeLightDrawDataSlotFromQueueDelegate GetFreeLightDrawDataSlotFromQueue { get; private set; }
         public static InitializeLightDrawDataDelegate InitializeLightDrawData { get; private set; }
         public static SetLightDrawDataDirectionDelegate SetLightDrawDataDirection { get; private set; }
         public static SetLightDrawDataAnglesDelegate SetLightDrawDataAngles { get; private set; }
         public static GetValueForLightDrawDataShadowUnkValueDelegate GetValueForLightDrawDataShadowUnkValue { get; private set; }
+        public static GetLightEmissiveIndexForBoneDelegate GetLightEmissiveIndexForBone { get; private set; }
 
         public static bool Init()
         {
@@ -51,6 +53,12 @@
             if (AssertAddress(address, nameof(GetValueForLightDrawDataShadowUnkValue)))
             {
                 GetValueForLightDrawDataShadowUnkValue = Marshal.GetDelegateForFunctionPointer<GetValueForLightDrawDataShadowUnkValueDelegate>(address);
+            }
+
+            address = Game.FindPattern("83 F9 ?? 7F 57 74 4F 83 E9 ??");
+            if(AssertAddress(address, nameof(GetLightEmissiveIndexForBone)))
+            {
+                GetLightEmissiveIndexForBone = Marshal.GetDelegateForFunctionPointer<GetLightEmissiveIndexForBoneDelegate>(address);
             }
 
             return !anyAssertFailed;

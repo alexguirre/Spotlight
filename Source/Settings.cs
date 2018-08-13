@@ -26,6 +26,8 @@
 
         public Keys EditorKey { get; }
 
+        public bool EnableLightEmissives { get; } = true;
+
         internal Settings(string generalSettingsFileName, string vehiclesSettingsFileName, string visualSettingsFileName, bool generateDefaultsIfFileNotFound)
         {
             GeneralSettingsFileName = generalSettingsFileName;

@@ -12,6 +12,7 @@
         public static int TlsAllocatorOffset2 { get; private set; }
         public static int CVehicleModelInfoVehicleMakeNameOffset { get; private set; }
         public static int CVehicleModelInfoGameNameOffset { get; private set; }
+        public static IntPtr VehiclesUpdateHook { get; private set; }
 
         public static bool Init()
         {
@@ -35,6 +36,14 @@
             {
                 CVehicleModelInfoVehicleMakeNameOffset = *(int*)(address + 3);
                 CVehicleModelInfoGameNameOffset = *(int*)(address + 10);
+            }
+
+
+            address = Game.FindPattern("48 8D 05 ?? ?? ?? ?? 33 D2 89 50 10");
+            if (AssertAddress(address, nameof(VehiclesUpdateHook)))
+            {
+                VehiclesUpdateHook = address + *(int*)(address + 3) + 7;
+                VehiclesUpdateHook += 8;
             }
 
             return !anyAssertFailed;

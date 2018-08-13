@@ -78,6 +78,7 @@
         private int nativeTurretIndex = -1;
         private eBoneRefId nativeTurretBaseBoneRefId = InvalidBoneRefId, nativeTurretBarrelBoneRefId = InvalidBoneRefId;
         private ushort[] weaponBoneHierarchy;
+        private int extraLightEmissiveIndex = -1;
 
         // TODO: small lag when executing for the first time, probably due to JIT compilation, figure out if there's a fix
         public VehicleSpotlight(Vehicle vehicle) : base(GetSpotlightDataForModel(vehicle.Model))
@@ -276,6 +277,31 @@
                             {
                                 VehicleData.Offset = new XYZ(0.0f, 0.0f, 0.0f);
                             }
+
+                            if (Plugin.Settings.EnableLightEmissives)
+                            {
+                                byte[] extraLightIndices = new byte[4];
+                                extraLightIndices[0] = nativeVehicle->GetBoneIndex(eBoneRefId.extralight_1);
+                                extraLightIndices[1] = nativeVehicle->GetBoneIndex(eBoneRefId.extralight_2);
+                                extraLightIndices[2] = nativeVehicle->GetBoneIndex(eBoneRefId.extralight_3);
+                                extraLightIndices[3] = nativeVehicle->GetBoneIndex(eBoneRefId.extralight_4);
+
+                                for (int i = 0; i < 4; i++)
+                                {
+                                    byte boneIndex = extraLightIndices[i];
+                                    if(boneIndex != 0xFF)
+                                    { 
+                                        // check if the light bone is child of any of the bones in the turret hierarchy
+                                        ushort parent = nativeVehicle->inst->archetype->skeleton->skeletonData->bones[boneIndex].parentIndex;
+                                        if (Array.FindIndex(weaponBoneHierarchy, (ushort weaponBone) => weaponBone == parent) != -1)
+                                        {
+                                            eBoneRefId id = eBoneRefId.extralight_1 + (i);
+                                            extraLightEmissiveIndex = GameFunctions.GetLightEmissiveIndexForBone(id);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -471,6 +497,27 @@
             justActivated = false;
 
             DrawLight();
+        }
+
+        public void SetExtraLightEmissive()
+        {
+            if(IsActive && extraLightEmissiveIndex != -1)
+            {
+                IntPtr drawHandler = *(IntPtr*)((IntPtr)nativeVehicle + 0x48);
+                if(drawHandler == IntPtr.Zero)
+                {
+                    return;
+                }
+
+                IntPtr customShaderEffect = *(IntPtr*)(drawHandler + 0x20);
+                if (customShaderEffect == IntPtr.Zero)
+                {
+                    return;
+                }
+
+                float* lightEmissives = (float*)(customShaderEffect + 0x20);
+                lightEmissives[extraLightEmissiveIndex] = 10.0f; // TODO: get light emissive value from settings or based on the spotlight data 
+            }
         }
 
         static string TrackerVersionNumber;

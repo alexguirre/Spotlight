@@ -7,6 +7,11 @@
 
     internal enum eBoneRefId : int
     {
+        extralight_1 = 108,
+        extralight_2 = 109,
+        extralight_3 = 110,
+        extralight_4 = 111,
+
         turret_1base = 281,
         turret_2base = 283,
         turret_3base = 285,
