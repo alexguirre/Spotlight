@@ -61,7 +61,7 @@
             int targetStatus = NtQueryInformationThread(targetThreadHandle, 0, &targetThreadInfo, (ulong)sizeof(THREAD_BASIC_INFORMATION), null);
             if (targetStatus != 0)
             {
-                Rage.Game.LogTrivialDebug($"Target Thread Invalid Query Status: {sourceStatus}");
+                Rage.Game.LogTrivialDebug($"Target Thread Invalid Query Status: {targetStatus}");
                 return;
             }
 

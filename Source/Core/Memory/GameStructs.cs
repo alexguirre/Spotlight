@@ -280,8 +280,8 @@
         [FieldOffset(0x0064)] public eLightFlags Flags;
         [FieldOffset(0x0068)] public float Intensity;
 
-        [FieldOffset(0x0070)] public int unkTxdDefPoolIndex;
-
+        [FieldOffset(0x0070)] public int TextureDictIndex;
+        [FieldOffset(0x0074)] public uint TextureNameHash;
         [FieldOffset(0x0078)] public float VolumeIntensity;
         [FieldOffset(0x007C)] public float VolumeSize;
         [FieldOffset(0x0080)] public float VolumeExponent;
@@ -322,6 +322,8 @@
         None = 0,
 
         CanRenderUnderground = 0x8, // if not set the light won't render in underground parts of the map, such as tunnels
+
+        HasTexture = 0x20,
 
         ShadowsFlag1 = 0x40, // needed
         ShadowsFlag2 = 0x80, // needed
