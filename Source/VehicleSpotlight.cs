@@ -503,20 +503,7 @@
         {
             if(IsActive && extraLightEmissiveIndex != -1)
             {
-                IntPtr drawHandler = *(IntPtr*)((IntPtr)nativeVehicle + 0x48);
-                if(drawHandler == IntPtr.Zero)
-                {
-                    return;
-                }
-
-                IntPtr customShaderEffect = *(IntPtr*)(drawHandler + 0x20);
-                if (customShaderEffect == IntPtr.Zero)
-                {
-                    return;
-                }
-
-                float* lightEmissives = (float*)(customShaderEffect + 0x20);
-                lightEmissives[extraLightEmissiveIndex] = 10.0f; // TODO: get light emissive value from settings or based on the spotlight data 
+                nativeVehicle->SetLightEmissive(extraLightEmissiveIndex, 10.0f); // TODO: get light emissive value from settings or based on the spotlight data
             }
         }
 

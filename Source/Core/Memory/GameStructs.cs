@@ -75,6 +75,27 @@
                 return gameName;
             }
         }
+
+        public void SetLightEmissive(int index, float value)
+        {
+            fixed (CVehicle* v = &this)
+            {
+                IntPtr drawHandler = *(IntPtr*)((IntPtr)v + 0x48);
+                if (drawHandler == IntPtr.Zero)
+                {
+                    return;
+                }
+
+                IntPtr customShaderEffect = *(IntPtr*)(drawHandler + 0x20);
+                if (customShaderEffect == IntPtr.Zero)
+                {
+                    return;
+                }
+
+                float* lightEmissives = (float*)(customShaderEffect + 0x20);
+                lightEmissives[index] = value;
+            }
+        }
     }
 
     [StructLayout(LayoutKind.Explicit)]
