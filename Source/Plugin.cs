@@ -188,7 +188,7 @@
 
         private static void OnUnload(bool isTerminating)
         {
-            if (Settings.EnableLightEmissives)
+            if (Settings != null && Settings.EnableLightEmissives)
             {
                 VehiclesUpdateHook.Unhook();
             }
