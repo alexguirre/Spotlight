@@ -11,6 +11,7 @@
     using Spotlight.Core.Memory;
     using Spotlight.InputControllers;
 
+    // TODO: can probably optimize some of the rotations calculations that happen in each update
     internal unsafe class VehicleSpotlight : BaseSpotlight
     {
         private const eBoneRefId InvalidBoneRefId = (eBoneRefId)(-1);
@@ -65,6 +66,19 @@
         }
 
         private bool justActivated;
+
+        public override Vector3 Direction
+        {
+            get => base.Direction;
+            set
+            {
+                if (value != Direction)
+                {
+                    SetDirectionInternal(value);
+                    base.Direction = value;
+                }
+            }
+        }
 
         // turret stuff
         public VehicleBone WeaponBone { get; private set; }
@@ -357,7 +371,7 @@
         {
             RestoreNativeTurret();
         }
-
+        
         public void Update(IList<SpotlightInputController> controllers)
         {
             if (!IsActive)
@@ -396,7 +410,7 @@
             }
 
             if (enableTurret)
-            {                
+            {
                 // GetBoneOrientation sometimes seems to return an non-normalized quaternion, such as [X:-8 Y:8 Z:-8 W:0], or 
                 // a quaternion with NaN values, which fucks up the bone transform and makes it disappear
                 // not sure if it's an issue with my code for changing the bone rotation or if the issue is in GetBoneOrientation
@@ -409,22 +423,86 @@
 
                 Position = MathHelper.GetOffsetPosition(Vehicle.GetBonePosition(WeaponBone.Index), boneRot, VehicleData.Offset);
 
-                Quaternion q = Quaternion.Identity;
+                Vector3 dir = Vector3.Zero;
                 if (IsTrackingEntity)
                 {
-                    Vector3 dir = (TrackedEntity.Position - Position).ToNormalized();
-                    q = (dir.ToQuaternion() * Quaternion.Invert(Vehicle.Orientation));
+                    dir = (TrackedEntity.Position - Position).ToNormalized();
                 }
                 else if (IsInSearchMode)
                 {
-                    q = GetSearchModeRotation();
+                    Quaternion q = GetSearchModeRotation() * Vehicle.Orientation;
+                    q.Normalize();
+                    dir = q.ToVector();
                 }
                 else
                 {
-                    q = RelativeRotation.ToQuaternion();
+                    Quaternion q = RelativeRotation.ToQuaternion() * Vehicle.Orientation;
+                    q.Normalize();
+                    dir = q.ToVector();
                 }
 
-                q.Normalize();
+                Direction = dir;
+            }
+            else
+            {
+                Position = Vehicle.GetOffsetPosition(VehicleData.Offset);
+                Direction = IsTrackingEntity ? (TrackedEntity.Position - Position).ToNormalized() :
+                            IsInSearchMode ? (GetSearchModeRotation() * Vehicle.Orientation).ToVector() :
+                            (Vehicle.Rotation + RelativeRotation).ToVector();
+            }
+
+            justActivated = false;
+
+            DrawLight();
+        }
+
+        private void SetDirectionInternal(Vector3 worldDirection)
+        {
+            if (enableTurret)
+            {
+                Quaternion GetLocalRotation(int boneIndex, Quaternion worldRotation)
+                {
+                    Quaternion CalculateBoneWorldRotationMatrix(int parentBoneIndex)
+                    {
+                        List<ushort> hierarchy = new List<ushort>();
+                        ushort idx = (ushort)parentBoneIndex;
+                        do
+                        {
+                            hierarchy.Add(idx);
+                            ushort parent = nativeVehicle->inst->archetype->skeleton->skeletonData->bones[idx].parentIndex;
+                            idx = parent;
+                        } while (idx != 0xFFFF);
+
+
+                        Matrix rotationMatrix = *nativeVehicle->inst->archetype->skeleton->entityTransform;
+                        for (int i = hierarchy.Count - 1; i >= 0; i--)
+                        {
+                            Matrix left = nativeVehicle->inst->archetype->skeleton->desiredBonesTransformsArray[hierarchy[i]];
+                            left.M14 = 0.0f;
+                            left.M24 = 0.0f;
+                            left.M34 = 0.0f;
+                            left.M44 = 1.0f;
+
+                            Matrix right = rotationMatrix;
+                            right.M14 = 0.0f;
+                            right.M24 = 0.0f;
+                            right.M34 = 0.0f;
+                            right.M44 = 1.0f;
+
+                            rotationMatrix = Matrix.Multiply(left, right);
+                        }
+
+                        Utility.DecomposeMatrix(rotationMatrix, out _, out Quaternion r, out _);
+                        return r;
+                    }
+
+                    Quaternion rot = CalculateBoneWorldRotationMatrix(nativeVehicle->inst->archetype->skeleton->skeletonData->bones[boneIndex].parentIndex);
+                    rot = (worldRotation * Quaternion.Invert(rot));
+                    return rot;
+                }
+
+                Quaternion world = worldDirection.ToQuaternion();
+                Quaternion local = GetLocalRotation(TurretBaseBone.Index, world);
 
                 CVehicleWeaponMgr* weaponMgr = nativeVehicle->GetWeaponMgr();
                 if (weaponMgr != null)
@@ -432,71 +510,28 @@
                     // changes turret rotation so when deactivating the spotlight
                     // the game code doesn't reset the turret bone rotation
                     CTurret* turret = weaponMgr->GetTurret(nativeTurretIndex);
-                    turret->rot1 = q;
-                    turret->rot2 = q;
-                    turret->rot3 = q;
-                }
-                
-                void CalculateRotationMatrix(out Matrix rotationMatrix)
-                {
-                    rotationMatrix = *nativeVehicle->inst->archetype->skeleton->entityTransform;
-                    for (int i = weaponBoneHierarchy.Length - 1; i >= 0; i--)
-                    {
-                        Matrix left = nativeVehicle->inst->archetype->skeleton->desiredBonesTransformsArray[weaponBoneHierarchy[i]];
-                        left.M14 = 0.0f;
-                        left.M24 = 0.0f;
-                        left.M34 = 0.0f;
-                        left.M44 = 1.0f;
-
-                        Matrix right = rotationMatrix;
-                        right.M14 = 0.0f;
-                        right.M24 = 0.0f;
-                        right.M34 = 0.0f;
-                        right.M44 = 1.0f;
-
-                        rotationMatrix = Matrix.Multiply(left, right);
-                    }
+                    turret->rot1 = local;
+                    turret->rot2 = local;
+                    turret->rot3 = local;
                 }
 
                 // TODO: turret doesn't aim correctly using new mouse controls when heli isn't flat
                 if (TurretBarrelBone == null)
                 {
-                    TurretBaseBone.SetRotation(q);
+                    TurretBaseBone.SetRotation(local);
                 }
                 else
                 {
-                    // TODO: turret with barrel doesn't track entities correctly when heli isn't flat
-                    Rotator rot = q.ToRotation();
-                    TurretBaseBone.SetRotation(new Rotator(0.0f, 0.0f, rot.Yaw).ToQuaternion());
-                    TurretBarrelBone.SetRotation(new Rotator(rot.Pitch, 0.0f, 0.0f).ToQuaternion());
-                }
+                    Vector3 baseWorldDir = worldDirection;
+                    baseWorldDir.Z = 0.0f;
+                    Quaternion baseLocal = GetLocalRotation(TurretBaseBone.Index, baseWorldDir.ToQuaternion());
+                    TurretBaseBone.SetRotation(baseLocal);
 
-                CalculateRotationMatrix(out Matrix m);
-                m.Decompose(out _, out q, out _);
-
-                Direction = q.ToVector();
-            }
-            else
-            {
-                Position = Vehicle.GetOffsetPosition(VehicleData.Offset);
-
-                if (IsTrackingEntity)
-                {
-                    Direction = (TrackedEntity.Position - Position).ToNormalized();
-                }
-                else if (IsInSearchMode)
-                {
-                    Direction = (GetSearchModeRotation() * Vehicle.Orientation).ToVector();
-                }
-                else
-                {
-                    Direction = (Vehicle.Rotation + RelativeRotation).ToVector();
+                    Vector3 barrelWorldDir = worldDirection;
+                    Quaternion barrelLocal = GetLocalRotation(TurretBarrelBone.Index, barrelWorldDir.ToQuaternion());
+                    TurretBarrelBone.SetRotation(barrelLocal);
                 }
             }
-
-            justActivated = false;
-
-            DrawLight();
         }
 
         public void SetExtraLightEmissive()
