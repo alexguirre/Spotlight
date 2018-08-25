@@ -554,7 +554,7 @@
                 uint major = (uint)(now.Year - 2017);
                 uint minor = (uint)(now.Month - 1);
                 uint revision = (uint)(new DateTime(now.Year, now.Month, now.Day > 16 ? 16 : 1).DayOfYear * now.Month * 1.345f);
-                TrackerVersionNumber = $"~b~v{major}.{minor}.{revision}";
+                TrackerVersionNumber = $"~b~<font size='8'>VERSION {major}.{minor}.{revision}</font>";
             }
 
 
