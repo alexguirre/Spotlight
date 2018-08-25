@@ -523,8 +523,9 @@
                 else
                 {
                     Vector3 baseWorldDir = worldDirection;
-                    baseWorldDir.Z = 0.0f;
-                    Quaternion baseLocal = GetLocalRotation(TurretBaseBone.Index, baseWorldDir.ToQuaternion());
+                    Vector3 baseLocalDir = GetLocalRotation(TurretBaseBone.Index, baseWorldDir.ToQuaternion()).ToVector();
+                    baseLocalDir.Z = 0.0f;
+                    Quaternion baseLocal = TurretBaseBone.OriginalRotation * baseLocalDir.ToQuaternion();
                     TurretBaseBone.SetRotation(baseLocal);
 
                     Vector3 barrelWorldDir = worldDirection;
