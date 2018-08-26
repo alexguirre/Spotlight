@@ -72,9 +72,7 @@ build:
   verbosity: minimal
 after_build:
 - cmd: >-
-    7z a Spotlight.zip %APPVEYOR_BUILD_FOLDER%\LICENSE.md
-
-    %APPVEYOR_BUILD_FOLDER%\Source\Build\*.*
+    7z a Spotlight.zip %APPVEYOR_BUILD_FOLDER%\LICENSE.md %APPVEYOR_BUILD_FOLDER%\Source\Build\*.*
 
     appveyor PushArtifact Spotlight.zip
 test: off
