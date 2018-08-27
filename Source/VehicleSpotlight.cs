@@ -515,7 +515,6 @@
                     turret->rot3 = local;
                 }
 
-                // TODO: turret doesn't aim correctly using new mouse controls when heli isn't flat
                 if (TurretBarrelBone == null)
                 {
                     TurretBaseBone.SetRotation(local);
