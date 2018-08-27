@@ -292,7 +292,7 @@
                                 VehicleData.Offset = new XYZ(0.0f, 0.0f, 0.0f);
                             }
 
-                            if (Plugin.Settings.EnableLightEmissives)
+                            if (Plugin.Settings.EnableLightEmissives && VehicleData.SpotlightExtraLight == VehicleData.DefaultSpotlightExtraLight)
                             {
                                 byte[] extraLightIndices = new byte[4];
                                 extraLightIndices[0] = nativeVehicle->GetBoneIndex(eBoneRefId.extralight_1);
@@ -318,6 +318,15 @@
                             }
                         }
                     }
+                }
+            }
+
+            if (VehicleData.SpotlightExtraLight != VehicleData.DefaultSpotlightExtraLight)
+            {
+                eBoneRefId id = eBoneRefId.extralight_1 + (VehicleData.SpotlightExtraLight - 1);
+                if (nativeVehicle->GetBoneIndex(id) != 0xFF)
+                {
+                    extraLightEmissiveIndex = GameFunctions.GetLightEmissiveIndexForBone(id);
                 }
             }
         }

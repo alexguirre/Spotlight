@@ -165,7 +165,7 @@
                 {
                     { "POLICE",     new VehicleData(new XYZ(-0.8f, 1.17f, 0.45f)) },
                     { "POLICE2",    new VehicleData(new XYZ(-0.84f, 0.85f, 0.43f)) },
-                    { "POLICE3",    new VehicleData(new XYZ(-0.84f, 0.78f, 0.5f)) },
+                    { "POLICE3",    new VehicleData(new XYZ(-0.84f, 0.78f, 0.5f), VehicleData.DefaultDisableTurret, 1) },
                     { "POLICE4",    new VehicleData(new XYZ(-0.8f, 1.17f, 0.45f)) },
                     { "POLICET",    new VehicleData(new XYZ(-1.1f, 1.37f, 0.94f)) },
                     { "RIOT",       new VehicleData(new XYZ(-1.18f, 1.65f, 1.55f)) },
@@ -374,6 +374,7 @@ Toggle = I
                 {
                     float x = VehicleData.DefaultOffsetX, y = VehicleData.DefaultOffsetY, z = VehicleData.DefaultOffsetZ;
                     bool disableTurret = VehicleData.DefaultDisableTurret;
+                    int spotlightExtraLight = VehicleData.DefaultSpotlightExtraLight;
 
                     bool success = false;
                     System.Exception exc = null;
@@ -390,6 +391,14 @@ Toggle = I
                             if (ini.DoesKeyExist(modelName, VehicleData.IniKeyDisableTurret))
                             {
                                 disableTurret = ini.ReadBoolean(modelName, VehicleData.IniKeyDisableTurret, VehicleData.DefaultDisableTurret);
+                            }
+                            if(ini.DoesKeyExist(modelName, VehicleData.IniKeySpotlightExtraLight))
+                            {
+                                spotlightExtraLight = ini.ReadInt32(modelName, VehicleData.IniKeySpotlightExtraLight, VehicleData.DefaultSpotlightExtraLight);
+                                if(spotlightExtraLight <= VehicleData.DefaultSpotlightExtraLight || spotlightExtraLight > 4) // there's only four possible extralight_* bones
+                                {
+                                    spotlightExtraLight = VehicleData.DefaultSpotlightExtraLight;
+                                }
                             }
 
                             success = true;
@@ -412,9 +421,10 @@ Toggle = I
                         y = VehicleData.DefaultOffsetY;
                         z = VehicleData.DefaultOffsetZ;
                         disableTurret = VehicleData.DefaultDisableTurret;
+                        spotlightExtraLight = VehicleData.DefaultSpotlightExtraLight;
                     }
 
-                    Data.Add(modelName, new VehicleData(new XYZ(x, y, z), disableTurret));
+                    Data.Add(modelName, new VehicleData(new XYZ(x, y, z), disableTurret, spotlightExtraLight));
                 }
             }
         }
