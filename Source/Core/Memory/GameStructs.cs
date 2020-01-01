@@ -7,28 +7,26 @@
 
     internal enum eBoneRefId : int
     {
-        extralight_1 = 108,
-        extralight_2 = 109,
-        extralight_3 = 110,
-        extralight_4 = 111,
+        extralight_1 = 124,
+        extralight_2 = 125,
+        extralight_3 = 126,
+        extralight_4 = 127,
 
-        turret_1base = 281,
-        turret_2base = 283,
-        turret_3base = 285,
-        turret_4base = 287,
+        turret_1base = 297,
+        turret_2base = 299,
+        turret_3base = 301,
+        turret_4base = 303,
         
-        turret_1barrel = 282,
-        turret_2barrel = 284,
-        turret_3barrel = 286,
-        turret_4barrel = 288,
+        turret_1barrel = 298,
+        turret_2barrel = 300,
+        turret_3barrel = 302,
+        turret_4barrel = 304,
     }
 
     [StructLayout(LayoutKind.Explicit)]
     internal unsafe struct CVehicle
     {
         [FieldOffset(0x0030)] public fragInstGta* inst;
-
-        [FieldOffset(0x0BB0)] public CVehicleWeaponMgr* weaponMgr;
 
         public CVehicleWeaponMgr* GetWeaponMgr()
         {
@@ -222,7 +220,7 @@
     {
         [FieldOffset(0x0000)] private CCoronaDrawCall drawQueueStart;
 
-        [FieldOffset(0xB400)] public int drawQueueCount;
+        [FieldOffset(0xCC00)] public int drawQueueCount;
         // plus fields for textures and settings from visualsettings.dat
 
         public CCoronaDrawCall* GetDrawCall(int index)
@@ -237,7 +235,7 @@
         {
             if (size != 0.0 && intensity > 0.0 /*&& !g_IsBlackoutEnabled*/)
             {
-                for (int index = drawQueueCount; index < 960; index = drawQueueCount)
+                for (int index = drawQueueCount; index < 1088; index = drawQueueCount)
                 {
                     if (index == System.Threading.Interlocked.CompareExchange(ref drawQueueCount, index + 1, index))
                     {

@@ -13,6 +13,11 @@
             {
 
                 default:
+                case 1868:
+                    {
+                        CVehicle_WeaponMgr = 0xC20;
+                    }
+                    break;
                 case 1290:
                     {
                         CVehicle_WeaponMgr = 0xBB0;
