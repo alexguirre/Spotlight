@@ -537,7 +537,9 @@
                     TurretBaseBone.SetRotation(baseLocal);
 
                     Vector3 barrelWorldDir = worldDirection;
-                    Quaternion barrelLocal = GetLocalRotation(TurretBarrelBone.Index, barrelWorldDir.ToQuaternion());
+                    Vector3 barrelLocalDir = GetLocalRotation(TurretBarrelBone.Index, barrelWorldDir.ToQuaternion()).ToVector();
+                    barrelLocalDir.X = 0.0f;
+                    Quaternion barrelLocal = TurretBarrelBone.OriginalRotation * barrelLocalDir.ToQuaternion();
                     TurretBarrelBone.SetRotation(barrelLocal);
                 }
             }
