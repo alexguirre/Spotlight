@@ -59,7 +59,7 @@
             fixed (CVehicle* v = &this)
             {
                 IntPtr modelInfo = *(IntPtr*)((IntPtr)v + 0x20);
-                IntPtr makeName = modelInfo + GameMemory.CVehicleModelInfoVehicleMakeNameOffset;
+                IntPtr makeName = modelInfo + GameOffsets.CVehicleModelInfo_VehicleMakeName;
                 return makeName;
             }
         }
@@ -69,7 +69,7 @@
             fixed (CVehicle* v = &this)
             {
                 IntPtr modelInfo = *(IntPtr*)((IntPtr)v + 0x20);
-                IntPtr gameName = modelInfo + GameMemory.CVehicleModelInfoGameNameOffset;
+                IntPtr gameName = modelInfo + GameOffsets.CVehicleModelInfo_GameName;
                 return gameName;
             }
         }

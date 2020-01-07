@@ -45,34 +45,10 @@
 
             LoadSpotlightControllers();
 
-            bool gameFnInit = GameFunctions.Init();
-            bool gameMemInit = GameMemory.Init();
-
-            if (gameFnInit)
-                Game.LogTrivialDebug($"Successful {nameof(GameFunctions)} init");
-            if (gameMemInit)
-                Game.LogTrivialDebug($"Successful {nameof(GameMemory)} init");
-
-            if (!gameFnInit || !gameMemInit)
+            if (!(GameFunctions.Init() && GameMemory.Init() && GameOffsets.Init()))
             {
-                string str = "";
-                if (!gameFnInit)
-                {
-                    str += nameof(GameFunctions);
-
-                    if (!gameMemInit)
-                    {
-                        str += " and ";
-                        str += nameof(GameMemory);
-                    }
-                }
-                else if (!gameMemInit)
-                {
-                    str += nameof(GameMemory);
-                }
-
-                Game.DisplayNotification($"~r~[ERROR] Spotlight: ~s~Failed to initialize {str}, unloading...");
-                Game.LogTrivial($"[ERROR] Failed to initialize {str}, unloading...");
+                Game.DisplayNotification($"~r~[ERROR] Spotlight: ~s~Failed to initialize, unloading...");
+                Game.LogTrivial($"[ERROR] Failed to initialize, unloading...");
                 Game.UnloadActivePlugin();
             }
 
@@ -84,7 +60,7 @@
             // when the queue array that the GetFreeLightDrawDataSlotFromQueue function accesses is full,
             // it uses the TLS to get an allocator to allocate memory for a bigger array,
             // therefore we copy the allocator pointers from the main thread TLS to our current thread TLS.
-            WinFunctions.CopyTlsValues(WinFunctions.GetProcessMainThreadId(), WinFunctions.GetCurrentThreadId(), GameMemory.TlsAllocatorOffset0, GameMemory.TlsAllocatorOffset1, GameMemory.TlsAllocatorOffset2);
+            WinFunctions.CopyTlsValues(WinFunctions.GetProcessMainThreadId(), WinFunctions.GetCurrentThreadId(), GameOffsets.TlsAllocator0, GameOffsets.TlsAllocator1, GameOffsets.TlsAllocator2);
             
             if (Settings.EnableLightEmissives)
             {
