@@ -366,7 +366,11 @@
                                             isHeli ? HeliSearchModeEnd : DefaultSearchModeEnd, 
                                             searchModePercentage);
 
-            searchModePercentage += SearchModeSpeed * Game.FrameTime * (searchModeDir ? 1.0f : -1.0f);
+            if (!Game.IsPaused)
+            {
+                searchModePercentage += SearchModeSpeed * Game.FrameTime * (searchModeDir ? 1.0f : -1.0f);
+            }
+            
             if((searchModeDir && searchModePercentage >= 1.0f) ||
                 (!searchModeDir && searchModePercentage <= 0.0f))
             {
