@@ -88,8 +88,9 @@
             
             if (Settings.EnableLightEmissives)
             {
+                // TODO: find something better than this vehicles update hook to override the extralight emissives values
+                // This function may execute multiple times per tick, which is not optimal
                 VehiclesUpdateHook.VehiclesUpdate += OnVehiclesUpdate;
-
             }
 
 #if DEBUG
@@ -148,7 +149,6 @@
                     s.IsActive = !s.IsActive;
                 }
             }
-
 
             for (int i = Spotlights.Count - 1; i >= 0; i--)
             {
