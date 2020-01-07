@@ -1,5 +1,7 @@
 ﻿namespace Spotlight.Core.Memory
 {
+    using System;
+
     using Rage;
 
     // offsets that are likely to change between versions
@@ -7,23 +9,11 @@
     {
         public static readonly int CVehicle_WeaponMgr;
 
-        static GameOffsets()
+        unsafe static GameOffsets()
         {
-            switch (Game.ProductVersion.Build)
-            {
+            IntPtr addr = Game.FindPattern("48 8B 9B ?? ?? ?? ?? 48 85 DB 74 ?? 33 F6");
 
-                default:
-                case 1868:
-                    {
-                        CVehicle_WeaponMgr = 0xC20;
-                    }
-                    break;
-                case 1290:
-                    {
-                        CVehicle_WeaponMgr = 0xBB0;
-                    }
-                    break;
-            }
+            CVehicle_WeaponMgr = *(int*)(addr + 3);
         }
     }
 }
