@@ -558,91 +558,72 @@
             }
         }
 
-        static string TrackerVersionNumber;
         private void OnTrackedEntityChanged()
         {
-            const string NotificationTitle = "~h~Spotlight Tracker";
-            if (TrackerVersionNumber == null)
-            {
-                // generate random version number that increases over time
-                DateTime now = DateTime.UtcNow;
-                uint major = (uint)(now.Year - 2017);
-                uint minor = (uint)(now.Month - 1);
-                uint revision = (uint)(new DateTime(now.Year, now.Month, now.Day > 16 ? 16 : 1).DayOfYear * now.Month * 1.345f);
-                TrackerVersionNumber = $"~b~<font size='8'>VERSION {major}.{minor}.{revision}</font>";
-            }
-
+            const string NotificationTitle = "~h~Spotlight";
 
             Entity e = TrackedEntity;
             if (e)
             {
-                if (e is Vehicle veh)
+                switch (e)
                 {
-                    string text = "Tracking vehicle.";
-                    CVehicle* vehPtr = (CVehicle*)veh.MemoryAddress;
-                    IntPtr makeNamePtr = vehPtr->GetMakeName();
-                    IntPtr gameNamePtr = vehPtr->GetGameName();
-                    string makeName = Utility.IsStringEmpty(makeNamePtr) ? null : Utility.GetLocalizedString(makeNamePtr);
-                    string gameName = Utility.IsStringEmpty(gameNamePtr) ? null : Utility.GetLocalizedString(gameNamePtr);
-                    text += "~n~Model: " + makeName + " " + gameName;
-                    if (veh.LicensePlateType != LicensePlateType.None)
-                    {
-                        text += "~n~License Plate: " + veh.LicensePlate;
-                    }
-                    text += "~n~Distance: " + ((int)Vehicle.DistanceTo(e)) + "m";
-
-
-                    string txd = "mpcarhud";
-                    string txn = "transport_car_icon";
-                    if (veh.IsBicycle)
-                    {
-                        txn = "transport_bicycle_icon";
-                    }
-                    else if (veh.IsBike)
-                    {
-                        txn = "transport_bike_icon";
-                    }
-                    else if (veh.IsBoat)
-                    {
-                        txn = "transport_boat_icon";
-                    }
-                    else if (veh.IsHelicopter)
-                    {
-                        txn = "transport_heli_icon";
-                    }
-                    else if (veh.IsPlane)
-                    {
-                        txn = "transport_plane_icon";
-                    }
-
-                    Game.DisplayNotification(txd, txn, NotificationTitle, TrackerVersionNumber, text);
-                }
-                else if (e is Ped ped)
-                {
-                    GameFiber.StartNew(() =>
-                    {
-                        uint headshotHandle = NativeFunction.Natives.RegisterPedheadshot<uint>(ped);
-                        int startTime = Environment.TickCount;
-                        while ((Environment.TickCount - startTime) < 10000) // max wait is 10 seconds
+                    case Vehicle veh:
                         {
-                            if (NativeFunction.Natives.IsPedheadshotReady<bool>(headshotHandle))
+                            CVehicle* vehPtr = (CVehicle*)veh.MemoryAddress;
+                            IntPtr makeNamePtr = vehPtr->GetMakeName();
+                            IntPtr gameNamePtr = vehPtr->GetGameName();
+                            string makeName = Utility.IsStringEmpty(makeNamePtr) ? null : Utility.GetLocalizedString(makeNamePtr);
+                            string gameName = Utility.IsStringEmpty(gameNamePtr) ? null : Utility.GetLocalizedString(gameNamePtr);
+                            string text = $"Model: ~b~{makeName} {gameName}~s~";
+                            if (veh.LicensePlateType != LicensePlateType.None)
                             {
-                                string text = "Tracking suspect.";
-                                text += "~n~Distance: " + ((int)Vehicle.DistanceTo(e)) + "m";
-
-                                string txd = NativeFunction.Natives.GetPedheadshotTxdString<string>(headshotHandle);
-                                Game.DisplayNotification(txd, txd, NotificationTitle, TrackerVersionNumber, text);
-                                break;
+                                text += $"~n~License Plate: ~b~{veh.LicensePlate}~s~";
                             }
-                            GameFiber.Sleep(5);
+                            text += $"~n~Distance: ~b~{(int)Vehicle.DistanceTo(e)}m~s~";
+
+
+                            string txd = "mpcarhud";
+                            string txn = "transport_car_icon";
+                            if (veh.IsBicycle)
+                            {
+                                txn = "transport_bicycle_icon";
+                            }
+                            else if (veh.IsBike)
+                            {
+                                txn = "transport_bike_icon";
+                            }
+                            else if (veh.IsBoat)
+                            {
+                                txn = "transport_boat_icon";
+                            }
+                            else if (veh.IsHelicopter)
+                            {
+                                txn = "transport_heli_icon";
+                            }
+                            else if (veh.IsPlane)
+                            {
+                                txn = "transport_plane_icon";
+                            }
+
+                            Game.DisplayNotification(txd, txn, NotificationTitle, "~b~Tracking vehicle", text);
                         }
-                        NativeFunction.Natives.UnregisterPedheadshot<uint>(headshotHandle);
-                    });
+                        break;
+                    case Ped ped:
+                        GameFiber.StartNew(() =>
+                        {
+                            uint headshotHandle = NativeFunction.Natives.RegisterPedheadshot<uint>(ped);
+                            int startTime = Environment.TickCount;
+                            GameFiber.WaitUntil(() => NativeFunction.Natives.IsPedheadshotReady<bool>(headshotHandle), 10000);
+                            string txd = NativeFunction.Natives.GetPedheadshotTxdString<string>(headshotHandle);
+                            Game.DisplayNotification(txd, txd, NotificationTitle, "~b~Tracking pedestrian", $"Distance: ~b~{(int)Vehicle.DistanceTo(e)}m~s~");
+                            NativeFunction.Natives.UnregisterPedheadshot<uint>(headshotHandle);
+                        });
+                        break;
                 }
             }
             else
             {
-                Game.DisplayNotification("timerbar_sr", "timer_cross", NotificationTitle, TrackerVersionNumber, "Stopped tracking.");
+                Game.DisplayNotification("timerbar_sr", "timer_cross", NotificationTitle, "~b~Stopped tracking", String.Empty);
             }
         }
 
