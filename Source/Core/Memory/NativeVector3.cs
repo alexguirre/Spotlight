@@ -4,7 +4,7 @@
 
     using Rage;
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Size = 0x10, Pack = 0x10)]
     internal unsafe struct NativeVector3
     {
         public float X;

@@ -3,10 +3,8 @@
     using System;
 
     using Rage;
-
+    using Spotlight.Core;
     using Spotlight.Core.Memory;
-
-    using static Core.Intrin;
 
     public interface ISpotlight
     {
@@ -57,33 +55,14 @@
 
             CLightDrawData* drawData = CLightDrawData.New(eLightType.SPOT_LIGHT, lightFlags, Position, Data.Color, Data.Intensity);
             NativeVector3 dir = Direction;
+            NativeVector3 perp = Utility.GetPerpendicular(dir).ToNormalized();
             drawData->Range = Data.Range;
             drawData->VolumeIntensity = Data.VolumeIntensity;
             drawData->VolumeExponent = 70.0f; // doesn't seem to have any effect
             drawData->VolumeSize = Data.VolumeSize;
             drawData->FalloffExponent = Data.Falloff;
 
-            // TODO: figure out how SSE instrinsics work, and what this does
-            NativeVector3 v16 = _mm_andnot_ps(new Vector3(-0.0f, -0.0f, -0.0f), dir);
-            NativeVector3 v17 = _mm_and_ps(_mm_cmple_ps(v16, _mm_shuffle_epi32(v16, -46)), _mm_cmplt_ps(v16, _mm_shuffle_epi32(v16, -55)));
-            NativeVector3 v18 = _mm_and_ps(
-                                    _mm_or_ps(
-                                      _mm_andnot_ps(
-                                        _mm_or_ps(
-                                          _mm_or_ps(_mm_shuffle_epi32(v17, 85), _mm_shuffle_epi32(v17, 0)),
-                                          _mm_shuffle_epi32(v17, -86)),
-                                          new Vector3(Single.NaN, Single.NaN, Single.NaN)),
-                                      v17),
-                                    new Vector3(1.0f, 1.0f, 1.0f));
-            v17 = _mm_shuffle_ps(v18, v18, 85);
-            NativeVector3 v19 = _mm_shuffle_ps(v18, v18, -86);
-
-            Vector3 v = new Vector3(x: (v19.X * dir.Y) - (v17.X * dir.Z),
-                                    y: (v18.X * dir.Z) - (v19.X * dir.X),
-                                    z: (v17.X * dir.X) - (v18.X * dir.Y));
-            NativeVector3 u = v.ToNormalized();
-
-            GameFunctions.SetLightDrawDataDirection(drawData, &dir, &u);
+            GameFunctions.SetLightDrawDataDirection(drawData, &dir, &perp);
             GameFunctions.SetLightDrawDataAngles(drawData, Data.InnerAngle, Data.OuterAngle);
 
             if (Data.CastShadows)
