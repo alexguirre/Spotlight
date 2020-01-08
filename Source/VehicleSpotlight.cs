@@ -11,7 +11,6 @@
     using Spotlight.Core.Memory;
     using Spotlight.InputControllers;
 
-    // TODO: can probably optimize some of the rotations calculations that happen in each update
     internal unsafe class VehicleSpotlight : BaseSpotlight
     {
         private const eBoneRefId InvalidBoneRefId = (eBoneRefId)(-1);
@@ -478,18 +477,19 @@
                     Quaternion CalculateBoneWorldRotationMatrix(int parentBoneIndex)
                     {
                         crSkeleton* skel = nativeVehicle->inst->entry->skeleton;
-                        List<ushort> hierarchy = new List<ushort>();
+                        crSkeletonData* skelData = skel->skeletonData;
+                        ushort* hierarchy = stackalloc ushort[skel->bonesCount];
+                        int hierarchyCount = 0;
                         ushort idx = (ushort)parentBoneIndex;
                         do
                         {
-                            hierarchy.Add(idx);
-                            ushort parent = skel->skeletonData->bones[idx].parentIndex;
-                            idx = parent;
+                            hierarchy[hierarchyCount++] = idx;
+                            idx = skelData->bones[idx].parentIndex;
                         } while (idx != 0xFFFF);
 
 
                         Matrix rotationMatrix = *skel->entityTransform;
-                        for (int i = hierarchy.Count - 1; i >= 0; i--)
+                        for (int i = hierarchyCount - 1; i >= 0; i--)
                         {
                             Matrix left = skel->desiredBonesTransformsArray[hierarchy[i]];
                             left.M14 = 0.0f;
