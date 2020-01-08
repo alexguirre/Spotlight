@@ -26,7 +26,7 @@
     [StructLayout(LayoutKind.Explicit)]
     internal unsafe struct CVehicle
     {
-        [FieldOffset(0x0030)] public fragInstGta* inst;
+        [FieldOffset(0x0030)] public fragInst* inst;
 
         public CVehicleWeaponMgr* GetWeaponMgr()
         {
@@ -161,19 +161,19 @@
     }
 
     [StructLayout(LayoutKind.Explicit)]
-    internal unsafe struct fragInstGta
+    internal unsafe struct fragInst
     {
-        [FieldOffset(0x0010)] public phArchetypeDamp* archetype;
+        [FieldOffset(0x68)] public fragCacheEntry* entry;
     }
 
     [StructLayout(LayoutKind.Explicit)]
-    internal unsafe struct phArchetypeDamp
+    internal unsafe struct fragCacheEntry
     {
-        [FieldOffset(0x0158)] public CEntitySkeleton* skeleton;
+        [FieldOffset(0x148 + 0x30)] public crSkeleton* skeleton;
     }
 
     [StructLayout(LayoutKind.Explicit)]
-    internal unsafe struct CEntitySkeleton
+    internal unsafe struct crSkeleton
     {
         [FieldOffset(0x0000)] public crSkeletonData* skeletonData;
         [FieldOffset(0x0008)] public Matrix* entityTransform;

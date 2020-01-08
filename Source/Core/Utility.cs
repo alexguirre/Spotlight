@@ -49,14 +49,14 @@
         public static unsafe Vector3 GetBoneOriginalTranslation(Vehicle vehicle, int index)
         {
             CVehicle* veh = (CVehicle*)vehicle.MemoryAddress;
-            NativeVector3 v = veh->inst->archetype->skeleton->skeletonData->bones[index].translation;
+            NativeVector3 v = veh->inst->entry->skeleton->skeletonData->bones[index].translation;
             return v;
         }
 
         public static unsafe Quaternion GetBoneOriginalRotation(Vehicle vehicle, int index)
         {
             CVehicle* veh = (CVehicle*)vehicle.MemoryAddress;
-            Quaternion q = veh->inst->archetype->skeleton->skeletonData->bones[index].rotation;
+            Quaternion q = veh->inst->entry->skeleton->skeletonData->bones[index].rotation;
             return q;
         }
 

@@ -175,7 +175,7 @@
                     }
 
                     eBoneRefId nativeWeaponBoneRefId = weaponMgr->GetWeapon(nativeWeaponIndex)->weaponBoneRefId;
-                    crSkeletonData* skel = nativeVehicle->inst->archetype->skeleton->skeletonData;
+                    crSkeletonData* skel = nativeVehicle->inst->entry->skeleton->skeletonData;
                     crSkeletonBoneData* weaponBoneData = &skel->bones[nativeVehicle->GetBoneIndex(nativeWeaponBoneRefId)];
 
                     crSkeletonBoneData* currentBoneData = weaponBoneData;
@@ -279,7 +279,7 @@
                             do
                             {
                                 weaponBoneHierarchyList.Add(idx);
-                                ushort parent = nativeVehicle->inst->archetype->skeleton->skeletonData->bones[idx].parentIndex;
+                                ushort parent = nativeVehicle->inst->entry->skeleton->skeletonData->bones[idx].parentIndex;
                                 idx = parent;
                             } while (idx != 0xFFFF);
                             weaponBoneHierarchy = weaponBoneHierarchyList.ToArray();
@@ -306,7 +306,7 @@
                                     if (boneIndex != 0xFF)
                                     {
                                         // check if the light bone is child of any of the bones in the turret hierarchy
-                                        ushort parent = nativeVehicle->inst->archetype->skeleton->skeletonData->bones[boneIndex].parentIndex;
+                                        ushort parent = nativeVehicle->inst->entry->skeleton->skeletonData->bones[boneIndex].parentIndex;
                                         if (Array.FindIndex(weaponBoneHierarchy, (ushort weaponBone) => weaponBone == parent) != -1)
                                         {
                                             eBoneRefId id = eBoneRefId.extralight_1 + (i);
@@ -477,20 +477,21 @@
                 {
                     Quaternion CalculateBoneWorldRotationMatrix(int parentBoneIndex)
                     {
+                        crSkeleton* skel = nativeVehicle->inst->entry->skeleton;
                         List<ushort> hierarchy = new List<ushort>();
                         ushort idx = (ushort)parentBoneIndex;
                         do
                         {
                             hierarchy.Add(idx);
-                            ushort parent = nativeVehicle->inst->archetype->skeleton->skeletonData->bones[idx].parentIndex;
+                            ushort parent = skel->skeletonData->bones[idx].parentIndex;
                             idx = parent;
                         } while (idx != 0xFFFF);
 
 
-                        Matrix rotationMatrix = *nativeVehicle->inst->archetype->skeleton->entityTransform;
+                        Matrix rotationMatrix = *skel->entityTransform;
                         for (int i = hierarchy.Count - 1; i >= 0; i--)
                         {
-                            Matrix left = nativeVehicle->inst->archetype->skeleton->desiredBonesTransformsArray[hierarchy[i]];
+                            Matrix left = skel->desiredBonesTransformsArray[hierarchy[i]];
                             left.M14 = 0.0f;
                             left.M24 = 0.0f;
                             left.M34 = 0.0f;
@@ -509,7 +510,7 @@
                         return r;
                     }
 
-                    Quaternion rot = CalculateBoneWorldRotationMatrix(nativeVehicle->inst->archetype->skeleton->skeletonData->bones[boneIndex].parentIndex);
+                    Quaternion rot = CalculateBoneWorldRotationMatrix(nativeVehicle->inst->entry->skeleton->skeletonData->bones[boneIndex].parentIndex);
                     rot = (worldRotation * Quaternion.Invert(rot));
                     return rot;
                 }
