@@ -222,11 +222,21 @@
         {
             fixed (CCoronas* self = &this)
             {
-                NativeVector3 pos = position;
-                NativeVector3 dir = direction;
-                GameFunctions.CCoronas_Draw(self, &pos, size, color, intensity, zBias, &dir, 1.0f, innerAngle, outerAngle, flags);
+                *tmpPos = position;
+                *tmpDir = direction;
+                GameFunctions.CCoronas_Draw(self, tmpPos, size, color, intensity, zBias, tmpDir, 1.0f, innerAngle, outerAngle, flags);
             }
         }
+
+        /*
+         * Allocate 16-byte aligned vectors since having Pack = 16 in NativeVector3's StructLayout does not ensure that it is 16-byte aligned
+         * and CCoronos::Draw expects the vectors to be 16-byte aligned.
+         * So copying the vector values here and passing these pointers to CCoronas::Draw should be good enough.
+         * 
+         * TODO: does C# have some way to force aligment of structs? Couldn't find it so far...
+         */
+        private static readonly NativeVector3* tmpPos = (NativeVector3*)(16 * (((long)Marshal.AllocHGlobal(sizeof(NativeVector3) + 8) + 15) / 16));
+        private static readonly NativeVector3* tmpDir = (NativeVector3*)(16 * (((long)Marshal.AllocHGlobal(sizeof(NativeVector3) + 8) + 15) / 16));
     }
 
     [StructLayout(LayoutKind.Explicit, Size = 0x1C0)]
