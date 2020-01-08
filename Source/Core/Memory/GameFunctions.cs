@@ -13,6 +13,8 @@
         public delegate void SetLightDrawDataAnglesDelegate(CLightDrawData* data, float innerAngle, float outerAngle);
         public delegate uint GetValueForLightDrawDataShadowUnkValueDelegate(CLightDrawData* data);
         public delegate int GetLightEmissiveIndexForBoneDelegate(eBoneRefId bone);
+        public delegate void CCoronas_DrawDelegate(CCoronas* self, NativeVector3* position, float size, int color, float intensity, float zBias, NativeVector3* direction, float a8, float innerAngle, float outerAngle, ushort flags);
+
 
         public static GetFreeLightDrawDataSlotFromQueueDelegate GetFreeLightDrawDataSlotFromQueue { get; private set; }
         public static InitializeLightDrawDataDelegate InitializeLightDrawData { get; private set; }
@@ -20,6 +22,7 @@
         public static SetLightDrawDataAnglesDelegate SetLightDrawDataAngles { get; private set; }
         public static GetValueForLightDrawDataShadowUnkValueDelegate GetValueForLightDrawDataShadowUnkValue { get; private set; }
         public static GetLightEmissiveIndexForBoneDelegate GetLightEmissiveIndexForBone { get; private set; }
+        public static CCoronas_DrawDelegate CCoronas_Draw { get; private set; }
 
         public static bool Init()
         {
@@ -59,6 +62,12 @@
             if (AssertAddress(address, nameof(GetLightEmissiveIndexForBone)))
             {
                 GetLightEmissiveIndexForBone = Marshal.GetDelegateForFunctionPointer<GetLightEmissiveIndexForBoneDelegate>(address);
+            }
+
+            address = Game.FindPattern("44 89 4C 24 ?? 48 83 EC 28 0F 29 74 24 ?? 0F 57 C0 ");
+            if (AssertAddress(address, nameof(CCoronas_Draw)))
+            {
+                CCoronas_Draw = Marshal.GetDelegateForFunctionPointer<CCoronas_DrawDelegate>(address);
             }
 
             return !anyAssertFailed;
