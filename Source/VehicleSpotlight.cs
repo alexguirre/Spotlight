@@ -3,7 +3,7 @@
     using System;
     using System.Linq;
     using System.Collections.Generic;
-    
+
     using Rage;
     using Rage.Native;
 
@@ -27,7 +27,7 @@
 
         public Vehicle Vehicle { get; }
         public VehicleData VehicleData { get; }
-        
+
         public Rotator RelativeRotation { get; set; }
 
         public bool IsTrackingEntity { get { return TrackedEntity.Exists(); } }
@@ -36,14 +36,14 @@
             get => trackedEntity;
             set
             {
-                if(value != trackedEntity)
+                if (value != trackedEntity)
                 {
                     trackedEntity = value;
                     OnTrackedEntityChanged();
                 }
             }
         }
-        
+
         public bool IsInSearchMode { get; set; }
         private float searchModePercentage;
         private bool searchModeDir;
@@ -303,8 +303,8 @@
                                 for (int i = 0; i < 4; i++)
                                 {
                                     byte boneIndex = extraLightIndices[i];
-                                    if(boneIndex != 0xFF)
-                                    { 
+                                    if (boneIndex != 0xFF)
+                                    {
                                         // check if the light bone is child of any of the bones in the turret hierarchy
                                         ushort parent = nativeVehicle->inst->archetype->skeleton->skeletonData->bones[boneIndex].parentIndex;
                                         if (Array.FindIndex(weaponBoneHierarchy, (ushort weaponBone) => weaponBone == parent) != -1)
@@ -363,15 +363,15 @@
         {
             bool isHeli = Vehicle.IsHelicopter;
             Quaternion q = Quaternion.Slerp(isHeli ? HeliSearchModeStart : DefaultSearchModeStart,
-                                            isHeli ? HeliSearchModeEnd : DefaultSearchModeEnd, 
+                                            isHeli ? HeliSearchModeEnd : DefaultSearchModeEnd,
                                             searchModePercentage);
 
             if (!Game.IsPaused)
             {
                 searchModePercentage += SearchModeSpeed * Game.FrameTime * (searchModeDir ? 1.0f : -1.0f);
             }
-            
-            if((searchModeDir && searchModePercentage >= 1.0f) ||
+
+            if ((searchModeDir && searchModePercentage >= 1.0f) ||
                 (!searchModeDir && searchModePercentage <= 0.0f))
             {
                 searchModeDir = !searchModeDir;
@@ -384,12 +384,12 @@
         {
             RestoreNativeTurret();
         }
-        
+
         public void Update(IList<SpotlightInputController> controllers)
         {
             if (!IsActive)
                 return;
-            
+
             if (enableTurret)
             {
                 // invalidate turret bones so the game code doesn't reset their rotation
@@ -551,7 +551,7 @@
 
         public void SetExtraLightEmissive()
         {
-            if(IsActive && extraLightEmissiveIndex != -1)
+            if (IsActive && extraLightEmissiveIndex != -1)
             {
                 nativeVehicle->SetLightEmissive(extraLightEmissiveIndex, 10.0f); // TODO: get light emissive value from settings or based on the spotlight data
             }
@@ -584,9 +584,9 @@
                     string makeName = Utility.IsStringEmpty(makeNamePtr) ? null : Utility.GetLocalizedString(makeNamePtr);
                     string gameName = Utility.IsStringEmpty(gameNamePtr) ? null : Utility.GetLocalizedString(gameNamePtr);
                     text += "~n~Model: " + makeName + " " + gameName;
-                    if(veh.LicensePlateType != LicensePlateType.None)
+                    if (veh.LicensePlateType != LicensePlateType.None)
                     {
-                    text += "~n~License Plate: " + veh.LicensePlate;
+                        text += "~n~License Plate: " + veh.LicensePlate;
                     }
                     text += "~n~Distance: " + ((int)Vehicle.DistanceTo(e)) + "m";
 
@@ -652,7 +652,7 @@
                 if (model == new Model(entry.Key))
                     return entry.Value;
             }
-            
+
             return VehicleData.Default;
         }
 

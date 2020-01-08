@@ -35,7 +35,7 @@
             foreach (ProcessThread thread in Process.GetCurrentProcess().Threads)
             {
                 long startTime = thread.StartTime.Ticks;
-                if(startTime < lowestStartTime)
+                if (startTime < lowestStartTime)
                 {
                     lowestStartTime = startTime;
                     lowestStartTimeThread = thread;

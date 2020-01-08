@@ -35,7 +35,7 @@ namespace SpotlightAPIExample
             }
         }
 
-        public static void End( bool isTerminating)
+        public static void End(bool isTerminating)
         {
             spotlight1?.Dispose();
             spotlight2?.Dispose();

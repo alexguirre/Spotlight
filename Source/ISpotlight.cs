@@ -3,7 +3,7 @@
     using System;
 
     using Rage;
-    
+
     using Spotlight.Core.Memory;
 
     using static Core.Intrin;
@@ -62,7 +62,7 @@
             drawData->VolumeExponent = 70.0f; // doesn't seem to have any effect
             drawData->VolumeSize = Data.VolumeSize;
             drawData->FalloffExponent = Data.Falloff;
-            
+
             // TODO: figure out how SSE instrinsics work, and what this does
             NativeVector3 v16 = _mm_andnot_ps(new Vector3(-0.0f, -0.0f, -0.0f), dir);
             NativeVector3 v17 = _mm_and_ps(_mm_cmple_ps(v16, _mm_shuffle_epi32(v16, -46)), _mm_cmplt_ps(v16, _mm_shuffle_epi32(v16, -55)));

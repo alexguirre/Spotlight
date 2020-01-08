@@ -17,17 +17,17 @@
         {
             SelectAllOnFocus = false;
         }
-        
-		protected override void OnButtonUp(Base control, EventArgs args)
+
+        protected override void OnButtonUp(Base control, EventArgs args)
         {
             Value += Increment;
         }
-        
+
         protected override void OnButtonDown(Base control, ClickedEventArgs args)
         {
             Value -= Increment;
         }
-        
+
         protected override void OnMouseClickedLeft(int x, int y, bool down)
         {
             base.OnMouseClickedLeft(x, y, down);
@@ -48,7 +48,7 @@
                 InputHandler.MouseFocus = null;
             }
         }
-        
+
         protected override void OnMouseMoved(int x, int y, int dx, int dy)
         {
             base.OnMouseMoved(x, y, dx, dy);

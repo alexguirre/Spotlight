@@ -1,7 +1,7 @@
 ﻿namespace Spotlight.Core.Memory
 {
     using System.Runtime.InteropServices;
-    
+
     using Rage;
 
     [StructLayout(LayoutKind.Sequential)]

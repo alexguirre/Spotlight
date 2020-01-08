@@ -1,7 +1,7 @@
 ﻿namespace Spotlight.Core.Memory
 {
     using System.Runtime.InteropServices;
-    
+
     [StructLayout(LayoutKind.Sequential)]
     internal unsafe struct NativeColorRGBAFloat
     {

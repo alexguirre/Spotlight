@@ -8,7 +8,7 @@
     using System.Windows.Forms;
     using System.Xml.Serialization;
     using System.Collections.Generic;
-    
+
     using Rage;
 
     using Spotlight.Core;
@@ -186,7 +186,7 @@
 
             if (legacy)
             {
-                File.WriteAllLines(fileName, new[] 
+                File.WriteAllLines(fileName, new[]
                 {
                     // TODO: explain requirements for turret movement and DisableTurret option
                     "",
@@ -321,7 +321,7 @@ Toggle = I
         void IXmlSerializable.ReadXml(XmlReader reader)
         {
             reader.ReadStartElement();
-            
+
             XmlAttributeOverrides attr = new XmlAttributeOverrides();
 
             attr.Add(typeof(SpotlightData), new XmlAttributes() { XmlType = new XmlTypeAttribute("Default") });
@@ -392,10 +392,10 @@ Toggle = I
                             {
                                 disableTurret = ini.ReadBoolean(modelName, VehicleData.IniKeyDisableTurret, VehicleData.DefaultDisableTurret);
                             }
-                            if(ini.DoesKeyExist(modelName, VehicleData.IniKeySpotlightExtraLight))
+                            if (ini.DoesKeyExist(modelName, VehicleData.IniKeySpotlightExtraLight))
                             {
                                 spotlightExtraLight = ini.ReadInt32(modelName, VehicleData.IniKeySpotlightExtraLight, VehicleData.DefaultSpotlightExtraLight);
-                                if(spotlightExtraLight <= VehicleData.DefaultSpotlightExtraLight || spotlightExtraLight > 4) // there's only four possible extralight_* bones
+                                if (spotlightExtraLight <= VehicleData.DefaultSpotlightExtraLight || spotlightExtraLight > 4) // there's only four possible extralight_* bones
                                 {
                                     spotlightExtraLight = VehicleData.DefaultSpotlightExtraLight;
                                 }
@@ -443,7 +443,7 @@ Toggle = I
                 {
                     ini.Write(item.Key, VehicleData.IniKeyDisableTurret, item.Value.DisableTurret.ToString(CultureInfo.InvariantCulture));
                 }
-                else if(ini.DoesKeyExist(item.Key, VehicleData.IniKeyDisableTurret))
+                else if (ini.DoesKeyExist(item.Key, VehicleData.IniKeyDisableTurret))
                 {
                     ini.DeleteKey(item.Key, VehicleData.IniKeyDisableTurret);
                 }

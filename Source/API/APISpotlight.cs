@@ -52,7 +52,7 @@
         {
             bool gameFnInit = GameFunctions.Init();
             bool gameMemInit = GameMemory.Init();
-            
+
             if (!gameFnInit || !gameMemInit)
             {
                 string str = "";
@@ -70,10 +70,10 @@
                 {
                     str += nameof(GameMemory);
                 }
-                
+
                 Game.LogTrivial($"[ERROR] Spotlight: Failed to initialize {str}");
             }
-            
+
             spotlights = new List<APISpotlight>();
             fiber = GameFiber.StartNew(UpdateSpotlights, "Spotlight API Manager");
 

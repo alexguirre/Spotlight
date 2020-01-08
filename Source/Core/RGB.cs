@@ -7,7 +7,7 @@
     using System.Xml.Serialization;
 
     using Rage;
-    
+
     public struct RGB : IXmlSerializable
     {
         private int raw;
@@ -34,7 +34,7 @@
         void IXmlSerializable.ReadXml(XmlReader reader)
         {
             reader.MoveToElement();
-            
+
             byte r = (byte)MathHelper.Clamp(Int32.Parse(reader.GetAttribute("R")), 0, 255);
             byte g = (byte)MathHelper.Clamp(Int32.Parse(reader.GetAttribute("G")), 0, 255);
             byte b = (byte)MathHelper.Clamp(Int32.Parse(reader.GetAttribute("B")), 0, 255);

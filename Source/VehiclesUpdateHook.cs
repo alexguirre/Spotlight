@@ -24,7 +24,7 @@
             replacedFuncDelegates = new VehiclesUpdateDelegate[FuncCount];
             detourFuncs = new IntPtr[FuncCount];
             detourDelegates = new VehiclesUpdateDelegate[FuncCount];
-            
+
             for (int i = 0; i < FuncCount; i++)
             {
                 int indexCopy = i;

@@ -2,7 +2,7 @@
 {
     using System.Linq;
     using System.Windows.Forms;
-    
+
     using Rage;
 
     using Spotlight.Core;
@@ -13,7 +13,7 @@
         readonly Keys moveRightKey;
         readonly Keys moveUpKey;
         readonly Keys moveDownKey;
-        
+
         readonly Keys toggleTrackingKey;
         readonly Keys searchModeKey;
 
@@ -97,7 +97,7 @@
             //        }
             //    }
             //}
-            else if(Utility.IsKeyDownWithModifier(searchModeKey, modifierKey))
+            else if (Utility.IsKeyDownWithModifier(searchModeKey, modifierKey))
             {
                 spotlight.IsInSearchMode = !spotlight.IsInSearchMode;
             }
@@ -115,8 +115,8 @@
 
         private Entity GetClosestEntityToSpotlight(VehicleSpotlight spotlight, bool peds, bool vehicles)
         {
-            HitResult result = World.TraceCapsule(spotlight.Position, spotlight.Position + spotlight.Direction * 2000.0f, 
-                                                    6.5f, 
+            HitResult result = World.TraceCapsule(spotlight.Position, spotlight.Position + spotlight.Direction * 2000.0f,
+                                                    6.5f,
                                                     (peds ? TraceFlags.IntersectPedsSimpleCollision : TraceFlags.None) | (vehicles ? TraceFlags.IntersectVehicles : TraceFlags.None),
                                                     spotlight.Vehicle);
             if (result.Hit)

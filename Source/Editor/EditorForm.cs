@@ -313,7 +313,7 @@
                     v = Plugin.Settings.Vehicles.Data[selectedModel].Offset;
                     b = Plugin.Settings.Vehicles.Data[selectedModel].DisableTurret;
                 }
-                
+
                 ((NumericUpDownEx)Window.FindChildByName("OffsetsXNumUpDown", true)).Value = v.X;
                 ((NumericUpDownEx)Window.FindChildByName("OffsetsYNumUpDown", true)).Value = v.Y;
                 ((NumericUpDownEx)Window.FindChildByName("OffsetsZNumUpDown", true)).Value = v.Z;
@@ -337,7 +337,7 @@
             Model m = selectedModel;
             foreach (VehicleSpotlight s in Plugin.Spotlights)
             {
-                if(s.Vehicle.Model == m)
+                if (s.Vehicle.Model == m)
                 {
                     s.VehicleData.Offset = v;
                     s.VehicleData.DisableTurret = b;
@@ -428,7 +428,7 @@
         {
             public EditorForm Editor { get; }
             public GameFiber Fiber { get; }
-            
+
             public ControllerFiber(EditorForm editor)
             {
                 Editor = editor;

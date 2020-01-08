@@ -16,7 +16,7 @@
         turret_2base = 299,
         turret_3base = 301,
         turret_4base = 303,
-        
+
         turret_1barrel = 298,
         turret_2barrel = 300,
         turret_3barrel = 302,
@@ -109,7 +109,7 @@
         {
             fixed (CVehicleWeaponMgr* v = &this)
             {
-                IntPtr* turrets = (IntPtr*)((IntPtr)v + 0x8); 
+                IntPtr* turrets = (IntPtr*)((IntPtr)v + 0x8);
                 return (CTurret*)(turrets[index]);
             }
         }

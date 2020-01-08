@@ -56,7 +56,7 @@
             }
 
             address = Game.FindPattern("83 F9 ?? 7F 57 74 4F 83 E9 ??");
-            if(AssertAddress(address, nameof(GetLightEmissiveIndexForBone)))
+            if (AssertAddress(address, nameof(GetLightEmissiveIndexForBone)))
             {
                 GetLightEmissiveIndexForBone = Marshal.GetDelegateForFunctionPointer<GetLightEmissiveIndexForBoneDelegate>(address);
             }

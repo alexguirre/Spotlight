@@ -19,7 +19,7 @@
         }
 
         public override bool ShouldToggleSpotlight() => Utility.IsKeyDownWithModifier(toggleKey, modifierKey);
-        
+
         protected override void UpdateControlsInternal(VehicleSpotlight spotlight)
         {
             if (modifierKey == Keys.None || Game.IsKeyDownRightNow(modifierKey))
@@ -39,7 +39,7 @@
                     camDir = camRot.ToVector();
                 }
 
-                Vector3 end= camPos + camDir * 2000.0f;
+                Vector3 end = camPos + camDir * 2000.0f;
                 HitResult result = World.TraceLine(camPos, end, TraceFlags.IntersectWorld, spotlight.Vehicle);
                 Vector3 targetPosition;
                 if (result.Hit)

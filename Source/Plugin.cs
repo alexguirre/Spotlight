@@ -6,7 +6,7 @@
     using System.Diagnostics;
     using System.Threading;
     using System.Collections.Generic;
-    
+
     using Rage;
 
     using Spotlight.Core.Memory;
@@ -19,9 +19,9 @@
 
         public static readonly List<VehicleSpotlight> Spotlights = new List<VehicleSpotlight>();
         public static readonly List<SpotlightInputController> InputControllers = new List<SpotlightInputController>();
-        
+
         public static EditorForm Editor { get; private set; }
-        
+
         private static void Main()
         {
             while (Game.IsLoading)
@@ -29,7 +29,7 @@
 
             if (!Directory.Exists(@"Plugins\Spotlight Resources\"))
                 Directory.CreateDirectory(@"Plugins\Spotlight Resources\");
-            
+
             // let's keep using the Offsets.ini file for now
             //string vehSettingsFile = @"Plugins\Spotlight Resources\VehiclesSettings.xml";
             //if (!File.Exists(vehSettingsFile) && File.Exists(@"Plugins\Spotlight Resources\Offsets.ini"))
@@ -61,7 +61,7 @@
             // it uses the TLS to get an allocator to allocate memory for a bigger array,
             // therefore we copy the allocator pointers from the main thread TLS to our current thread TLS.
             WinFunctions.CopyTlsValues(WinFunctions.GetProcessMainThreadId(), WinFunctions.GetCurrentThreadId(), GameOffsets.TlsAllocator0, GameOffsets.TlsAllocator1, GameOffsets.TlsAllocator2);
-            
+
             if (Settings.EnableLightEmissives)
             {
                 // TODO: find something better than this vehicles update hook to override the extralight emissives values
@@ -138,7 +138,7 @@
 
                 s.Update(InputControllers);
             }
-            
+
 
             if ((Editor == null || !Editor.Window.IsVisible) && Game.IsKeyDown(Settings.EditorKey))
             {
