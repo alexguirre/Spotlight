@@ -69,6 +69,8 @@
                 VehiclesUpdateHook.VehiclesUpdate += OnVehiclesUpdate;
             }
 
+            Game.LogTrivial("Initialized");
+
 #if DEBUG
             bool f = false;
 #endif
