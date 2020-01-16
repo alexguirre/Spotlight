@@ -222,7 +222,8 @@
                     volume: true,
                     corona: true,
                     specular: true,
-                    movementSpeed: 1),
+                    movementSpeed: 1,
+                    extraLightEmissive: 10.0f),
                 Helicopter = new SpotlightData(
                     color: new RGB(80, 80, 80),
                     castShadows: true,
@@ -238,7 +239,8 @@
                     volume: true,
                     corona: true,
                     specular: true,
-                    movementSpeed: 1),
+                    movementSpeed: 1,
+                    extraLightEmissive: 10.0f),
                 Boat = new SpotlightData(
                     color: new RGB(80, 80, 80),
                     castShadows: true,
@@ -254,7 +256,8 @@
                     volume: true,
                     corona: true,
                     specular: true,
-                    movementSpeed: 1),
+                    movementSpeed: 1,
+                    extraLightEmissive: 10.0f),
             };
 
             XmlSerializer ser = new XmlSerializer(typeof(VisualSettings));

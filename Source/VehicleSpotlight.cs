@@ -563,7 +563,7 @@
         {
             if (IsActive && extraLightEmissiveIndex != -1)
             {
-                nativeVehicle->SetLightEmissive(extraLightEmissiveIndex, 10.0f); // TODO: get light emissive value from settings or based on the spotlight data
+                nativeVehicle->SetLightEmissive(extraLightEmissiveIndex, Data.ExtraLightEmissive);
             }
         }
 
