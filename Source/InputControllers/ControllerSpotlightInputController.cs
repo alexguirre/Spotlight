@@ -38,29 +38,29 @@
                 case ControllerMethod.LeftStick:
                     if (modifierButton == ControllerButtons.None || Game.IsControllerButtonDownRightNow(modifierButton))
                     {
-                        yaw -= Utility.GetDisabledControlNormal(GameControl.FrontendAxisX) * spotlight.Data.MovementSpeed;
-                        pitch -= Utility.GetDisabledControlNormal(GameControl.FrontendAxisY) * spotlight.Data.MovementSpeed;
+                        yaw -= Utility.GetDisabledControlNormal(GameControl.FrontendAxisX) * GetMovementAmountForThisFrame(spotlight);
+                        pitch -= Utility.GetDisabledControlNormal(GameControl.FrontendAxisY) * GetMovementAmountForThisFrame(spotlight);
                     }
                     break;
                 case ControllerMethod.RightStick:
                     if (modifierButton == ControllerButtons.None || Game.IsControllerButtonDownRightNow(modifierButton))
                     {
-                        yaw -= Utility.GetDisabledControlNormal(GameControl.FrontendRightAxisX) * spotlight.Data.MovementSpeed;
-                        pitch -= Utility.GetDisabledControlNormal(GameControl.FrontendRightAxisY) * spotlight.Data.MovementSpeed;
+                        yaw -= Utility.GetDisabledControlNormal(GameControl.FrontendRightAxisX) * GetMovementAmountForThisFrame(spotlight);
+                        pitch -= Utility.GetDisabledControlNormal(GameControl.FrontendRightAxisY) * GetMovementAmountForThisFrame(spotlight);
                     }
                     break;
                 case ControllerMethod.DPad:
                     if (modifierButton == ControllerButtons.None || Game.IsControllerButtonDownRightNow(modifierButton))
                     {
                         if (Game.IsControllerButtonDownRightNow(ControllerButtons.DPadLeft))
-                            yaw += spotlight.Data.MovementSpeed;
+                            yaw += GetMovementAmountForThisFrame(spotlight);
                         else if (Game.IsControllerButtonDownRightNow(ControllerButtons.DPadRight))
-                            yaw -= spotlight.Data.MovementSpeed;
+                            yaw -= GetMovementAmountForThisFrame(spotlight);
 
                         if (Game.IsControllerButtonDownRightNow(ControllerButtons.DPadUp))
-                            pitch += spotlight.Data.MovementSpeed;
+                            pitch += GetMovementAmountForThisFrame(spotlight);
                         else if (Game.IsControllerButtonDownRightNow(ControllerButtons.DPadDown))
-                            pitch -= spotlight.Data.MovementSpeed;
+                            pitch -= GetMovementAmountForThisFrame(spotlight);
                     }
                     break;
             }

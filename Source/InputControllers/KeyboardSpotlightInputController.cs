@@ -46,24 +46,24 @@
             if (Utility.IsKeyDownRightNowWithModifier(moveLeftKey, modifierKey))
             {
                 hasMoved = true;
-                yaw += spotlight.Data.MovementSpeed;
+                yaw += GetMovementAmountForThisFrame(spotlight);
             }
             else if (Utility.IsKeyDownRightNowWithModifier(moveRightKey, modifierKey))
             {
                 hasMoved = true;
-                yaw -= spotlight.Data.MovementSpeed;
+                yaw -= GetMovementAmountForThisFrame(spotlight);
             }
 
 
             if (Utility.IsKeyDownRightNowWithModifier(moveUpKey, modifierKey))
             {
                 hasMoved = true;
-                pitch += spotlight.Data.MovementSpeed;
+                pitch += GetMovementAmountForThisFrame(spotlight);
             }
             else if (Utility.IsKeyDownRightNowWithModifier(moveDownKey, modifierKey))
             {
                 hasMoved = true;
-                pitch -= spotlight.Data.MovementSpeed;
+                pitch -= GetMovementAmountForThisFrame(spotlight);
             }
 
 
@@ -82,21 +82,6 @@
                     }
                 }
             }
-            //else if (Utility.IsKeyDownWithModifier(trackPedKey, modifierKey))
-            //{
-            //    if (spotlight.IsTrackingPed)
-            //    {
-            //        spotlight.TrackedPed = null;
-            //    }
-            //    else
-            //    {
-            //        Ped p = GetClosestEntityToSpotlight(spotlight, true, false) as Ped;
-            //        if (p)
-            //        {
-            //            spotlight.TrackedPed = p;
-            //        }
-            //    }
-            //}
             else if (Utility.IsKeyDownWithModifier(searchModeKey, modifierKey))
             {
                 spotlight.IsInSearchMode = !spotlight.IsInSearchMode;

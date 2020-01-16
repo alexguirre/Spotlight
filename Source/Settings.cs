@@ -222,7 +222,7 @@
                     volume: true,
                     corona: true,
                     specular: true,
-                    movementSpeed: 1,
+                    movementSpeed: 100,
                     extraLightEmissive: 10.0f),
                 Helicopter = new SpotlightData(
                     color: new RGB(80, 80, 80),
@@ -239,7 +239,7 @@
                     volume: true,
                     corona: true,
                     specular: true,
-                    movementSpeed: 1,
+                    movementSpeed: 100,
                     extraLightEmissive: 10.0f),
                 Boat = new SpotlightData(
                     color: new RGB(80, 80, 80),
@@ -256,7 +256,7 @@
                     volume: true,
                     corona: true,
                     specular: true,
-                    movementSpeed: 1,
+                    movementSpeed: 100,
                     extraLightEmissive: 10.0f),
             };
 

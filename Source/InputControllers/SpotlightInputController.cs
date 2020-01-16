@@ -32,5 +32,10 @@
         }
 
         protected abstract bool GetUpdatedRotationDeltaInternal(VehicleSpotlight spotlight, out Rotator rotation);
+
+        protected float GetMovementAmountForThisFrame(VehicleSpotlight spotlight)
+        {
+            return spotlight.Data.MovementSpeed * Game.FrameTime;
+        }
     }
 }

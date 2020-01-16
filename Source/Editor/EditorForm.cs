@@ -169,7 +169,7 @@
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Falloff)}", "Falloff ", -9999, 9999, 1f, sData.Falloff);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeIntensity)}", "Volume Intensity ", -9999, 9999, 0.05f, sData.VolumeIntensity);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeSize)}", "Volume Size ", -9999, 9999, 0.05f, sData.VolumeSize);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.MovementSpeed)}", "Movement Speed ", 0, 100, 0.5f, sData.MovementSpeed);
+            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.MovementSpeed)}", "Movement Speed ", 0, 9999, 0.5f, sData.MovementSpeed);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.ExtraLightEmissive)}", "Extra Light Emissive", -9999, 9999, 0.25f, sData.ExtraLightEmissive);
 
             y += 6;
