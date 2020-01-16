@@ -27,7 +27,7 @@
         public Vehicle Vehicle { get; }
         public VehicleData VehicleData { get; }
 
-        public Rotator RelativeRotation { get; set; }
+        public Quaternion RelativeRotation { get; set; }
 
         public bool IsTrackingEntity { get { return TrackedEntity.Exists(); } }
         public Entity TrackedEntity
@@ -105,7 +105,13 @@
             }
 
             if (vehicle.Model.IsHelicopter)
-                RelativeRotation = new Rotator(-50.0f, 0.0f, 0.0f);
+            {
+                RelativeRotation = Quaternion.FromRotation(new Rotator(-50.0f, 0.0f, 0.0f));
+            }
+            else
+            {
+                RelativeRotation = Quaternion.Identity;
+            }
         }
 
         // attempts to gather the necessary data to enable the turret movement 
@@ -403,7 +409,7 @@
                     {
                         // if just activated, take the current turret rotation as the spotlight's rotation 
                         // so the bone doesn't rotate abruptly
-                        RelativeRotation = turret->rot1.ToRotation();
+                        RelativeRotation = turret->rot1;
                     }
                 }
             }
@@ -415,7 +421,10 @@
                     controllers[i].UpdateControls(this);
                     if (!IsTrackingEntity && !IsInSearchMode && controllers[i].GetUpdatedRotationDelta(this, out Rotator newRotDelta))
                     {
-                        RelativeRotation += newRotDelta;
+                        Rotator oldRot = RelativeRotation.ToRotation();
+                        Rotator newRot = oldRot + newRotDelta;
+                        newRot.Roll = 0.0f;
+                        RelativeRotation = newRot.ToQuaternion();
                         break;
                     }
                 }
@@ -448,7 +457,7 @@
                 }
                 else
                 {
-                    Quaternion q = RelativeRotation.ToQuaternion() * Vehicle.Orientation;
+                    Quaternion q = RelativeRotation * Vehicle.Orientation;
                     q.Normalize();
                     dir = q.ToVector();
                 }
@@ -460,7 +469,7 @@
                 Position = Vehicle.GetOffsetPosition(VehicleData.Offset);
                 Direction = IsTrackingEntity ? (TrackedEntity.Position - Position).ToNormalized() :
                             IsInSearchMode ? (GetSearchModeRotation() * Vehicle.Orientation).ToVector() :
-                            (Vehicle.Rotation + RelativeRotation).ToVector();
+                            (RelativeRotation * Vehicle.Orientation).ToVector();
             }
 
             justActivated = false;

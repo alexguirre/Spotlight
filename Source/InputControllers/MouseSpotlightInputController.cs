@@ -54,7 +54,7 @@
                 Vector3 worldDir = (targetPosition - spotlight.Position).ToNormalized();
                 Quaternion worldRot = worldDir.ToQuaternion();
                 Quaternion r = worldRot * Quaternion.Invert(spotlight.Vehicle.Orientation);
-                spotlight.RelativeRotation = r.ToRotation();
+                spotlight.RelativeRotation = r;
             }
         }
 
