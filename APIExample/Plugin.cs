@@ -17,14 +17,14 @@ namespace SpotlightAPIExample
         static float h;
         public static void Run()
         {
-            spotlight1 = new APISpotlight(new SpotlightData(Color.FromArgb(255, 240, 5, 5), true, 45f, 30f, 25f, 30f, 50f, 0.025f, 0.05f, 25f, 1.75f, true, true, true, 480, 10.0f)) { IsActive = true };
-            spotlight2 = new APISpotlight(new SpotlightData(Color.FromArgb(255, 5, 5, 240), true, 45f, 30f, 25f, 30f, 50f, 0.025f, 0.05f, 25f, 1.75f, true, true, true, 480, 10.0f)) { IsActive = true };
+            spotlight1 = new APISpotlight(new SpotlightData(Color.FromArgb(255, 240, 5, 5), true, 45f, 30f, 25f, 30f, 50f, 0.025f, 0.05f, 25f, 1.75f, true, true, true, 10.0f)) { IsActive = true };
+            spotlight2 = new APISpotlight(new SpotlightData(Color.FromArgb(255, 5, 5, 240), true, 45f, 30f, 25f, 30f, 50f, 0.025f, 0.05f, 25f, 1.75f, true, true, true, 10.0f)) { IsActive = true };
 
             while (true)
             {
                 GameFiber.Yield();
 
-                h = MathHelper.NormalizeHeading(h + spotlight1.Data.MovementSpeed * Game.FrameTime);
+                h = MathHelper.NormalizeHeading(h + 480 * Game.FrameTime);
                 float h2 = MathHelper.NormalizeHeading(h + 180.0f);
 
                 spotlight1.Position = Game.LocalPlayer.Character.GetOffsetPositionUp(0.95f);
