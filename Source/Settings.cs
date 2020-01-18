@@ -278,7 +278,7 @@ MouseControlsEnabled = true
 
 
 [Keyboard] ; Settings for the keyboard controls
-; VALID KEYS: https://msdn.microsoft.com/en-us/library/system.windows.forms.keys(v=vs.110).aspx
+; VALID KEYS: https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.keys?view=netframework-4.6.1#fields
 Modifier = None
 Toggle = I
 
@@ -295,7 +295,7 @@ SearchModeKey = Decimal
 Speed = 100
 
 [Controller] ; Settings for the controller controls
-; VALID BUTTONS: http://docs.ragepluginhook.net/html/558BC34.htm
+; VALID BUTTONS: https://docs.ragepluginhook.net/?topic=html/T_Rage_ControllerButtons.htm
 Modifier = LeftShoulder
 Toggle = X
 
@@ -307,7 +307,7 @@ Speed = 100
 
 
 [Mouse] ; Settings for the mouse controls
-; VALID KEYS: https://msdn.microsoft.com/en-us/library/system.windows.forms.keys(v=vs.110).aspx
+; VALID KEYS: https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.keys?view=netframework-4.6.1#fields
 Modifier = LControlKey
 Toggle = I
 
