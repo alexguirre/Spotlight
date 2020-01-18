@@ -32,6 +32,8 @@
 
             modifierKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "Modifier", Keys.None);
             toggleKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Keyboard", "Toggle", Keys.I);
+
+            MovementSpeed = Plugin.Settings.GeneralSettingsIniFile.ReadSingle("Keyboard", "Speed", 100.0f);
         }
 
         public override bool ShouldToggleSpotlight() => Utility.IsKeyDownWithModifier(toggleKey, modifierKey);

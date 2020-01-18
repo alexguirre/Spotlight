@@ -222,7 +222,6 @@
                     volume: true,
                     corona: true,
                     specular: true,
-                    movementSpeed: 100,
                     extraLightEmissive: 10.0f),
                 Helicopter = new SpotlightData(
                     color: new RGB(80, 80, 80),
@@ -239,7 +238,6 @@
                     volume: true,
                     corona: true,
                     specular: true,
-                    movementSpeed: 100,
                     extraLightEmissive: 10.0f),
                 Boat = new SpotlightData(
                     color: new RGB(80, 80, 80),
@@ -256,7 +254,6 @@
                     volume: true,
                     corona: true,
                     specular: true,
-                    movementSpeed: 100,
                     extraLightEmissive: 10.0f),
             };
 
@@ -294,6 +291,8 @@ Move Down = NumPad2
 ToggleTrackingKey = NumPad3
 SearchModeKey = Decimal
 
+; Rotation speed in degrees per second.
+Speed = 100
 
 [Controller] ; Settings for the controller controls
 ; VALID BUTTONS: http://docs.ragepluginhook.net/html/558BC34.htm
@@ -303,6 +302,8 @@ Toggle = X
 ; Set it to LeftStick, RightStick or DPad, to select what to use
 Method = LeftStick
 
+; Rotation speed in degrees per second.
+Speed = 100
 
 
 [Mouse] ; Settings for the mouse controls

@@ -19,7 +19,7 @@
     {
         private ControllerFiber Controller { get; }
 
-        public EditorForm() : base("Spotlight Editor", 650, 350)
+        public EditorForm() : base("Spotlight Editor", 650, 325)
         {
             Controller = new ControllerFiber(this);
         }
@@ -169,7 +169,6 @@
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.Falloff)}", "Falloff ", -9999, 9999, 1f, sData.Falloff);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeIntensity)}", "Volume Intensity ", -9999, 9999, 0.05f, sData.VolumeIntensity);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.VolumeSize)}", "Volume Size ", -9999, 9999, 0.05f, sData.VolumeSize);
-            CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.MovementSpeed)}", "Movement Speed ", 0, 9999, 0.5f, sData.MovementSpeed);
             CreateFloatFieldControl(page, x, ref y, $"{name}{nameof(SpotlightData.ExtraLightEmissive)}", "Extra Light Emissive", -9999, 9999, 0.25f, sData.ExtraLightEmissive);
 
             y += 6;
@@ -402,7 +401,6 @@
             else if (control.Name.Contains(nameof(SpotlightData.VolumeSize))) d.VolumeSize = value;
             else if (control.Name.Contains(nameof(SpotlightData.CoronaIntensity))) d.CoronaIntensity = value;
             else if (control.Name.Contains(nameof(SpotlightData.CoronaSize))) d.CoronaSize = value;
-            else if (control.Name.Contains(nameof(SpotlightData.MovementSpeed))) d.MovementSpeed = value;
             else if (control.Name.Contains(nameof(SpotlightData.ExtraLightEmissive))) d.ExtraLightEmissive = value;
         }
 

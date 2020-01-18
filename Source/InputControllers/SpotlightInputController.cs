@@ -5,6 +5,7 @@
     internal abstract class SpotlightInputController
     {
         protected VehicleSpotlight LastUpdatedSpotlight { get; private set; }
+        protected float MovementSpeed { get; set; }
 
         protected SpotlightInputController()
         {
@@ -35,7 +36,7 @@
 
         protected float GetMovementAmountForThisFrame(VehicleSpotlight spotlight)
         {
-            return spotlight.Data.MovementSpeed * Game.FrameTime;
+            return MovementSpeed * Game.FrameTime;
         }
     }
 }

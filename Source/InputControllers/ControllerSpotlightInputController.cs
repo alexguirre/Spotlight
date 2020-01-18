@@ -22,6 +22,8 @@
 
             modifierButton = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<ControllerButtons>("Controller", "Modifier", ControllerButtons.LeftShoulder);
             toggleButton = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<ControllerButtons>("Controller", "Toggle", ControllerButtons.X);
+
+            MovementSpeed = Plugin.Settings.GeneralSettingsIniFile.ReadSingle("Controller", "Speed", 100.0f);
         }
 
         public override bool ShouldToggleSpotlight() => Utility.IsControllerButtonDownWithModifier(toggleButton, modifierButton);
