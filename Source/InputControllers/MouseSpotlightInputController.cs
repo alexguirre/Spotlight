@@ -1,5 +1,6 @@
 ﻿namespace Spotlight.InputControllers
 {
+    using System;
     using System.Windows.Forms;
 
     using Rage;
@@ -16,6 +17,8 @@
         {
             modifierKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Mouse", "Modifier", Keys.LControlKey);
             toggleKey = Plugin.Settings.GeneralSettingsIniFile.ReadEnum<Keys>("Mouse", "Toggle", Keys.I);
+
+            MovementSpeed = Plugin.Settings.GeneralSettingsIniFile.ReadSingle("Mouse", "Speed", 100.0f);
         }
 
         public override bool ShouldToggleSpotlight() => Utility.IsKeyDownWithModifier(toggleKey, modifierKey);
@@ -54,7 +57,26 @@
                 Vector3 worldDir = (targetPosition - spotlight.Position).ToNormalized();
                 Quaternion worldRot = worldDir.ToQuaternion();
                 Quaternion r = worldRot * Quaternion.Invert(spotlight.Vehicle.Orientation);
-                spotlight.RelativeRotation = r;
+                if (MovementSpeed == 0.0f)
+                {
+                    spotlight.RelativeRotation = r;
+                }
+                else
+                {
+                    Quaternion diff = r * Quaternion.Invert(spotlight.RelativeRotation);
+                    float diffAngle = MathHelper.ConvertRadiansToDegrees(diff.Angle);
+                    if (diffAngle >= 180.0f)
+                    {
+                        diffAngle = 360.0f - diffAngle;
+                    }
+
+                    if (diffAngle > float.Epsilon)
+                    {
+                        float secondsToFinish = diffAngle / MovementSpeed;
+                        float t = Math.Min(1.0f, Game.FrameTime / secondsToFinish);
+                        spotlight.RelativeRotation = Quaternion.Slerp(spotlight.RelativeRotation, r, t);
+                    }
+                }
             }
         }
 

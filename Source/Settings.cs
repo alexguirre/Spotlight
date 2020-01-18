@@ -310,6 +310,9 @@ Speed = 100
 ; VALID KEYS: https://msdn.microsoft.com/en-us/library/system.windows.forms.keys(v=vs.110).aspx
 Modifier = LControlKey
 Toggle = I
+
+; Rotation speed in degrees per second. Set it to 0 to rotate instantly.
+Speed = 100
 ";
         #endregion
     }
