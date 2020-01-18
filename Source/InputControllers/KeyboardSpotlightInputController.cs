@@ -48,24 +48,24 @@
             if (Utility.IsKeyDownRightNowWithModifier(moveLeftKey, modifierKey))
             {
                 hasMoved = true;
-                yaw += GetMovementAmountForThisFrame(spotlight);
+                yaw += GetMovementAmountForThisFrame();
             }
             else if (Utility.IsKeyDownRightNowWithModifier(moveRightKey, modifierKey))
             {
                 hasMoved = true;
-                yaw -= GetMovementAmountForThisFrame(spotlight);
+                yaw -= GetMovementAmountForThisFrame();
             }
 
 
             if (Utility.IsKeyDownRightNowWithModifier(moveUpKey, modifierKey))
             {
                 hasMoved = true;
-                pitch += GetMovementAmountForThisFrame(spotlight);
+                pitch += GetMovementAmountForThisFrame();
             }
             else if (Utility.IsKeyDownRightNowWithModifier(moveDownKey, modifierKey))
             {
                 hasMoved = true;
-                pitch -= GetMovementAmountForThisFrame(spotlight);
+                pitch -= GetMovementAmountForThisFrame();
             }
 
 

@@ -34,7 +34,7 @@
 
         protected abstract bool GetUpdatedRotationDeltaInternal(VehicleSpotlight spotlight, out Rotator rotation);
 
-        protected float GetMovementAmountForThisFrame(VehicleSpotlight spotlight)
+        protected float GetMovementAmountForThisFrame()
         {
             return MovementSpeed * Game.FrameTime;
         }
