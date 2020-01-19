@@ -569,6 +569,11 @@
 
         private void OnTrackedEntityChanged()
         {
+            if (!Plugin.Settings.EnableTrackingNotifications)
+            {
+                return;
+            }
+
             const string NotificationTitle = "~h~Spotlight";
 
             Entity e = TrackedEntity;

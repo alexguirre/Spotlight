@@ -28,6 +28,8 @@
 
         public bool EnableLightEmissives { get; } = true;
 
+        public bool EnableTrackingNotifications { get; }
+
         internal Settings(string generalSettingsFileName, string vehiclesSettingsFileName, string visualSettingsFileName, bool generateDefaultsIfFileNotFound)
         {
             GeneralSettingsFileName = generalSettingsFileName;
@@ -61,6 +63,8 @@
             Visual = ReadVisualSettingsFromXMLFile(visualSettingsFileName);
 
             EditorKey = GeneralSettingsIniFile.ReadEnum<Keys>("Misc", "EditorKey", Keys.F11);
+
+            EnableTrackingNotifications = GeneralSettingsIniFile.ReadBoolean("Misc", "TrackingNotificationsEnabled", true);
         }
 
         internal void UpdateVehicleSettings(IDictionary<string, Tuple<Vector3, bool>> settingsByModelName, bool saveToFile)
@@ -269,7 +273,10 @@
         const string DefaultGeneralSettingsText = @"
 [Misc]
 ; The key to open the in-game editor
-EditorKey = F11 
+EditorKey = F11
+
+; Whether the notifications indicating the tracked pedestrian/vehicle are shown
+TrackingNotificationsEnabled = true
 
 [Controls] ; Settings to specify which controls are enabled
 KeyboardControlsEnabled = true
