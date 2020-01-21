@@ -19,6 +19,7 @@ namespace SpotlightAPIExample
         {
             PluginState.Init();
 
+            Vehicle spawnedVehicle = null;
             while (true)
             {
                 GameFiber.Yield();
@@ -45,6 +46,26 @@ namespace SpotlightAPIExample
                         Vehicle v = new Vehicle(closest.Position + Vector3.WorldUp * 5.0f);
                         v.Dismiss();
                         closest.SetSpotlightTrackedEntity(v);
+                    }
+                }
+
+                if (spawnedVehicle)
+                {
+                    if (Game.IsKeyDown(Keys.K))
+                    {
+                        spawnedVehicle.SetSpotlightActive(!spawnedVehicle.IsSpotlightActive());
+                    }
+                }
+                else
+                {
+                    if (Game.IsKeyDown(Keys.K))
+                    {
+                        Vector3 pos = Game.LocalPlayer.Character.Position + new Vector3(0.0f, 5.0f, 5.0f);
+                        spawnedVehicle = new Vehicle((Model m) => m.IsCar, pos);
+                        spawnedVehicle.Dismiss();
+                        spawnedVehicle.RequestSpotlightAndWait();
+                        spawnedVehicle.SetSpotlightActive(true);
+                        spawnedVehicle.SetSpotlightTrackedEntity(Game.LocalPlayer.Character);
                     }
                 }
             }

@@ -49,10 +49,14 @@
         [MarshalAs(UnmanagedType.I1)]
         public bool IsLoaded;
         public fixed byte SpotlightStates[VehicleSpotlightStateData.Size * MaxVehicleSpotlights];
+        public fixed uint RequestVehicleHandles[MaxRequests];
+        public uint RequestCount;
 
         // NOTE: this value is the next prime greater than 300, where 300 is the maximum number of vehicles possible
         public const int MaxVehicleSpotlights = 307;
         public const int MaxVehicleSpotlightsPrevPrime = 293; // needed for double hashing
+
+        public const int MaxRequests = 8;
     }
 
     public static unsafe class PluginState
@@ -210,6 +214,65 @@
             VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
 
             return s != null ? s->TrackedEntity : null;
+        }
+
+        public static void SetSpotlightActive(this Vehicle vehicle, bool active)
+        {
+            VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
+            if (s != null)
+            {
+                s->IsActive = active;
+                s->HasChanged = true;
+            }
+        }
+
+        public static bool IsSpotlightActive(this Vehicle vehicle)
+        {
+            VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
+
+            return s != null ? s->IsActive : false;
+        }
+
+        public static void RequestSpotlight(this Vehicle vehicle)
+        {
+            if (!IsLoaded)
+            {
+                return;
+            }
+
+            GameFiber.WaitUntil(() => data->RequestCount < PluginStateData.MaxRequests);
+
+            data->RequestVehicleHandles[data->RequestCount++] = vehicle.Handle;
+        }
+
+        public static void RequestSpotlightAndWait(this Vehicle vehicle)
+        {
+            if (!IsLoaded)
+            {
+                return;
+            }
+
+            RequestSpotlight(vehicle);
+
+            GameFiber.WaitUntil(() => HasSpotlight(vehicle));
+        }
+
+        internal static bool HasAnySpotlightRequest()
+        {
+            return data->RequestCount > 0;
+        }
+
+        internal static Vehicle PopSpotlightRequest()
+        {
+            uint handle = data->RequestVehicleHandles[--data->RequestCount];
+            if (Rage.Native.NativeFunction.Natives.DoesEntityExist<bool>(handle))
+            {
+                return World.GetEntityByHandle<Vehicle>(handle);
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

@@ -120,6 +120,14 @@
                 return;
             }
 
+            while (PluginState.HasAnySpotlightRequest())
+            {
+                Vehicle v = PluginState.PopSpotlightRequest();
+                if (v)
+                {
+                    GetVehicleSpotlight(v);
+                }
+            }
 
             if (InputControllers.Any(c => c.ShouldToggleSpotlight()))
             {
