@@ -17,21 +17,36 @@ namespace SpotlightAPIExample
         static float h;
         public static void Run()
         {
-            spotlight1 = new APISpotlight(new SpotlightData(Color.FromArgb(255, 240, 5, 5), true, 45f, 30f, 25f, 30f, 50f, 0.025f, 0.05f, 25f, 1.75f, true, true, true, 10.0f)) { IsActive = true };
-            spotlight2 = new APISpotlight(new SpotlightData(Color.FromArgb(255, 5, 5, 240), true, 45f, 30f, 25f, 30f, 50f, 0.025f, 0.05f, 25f, 1.75f, true, true, true, 10.0f)) { IsActive = true };
+            PluginState.Init();
 
             while (true)
             {
                 GameFiber.Yield();
 
-                h = MathHelper.NormalizeHeading(h + 480 * Game.FrameTime);
-                float h2 = MathHelper.NormalizeHeading(h + 180.0f);
+                Vehicle closest = Game.LocalPlayer.Character.LastVehicle;
+                if (!closest)
+                {
+                    Vehicle[] vehs = Game.LocalPlayer.Character.GetNearbyVehicles(1);
+                    if (vehs.Length > 0)
+                    {
+                        closest = vehs[0];
+                    }
+                }
 
-                spotlight1.Position = Game.LocalPlayer.Character.GetOffsetPositionUp(0.95f);
-                spotlight2.Position = spotlight1.Position;
+                if (closest)
+                {
+                    bool hasSpotlight = closest.HasSpotlight();
+                    Entity tracked = closest.GetSpotlightTrackedEntity();
+                    string s = tracked ? tracked.Handle.ToString() : "null";
+                    Game.DisplayHelp($"IsLoaded = {PluginState.IsLoaded}~n~Closest~n~Has spotlight = {hasSpotlight}~n~TrackedEntity = {s}");
 
-                spotlight1.Direction = MathHelper.ConvertHeadingToDirection(h);
-                spotlight2.Direction = MathHelper.ConvertHeadingToDirection(h2);
+                    if (Game.IsKeyDown(Keys.J))
+                    {
+                        Vehicle v = new Vehicle(closest.Position + Vector3.WorldUp * 5.0f);
+                        v.Dismiss();
+                        closest.SetSpotlightTrackedEntity(v);
+                    }
+                }
             }
         }
 
@@ -39,6 +54,8 @@ namespace SpotlightAPIExample
         {
             spotlight1?.Dispose();
             spotlight2?.Dispose();
+
+            PluginState.Shutdown();
         }
     }
 }

@@ -22,6 +22,7 @@
         private static readonly Quaternion DefaultSearchModeEnd = Quaternion.FromRotation(new Rotator(-3.25f, 0.0f, 40.0f));
 
         private readonly CVehicle* nativeVehicle;
+        private readonly VehicleSpotlightStateData* state;
         private Entity trackedEntity;
 
         public Vehicle Vehicle { get; }
@@ -37,6 +38,7 @@
             {
                 if (value != trackedEntity)
                 {
+                    state->TrackedEntity = value;
                     trackedEntity = value;
                     OnTrackedEntityChanged();
                 }
@@ -59,6 +61,7 @@
                     RestoreNativeTurret();
                 }
 
+                state->IsActive = value;
                 justActivated = value;
                 base.IsActive = value;
             }
@@ -112,6 +115,26 @@
             {
                 RelativeRotation = Quaternion.Identity;
             }
+
+            state = PluginState.AddSpotlight(vehicle);
+        }
+
+        public void OnRemoved()
+        {
+            state->Release();
+        }
+
+        private void SyncWithState()
+        {
+            if (!state->HasChanged)
+            {
+                return;
+            }
+
+            IsActive = state->IsActive;
+            TrackedEntity = state->TrackedEntity;
+
+            state->HasChanged = false;
         }
 
         // attempts to gather the necessary data to enable the turret movement 
@@ -387,11 +410,14 @@
 
         public void OnUnload()
         {
+            OnRemoved();
             RestoreNativeTurret();
         }
 
         public void Update(IList<SpotlightInputController> controllers)
         {
+            SyncWithState();
+
             if (!IsActive)
                 return;
 

@@ -24,6 +24,9 @@
 
         private static void Main()
         {
+            PluginState.Init();
+            PluginState.IsLoaded = true;
+
             while (Game.IsLoading)
                 GameFiber.Sleep(500);
 
@@ -134,6 +137,7 @@
                 if (!s.Vehicle || s.Vehicle.IsDead)
                 {
                     s.IsActive = false;
+                    s.OnRemoved();
                     Spotlights.RemoveAt(i);
                     continue;
                 }
@@ -176,6 +180,9 @@
                 Spotlights[i].OnUnload();
             }
             Spotlights.Clear();
+
+            PluginState.IsLoaded = false;
+            PluginState.Shutdown();
         }
 
 

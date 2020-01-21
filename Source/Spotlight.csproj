@@ -70,6 +70,7 @@
     <Compile Include="ISpotlight.cs" />
     <Compile Include="InputControllers\ControllerSpotlightInputController.cs" />
     <Compile Include="InputControllers\KeyboardSpotlightInputController.cs" />
+    <Compile Include="PluginState.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="InputControllers\MouseSpotlightInputController.cs" />
     <Compile Include="InputControllers\SpotlightInputController.cs" />
