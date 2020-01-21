@@ -1,7 +1,4 @@
 version: b{build}
-branches:
-  only:
-  - master
 skip_branch_with_pr: true
 image: Visual Studio 2017
 configuration:
@@ -17,7 +14,7 @@ assembly_info:
 environment:
   SPOTLIGHT_BUILD_PATH: Build
   MAJOR_VERSION: 1
-  MINOR_VERSION: 3
+  MINOR_VERSION: 4
   START_YEAR: 2015
 install:
 - ps: >-
