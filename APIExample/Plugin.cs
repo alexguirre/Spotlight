@@ -53,7 +53,15 @@ namespace SpotlightAPIExample
                 {
                     if (Game.IsKeyDown(Keys.K))
                     {
+                        spawnedVehicle.Delete();
+                    }
+                    else if (Game.IsKeyDown(Keys.L))
+                    {
                         spawnedVehicle.SetSpotlightActive(!spawnedVehicle.IsSpotlightActive());
+                    }
+                    else if (Game.IsKeyDown(Keys.O))
+                    {
+                        spawnedVehicle.SetSpotlightRotation(Quaternion.FromRotation(new Rotator(45.0f, 0.0f, 45.0f)));
                     }
                 }
                 else

@@ -8,7 +8,7 @@
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = Size)]
     internal unsafe struct VehicleSpotlightStateData
     {
-        public const int Size = 11;
+        public const int Size = 1 + 1 + 1 + 4 + 4 + (4 * 4);
         public enum Status : byte { Empty = 0, Released = 1, Used = 2 }
 
         public Status SlotStatus;
@@ -16,6 +16,7 @@
         public bool IsActive;
         public uint VehicleHandle;
         public uint TrackedEntityHandle;
+        public Quaternion Rotation;
 
         public Entity TrackedEntity
         {
@@ -231,6 +232,23 @@
             VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
 
             return s != null ? s->IsActive : false;
+        }
+
+        public static void SetSpotlightRotation(this Vehicle vehicle, Quaternion rotation)
+        {
+            VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
+            if (s != null)
+            {
+                s->Rotation = rotation;
+                s->HasChanged = true;
+            }
+        }
+
+        public static Quaternion GetSpotlightRotation(this Vehicle vehicle)
+        {
+            VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
+
+            return s != null ? s->Rotation : default;
         }
 
         public static bool RequestSpotlight(this Vehicle vehicle)

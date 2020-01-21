@@ -24,11 +24,23 @@
         private readonly CVehicle* nativeVehicle;
         private readonly VehicleSpotlightStateData* state;
         private Entity trackedEntity;
+        private Quaternion relativeRotation;
 
         public Vehicle Vehicle { get; }
         public VehicleData VehicleData { get; }
 
-        public Quaternion RelativeRotation { get; set; }
+        public Quaternion RelativeRotation
+        {
+            get => relativeRotation;
+            set
+            {
+                if (value != relativeRotation)
+                {
+                    state->Rotation = value;
+                    relativeRotation = value;
+                }
+            }
+        }
 
         public bool IsTrackingEntity { get { return TrackedEntity.Exists(); } }
         public Entity TrackedEntity
@@ -102,6 +114,8 @@
             Vehicle = vehicle;
             nativeVehicle = (CVehicle*)vehicle.MemoryAddress;
             VehicleData = GetVehicleDataForModel(vehicle.Model);
+            state = PluginState.AddSpotlight(vehicle);
+
             if (!VehicleData.DisableTurret)
             {
                 TryFindTurretStuff();
@@ -115,8 +129,6 @@
             {
                 RelativeRotation = Quaternion.Identity;
             }
-
-            state = PluginState.AddSpotlight(vehicle);
         }
 
         public void OnRemoved()
@@ -133,6 +145,7 @@
 
             IsActive = state->IsActive;
             TrackedEntity = state->TrackedEntity;
+            RelativeRotation = state->Rotation;
 
             state->HasChanged = false;
         }
