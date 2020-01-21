@@ -233,26 +233,25 @@
             return s != null ? s->IsActive : false;
         }
 
-        public static void RequestSpotlight(this Vehicle vehicle)
+        public static bool RequestSpotlight(this Vehicle vehicle)
         {
-            if (!IsLoaded)
+            if (!IsLoaded || HasSpotlight(vehicle))
             {
-                return;
+                return false;
             }
 
             GameFiber.WaitUntil(() => data->RequestCount < PluginStateData.MaxRequests);
 
             data->RequestVehicleHandles[data->RequestCount++] = vehicle.Handle;
+            return true;
         }
 
         public static void RequestSpotlightAndWait(this Vehicle vehicle)
         {
-            if (!IsLoaded)
+            if (!RequestSpotlight(vehicle))
             {
                 return;
             }
-
-            RequestSpotlight(vehicle);
 
             GameFiber.WaitUntil(() => HasSpotlight(vehicle));
         }
