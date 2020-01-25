@@ -39,7 +39,7 @@ namespace SpotlightAPIExample
                     bool hasSpotlight = closest.HasSpotlight();
                     Entity tracked = closest.GetSpotlightTrackedEntity();
                     string s = tracked ? tracked.Handle.ToString() : "null";
-                    Game.DisplayHelp($"IsLoaded = {PluginState.IsLoaded}~n~Closest~n~Has spotlight = {hasSpotlight}~n~TrackedEntity = {s}");
+                    Game.DisplayHelp($"IsLoaded = {PluginState.IsLoaded}~n~Closest~n~Has spotlight = {hasSpotlight}~n~Is Active = {closest.IsSpotlightActive()}~n~Is In Search Mode = {closest.IsSpotlightInSearchMode()}~n~TrackedEntity = {s}");
 
                     if (Game.IsKeyDown(Keys.J))
                     {
@@ -62,6 +62,10 @@ namespace SpotlightAPIExample
                     else if (Game.IsKeyDown(Keys.O))
                     {
                         spawnedVehicle.SetSpotlightRotation(Quaternion.FromRotation(new Rotator(45.0f, 0.0f, 45.0f)));
+                    }
+                    else if (Game.IsKeyDown(Keys.M))
+                    {
+                        spawnedVehicle.SetSpotlightInSearchMode(!spawnedVehicle.IsSpotlightInSearchMode());
                     }
                 }
                 else

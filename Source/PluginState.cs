@@ -8,12 +8,13 @@
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = Size)]
     internal unsafe struct VehicleSpotlightStateData
     {
-        public const int Size = 1 + 1 + 1 + 4 + 4 + (4 * 4);
+        public const int Size = 1 + 1 + 1 + 1 + 4 + 4 + (4 * 4);
         public enum Status : byte { Empty = 0, Released = 1, Used = 2 }
 
         public Status SlotStatus;
         public bool HasChanged;
         public bool IsActive;
+        public bool IsInSearchMode;
         public uint VehicleHandle;
         public uint TrackedEntityHandle;
         public Quaternion Rotation;
@@ -32,10 +33,14 @@
             }
         }
 
-        public void Use(Vehicle vehicle)
+        public void Use(VehicleSpotlight spotlight)
         {
-            VehicleHandle = vehicle.Handle;
             SlotStatus = Status.Used;
+            HasChanged = false;
+            IsActive = spotlight.IsActive;
+            IsInSearchMode = spotlight.IsInSearchMode;
+            VehicleHandle = spotlight.Vehicle.Handle;
+            TrackedEntity = spotlight.TrackedEntity;
         }
 
         public void Release()
@@ -185,13 +190,13 @@
             return FindSpotlightIndex(vehicle) != InvalidIndex;
         }
 
-        internal static VehicleSpotlightStateData* AddSpotlight(Vehicle vehicle)
+        internal static VehicleSpotlightStateData* AddSpotlight(VehicleSpotlight spotlight)
         {
-            uint index = FindSpotlightInsertionIndex(vehicle);
+            uint index = FindSpotlightInsertionIndex(spotlight.Vehicle);
             if (index != InvalidIndex)
             {
                 VehicleSpotlightStateData* s = At(index);
-                s->Use(vehicle);
+                s->Use(spotlight);
                 return s;
             }
             else
@@ -232,6 +237,23 @@
             VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
 
             return s != null ? s->IsActive : false;
+        }
+
+        public static void SetSpotlightInSearchMode(this Vehicle vehicle, bool searchModeActive)
+        {
+            VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
+            if (s != null)
+            {
+                s->IsInSearchMode = searchModeActive;
+                s->HasChanged = true;
+            }
+        }
+
+        public static bool IsSpotlightInSearchMode(this Vehicle vehicle)
+        {
+            VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
+
+            return s != null ? s->IsInSearchMode : false;
         }
 
         public static void SetSpotlightRotation(this Vehicle vehicle, Quaternion rotation)

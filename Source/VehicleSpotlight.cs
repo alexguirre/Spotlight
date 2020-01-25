@@ -25,6 +25,7 @@
         private readonly VehicleSpotlightStateData* state;
         private Entity trackedEntity;
         private Quaternion relativeRotation;
+        private bool isInSearchMode;
 
         public Vehicle Vehicle { get; }
         public VehicleData VehicleData { get; }
@@ -57,7 +58,19 @@
             }
         }
 
-        public bool IsInSearchMode { get; set; }
+        public bool IsInSearchMode
+        {
+            get => isInSearchMode;
+            set
+            {
+                if (value != isInSearchMode)
+                {
+                    state->IsInSearchMode = value;
+                    isInSearchMode = value;
+                }
+            }
+        }
+
         private float searchModePercentage;
         private bool searchModeDir;
 
@@ -114,7 +127,7 @@
             Vehicle = vehicle;
             nativeVehicle = (CVehicle*)vehicle.MemoryAddress;
             VehicleData = GetVehicleDataForModel(vehicle.Model);
-            state = PluginState.AddSpotlight(vehicle);
+            state = PluginState.AddSpotlight(this);
 
             if (!VehicleData.DisableTurret)
             {
@@ -144,6 +157,7 @@
             }
 
             IsActive = state->IsActive;
+            IsInSearchMode = state->IsInSearchMode;
             TrackedEntity = state->TrackedEntity;
             RelativeRotation = state->Rotation;
 
