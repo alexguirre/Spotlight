@@ -270,7 +270,7 @@
         {
             VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
 
-            return s != null ? s->Rotation : default;
+            return s != null ? s->Rotation : default(Quaternion);
         }
 
         internal static bool RequestSpotlight(Vehicle vehicle)
