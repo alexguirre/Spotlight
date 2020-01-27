@@ -73,14 +73,14 @@
             {
                 if (spotlight.IsTrackingEntity)
                 {
-                    spotlight.TrackedEntity = null;
+                    spotlight.SetTrackedEntityAndDisplayNotification(null);
                 }
                 else
                 {
                     Entity e = GetClosestEntityToSpotlight(spotlight, true, true);
                     if (e)
                     {
-                        spotlight.TrackedEntity = e;
+                        spotlight.SetTrackedEntityAndDisplayNotification(e);
                     }
                 }
             }

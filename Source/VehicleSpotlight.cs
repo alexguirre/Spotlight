@@ -53,7 +53,6 @@
                 {
                     state->TrackedEntity = value;
                     trackedEntity = value;
-                    OnTrackedEntityChanged();
                 }
             }
         }
@@ -620,7 +619,13 @@
             }
         }
 
-        private void OnTrackedEntityChanged()
+        public void SetTrackedEntityAndDisplayNotification(Entity e)
+        {
+            TrackedEntity = e;
+            DisplayTrackedEntityNotification();
+        }
+
+        private void DisplayTrackedEntityNotification()
         {
             if (!Plugin.Settings.EnableTrackingNotifications)
             {
