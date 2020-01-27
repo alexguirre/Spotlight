@@ -65,7 +65,7 @@
         public const int MaxRequests = 8;
     }
 
-    public static unsafe class PluginState
+    internal static unsafe class PluginState
     {
         private const string MappedFileName = "spotlight_plugin_state";
 
@@ -73,7 +73,7 @@
         private static MemoryMappedViewAccessor mappedFileAccessor;
         private static PluginStateData* data;
 
-        public static void Init()
+        internal static void Init()
         {
             Game.LogTrivialDebug($"[Spotlight.PluginState] Init from '{System.AppDomain.CurrentDomain.FriendlyName}'");
             Game.LogTrivialDebug($"[Spotlight.PluginState] sizeof(PluginStateData) = '{sizeof(PluginStateData)}'");
@@ -86,7 +86,7 @@
             data = (PluginStateData*)ptr;
         }
 
-        public static void Shutdown()
+        internal static void Shutdown()
         {
             Game.LogTrivialDebug($"[Spotlight.PluginState] Shutdown from '{System.AppDomain.CurrentDomain.FriendlyName}'");
 
@@ -103,10 +103,10 @@
             }
         }
 
-        public static bool IsLoaded
+        internal static bool IsLoaded
         {
             get => data != null && data->IsLoaded;
-            internal set
+            set
             {
                 if (data != null)
                 {
@@ -185,7 +185,7 @@
             }
         }
 
-        public static bool HasSpotlight(this Vehicle vehicle)
+        internal static bool HasSpotlight(Vehicle vehicle)
         {
             return FindSpotlightIndex(vehicle) != InvalidIndex;
         }
@@ -205,7 +205,7 @@
             }
         }
 
-        public static void SetSpotlightTrackedEntity(this Vehicle vehicle, Entity entity)
+        internal static void SetSpotlightTrackedEntity(Vehicle vehicle, Entity entity)
         {
             VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
             if (s != null)
@@ -215,14 +215,14 @@
             }
         }
 
-        public static Entity GetSpotlightTrackedEntity(this Vehicle vehicle)
+        internal static Entity GetSpotlightTrackedEntity(Vehicle vehicle)
         {
             VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
 
             return s != null ? s->TrackedEntity : null;
         }
 
-        public static void SetSpotlightActive(this Vehicle vehicle, bool active)
+        internal static void SetSpotlightActive(Vehicle vehicle, bool active)
         {
             VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
             if (s != null)
@@ -232,14 +232,14 @@
             }
         }
 
-        public static bool IsSpotlightActive(this Vehicle vehicle)
+        internal static bool IsSpotlightActive(Vehicle vehicle)
         {
             VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
 
             return s != null ? s->IsActive : false;
         }
 
-        public static void SetSpotlightInSearchMode(this Vehicle vehicle, bool searchModeActive)
+        internal static void SetSpotlightInSearchMode(Vehicle vehicle, bool searchModeActive)
         {
             VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
             if (s != null)
@@ -249,14 +249,14 @@
             }
         }
 
-        public static bool IsSpotlightInSearchMode(this Vehicle vehicle)
+        internal static bool IsSpotlightInSearchMode(Vehicle vehicle)
         {
             VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
 
             return s != null ? s->IsInSearchMode : false;
         }
 
-        public static void SetSpotlightRotation(this Vehicle vehicle, Quaternion rotation)
+        internal static void SetSpotlightRotation(Vehicle vehicle, Quaternion rotation)
         {
             VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
             if (s != null)
@@ -266,14 +266,14 @@
             }
         }
 
-        public static Quaternion GetSpotlightRotation(this Vehicle vehicle)
+        internal static Quaternion GetSpotlightRotation(Vehicle vehicle)
         {
             VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
 
             return s != null ? s->Rotation : default;
         }
 
-        public static bool RequestSpotlight(this Vehicle vehicle)
+        internal static bool RequestSpotlight(Vehicle vehicle)
         {
             if (!IsLoaded || HasSpotlight(vehicle))
             {
@@ -286,7 +286,7 @@
             return true;
         }
 
-        public static void RequestSpotlightAndWait(this Vehicle vehicle)
+        internal static void RequestSpotlightAndWait(Vehicle vehicle)
         {
             if (!RequestSpotlight(vehicle))
             {
