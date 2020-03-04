@@ -26,7 +26,7 @@
         internal BaseSpotlight(SpotlightData data)
         {
             Data = data;
-            shadowId = GetNewShadowId();
+            shadowId = GenerateShadowId();
         }
 
         protected internal void DrawLight()
@@ -77,16 +77,11 @@
             }
         }
 
-
-
-        private static uint totalShadowsId = 0;
-        private static ulong GetNewShadowId()
+        private ulong GenerateShadowId()
         {
-            totalShadowsId++;
-            if (totalShadowsId > 200) // own limit, I don't know if game has a limit or in case it has, if it's lower
-                totalShadowsId = 1;
-            ulong id = 0xE79C9874 + totalShadowsId;  // 0xE79C9874 is JOAAT hash of "alexguirre", just a random base id for the shadow ids, game uses the script name hash for this 
-            return id;
+            ulong a = unchecked((ulong)AppDomain.CurrentDomain.Id) << 32;
+            ulong b = unchecked((ulong)GetHashCode());
+            return a | b;
         }
     }
 }
