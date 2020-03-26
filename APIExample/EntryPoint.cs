@@ -71,7 +71,7 @@ namespace SpotlightAPIExample
                         {
                             while (v.IsSpotlightActive())
                             {
-                                Quaternion relativeRot = v.GetSpotlightRotation(); // TODO: just provide direction directly?
+                                Quaternion relativeRot = v.GetSpotlightRotation();
                                 Vector3 worldDir = (relativeRot * v.Orientation).ToVector();
                                 Vector3 worldPos = v.GetSpotlightPosition();
 
