@@ -52,11 +52,11 @@
     [StructLayout(LayoutKind.Sequential)]
     internal unsafe struct PluginStateData
     {
-        [MarshalAs(UnmanagedType.I1)]
-        public bool IsLoaded;
         public fixed byte SpotlightStates[VehicleSpotlightStateData.Size * MaxVehicleSpotlights];
         public fixed uint RequestVehicleHandles[MaxRequests];
         public uint RequestCount;
+        [MarshalAs(UnmanagedType.I1)]
+        public bool IsLoaded;
 
         // NOTE: this value is the next prime greater than 300, where 300 is the maximum number of vehicles possible
         public const int MaxVehicleSpotlights = 307;
@@ -67,7 +67,7 @@
 
     internal static unsafe class PluginState
     {
-        private const string MappedFileName = "spotlight_plugin_state";
+        private const string MappedFileName = "spotlight_plugin_state{D6561D3A-F1A2-4ABE-8BD3-7DBA2870F9BA}";
 
         private static MemoryMappedFile mappedFile;
         private static MemoryMappedViewAccessor mappedFileAccessor;
@@ -133,7 +133,6 @@
             do
             {
                 index = DoubleHash(handle, i++);
-                Game.DisplaySubtitle($"handle:{handle:X08}~n~index:{index}~n~i:{i - 1}");
 
                 VehicleSpotlightStateData* data = At(index);
                 if (data->SlotStatus == VehicleSpotlightStateData.Status.Used && data->VehicleHandle == handle)
