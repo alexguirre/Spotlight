@@ -8,7 +8,7 @@
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = Size)]
     internal unsafe struct VehicleSpotlightStateData
     {
-        public const int Size = 1 + 1 + 1 + 1 + 4 + 4 + (4 * 4);
+        public const int Size = 1 + 1 + 1 + 1 + 4 + 4 + (4 * 4) + (4 * 6);
         public enum Status : byte { Empty = 0, Released = 1, Used = 2 }
 
         public Status SlotStatus;
@@ -18,6 +18,7 @@
         public uint VehicleHandle;
         public uint TrackedEntityHandle;
         public Quaternion Rotation;
+        public Vector3 Position;
 
         public Entity TrackedEntity
         {
@@ -41,6 +42,8 @@
             IsInSearchMode = spotlight.IsInSearchMode;
             VehicleHandle = spotlight.Vehicle.Handle;
             TrackedEntity = spotlight.TrackedEntity;
+            Rotation = spotlight.RelativeRotation;
+            Position = spotlight.Position;
         }
 
         public void Release()
@@ -50,7 +53,7 @@
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal unsafe struct PluginStateData
+    internal unsafe struct PluginStateData // ~16kb
     {
         public fixed byte SpotlightStates[VehicleSpotlightStateData.Size * MaxVehicleSpotlights];
         public fixed uint RequestVehicleHandles[MaxRequests];
@@ -269,7 +272,14 @@
         {
             VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
 
-            return s != null ? s->Rotation : default(Quaternion);
+            return s != null ? s->Rotation : default;
+        }
+
+        internal static Vector3 GetSpotlightPosition(Vehicle vehicle)
+        {
+            VehicleSpotlightStateData* s = GetSpotlightState(vehicle);
+
+            return s != null ? s->Position : default;
         }
 
         internal static bool RequestSpotlight(Vehicle vehicle)

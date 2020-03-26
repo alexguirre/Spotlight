@@ -56,5 +56,46 @@ namespace SpotlightAPIExample
                 Game.Console.Print("Spotlight plugin is not loaded");
             }
         }
+
+        [ConsoleCommand("Draws a line from the spotlight with the same direction until the spotlight is turn off")]
+        private static void DrawSpotlightDirection()
+        {
+            if (SpotlightAPI.CanBeUsed)
+            {
+                Vehicle v = Game.LocalPlayer.Character.CurrentVehicle;
+                if (v)
+                {
+                    if (v.HasSpotlight() && v.IsSpotlightActive())
+                    {
+                        GameFiber.StartNew(() =>
+                        {
+                            while (v.IsSpotlightActive())
+                            {
+                                Quaternion relativeRot = v.GetSpotlightRotation(); // TODO: just provide direction directly?
+                                Vector3 worldDir = (relativeRot * v.Orientation).ToVector();
+                                Vector3 worldPos = v.GetSpotlightPosition();
+
+                                Debug.DrawLine(worldPos, worldPos + worldDir * 10.0f, System.Drawing.Color.Red);
+
+                                GameFiber.Yield();
+                            }
+                        });
+
+                    }
+                    else
+                    {
+                        Game.Console.Print("Spotlight is not active");
+                    }
+                }
+                else
+                {
+                    Game.Console.Print("Not in a vehicle");
+                }
+            }
+            else
+            {
+                Game.Console.Print("Spotlight plugin is not loaded");
+            }
+        }
     }
 }

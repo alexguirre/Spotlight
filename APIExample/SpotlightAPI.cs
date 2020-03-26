@@ -31,6 +31,7 @@
         public static bool IsSpotlightInSearchMode(this Vehicle vehicle) => Functions.IsSpotlightInSearchMode(vehicle);
         public static void SetSpotlightRotation(this Vehicle vehicle, Quaternion rotation) => Functions.SetSpotlightRotation(vehicle, rotation);
         public static Quaternion GetSpotlightRotation(this Vehicle vehicle) => Functions.GetSpotlightRotation(vehicle);
+        public static Vector3 GetSpotlightPosition(this Vehicle vehicle) => Functions.GetSpotlightPosition(vehicle);
 
         static SpotlightAPI()
         {

@@ -39,5 +39,7 @@
         public static void SetSpotlightRotation(Vehicle vehicle, Quaternion rotation) => PluginState.SetSpotlightRotation(vehicle, rotation);
 
         public static Quaternion GetSpotlightRotation(Vehicle vehicle) => PluginState.GetSpotlightRotation(vehicle);
+
+        public static Vector3 GetSpotlightPosition(Vehicle vehicle) => PluginState.GetSpotlightPosition(vehicle);
     }
 }

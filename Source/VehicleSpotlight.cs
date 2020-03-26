@@ -93,6 +93,19 @@
 
         private bool justActivated;
 
+        public override Vector3 Position
+        {
+            get => base.Position;
+            set
+            {
+                if (value != Position)
+                {
+                    state->Position = value;
+                    base.Position = value;
+                }
+            }
+        }
+
         public override Vector3 Direction
         {
             get => base.Direction;
