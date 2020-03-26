@@ -22,12 +22,26 @@
         private static readonly Quaternion DefaultSearchModeEnd = Quaternion.FromRotation(new Rotator(-3.25f, 0.0f, 40.0f));
 
         private readonly CVehicle* nativeVehicle;
+        private readonly VehicleSpotlightStateData* state;
         private Entity trackedEntity;
+        private Quaternion relativeRotation;
+        private bool isInSearchMode;
 
         public Vehicle Vehicle { get; }
         public VehicleData VehicleData { get; }
 
-        public Quaternion RelativeRotation { get; set; }
+        public Quaternion RelativeRotation
+        {
+            get => relativeRotation;
+            set
+            {
+                if (value != relativeRotation)
+                {
+                    state->Rotation = value;
+                    relativeRotation = value;
+                }
+            }
+        }
 
         public bool IsTrackingEntity { get { return TrackedEntity.Exists(); } }
         public Entity TrackedEntity
@@ -37,13 +51,25 @@
             {
                 if (value != trackedEntity)
                 {
+                    state->TrackedEntity = value;
                     trackedEntity = value;
-                    OnTrackedEntityChanged();
                 }
             }
         }
 
-        public bool IsInSearchMode { get; set; }
+        public bool IsInSearchMode
+        {
+            get => isInSearchMode;
+            set
+            {
+                if (value != isInSearchMode)
+                {
+                    state->IsInSearchMode = value;
+                    isInSearchMode = value;
+                }
+            }
+        }
+
         private float searchModePercentage;
         private bool searchModeDir;
 
@@ -59,12 +85,26 @@
                     RestoreNativeTurret();
                 }
 
+                state->IsActive = value;
                 justActivated = value;
                 base.IsActive = value;
             }
         }
 
         private bool justActivated;
+
+        public override Vector3 Position
+        {
+            get => base.Position;
+            set
+            {
+                if (value != Position)
+                {
+                    state->Position = value;
+                    base.Position = value;
+                }
+            }
+        }
 
         public override Vector3 Direction
         {
@@ -99,6 +139,8 @@
             Vehicle = vehicle;
             nativeVehicle = (CVehicle*)vehicle.MemoryAddress;
             VehicleData = GetVehicleDataForModel(vehicle.Model);
+            state = PluginState.AddSpotlight(this);
+
             if (!VehicleData.DisableTurret)
             {
                 TryFindTurretStuff();
@@ -112,6 +154,26 @@
             {
                 RelativeRotation = Quaternion.Identity;
             }
+        }
+
+        public void OnRemoved()
+        {
+            state->Release();
+        }
+
+        private void SyncWithState()
+        {
+            if (!state->HasChanged)
+            {
+                return;
+            }
+
+            IsActive = state->IsActive;
+            IsInSearchMode = state->IsInSearchMode;
+            TrackedEntity = state->TrackedEntity;
+            RelativeRotation = state->Rotation;
+
+            state->HasChanged = false;
         }
 
         // attempts to gather the necessary data to enable the turret movement 
@@ -387,11 +449,14 @@
 
         public void OnUnload()
         {
+            OnRemoved();
             RestoreNativeTurret();
         }
 
         public void Update(IList<SpotlightInputController> controllers)
         {
+            SyncWithState();
+
             if (!IsActive)
                 return;
 
@@ -472,6 +537,12 @@
                             (RelativeRotation * Vehicle.Orientation).ToVector();
             }
 
+            if (IsTrackingEntity || IsInSearchMode)
+            {
+                // keep updating the RelativeRotation when tracking or search mode so it's available through the API
+                RelativeRotation = Direction.ToQuaternion() * Quaternion.Invert(Vehicle.Orientation);
+            }
+            
             justActivated = false;
 
             DrawLight();
@@ -567,7 +638,13 @@
             }
         }
 
-        private void OnTrackedEntityChanged()
+        public void SetTrackedEntityAndDisplayNotification(Entity e)
+        {
+            TrackedEntity = e;
+            DisplayTrackedEntityNotification();
+        }
+
+        private void DisplayTrackedEntityNotification()
         {
             if (!Plugin.Settings.EnableTrackingNotifications)
             {

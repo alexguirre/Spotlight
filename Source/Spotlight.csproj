@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\APISpotlight.cs" />
+    <Compile Include="API\Functions.cs" />
     <Compile Include="Core\Memory\GameMemory.cs" />
     <Compile Include="Core\Memory\GameOffsets.cs" />
     <Compile Include="Core\Memory\GameStructs.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="ISpotlight.cs" />
     <Compile Include="InputControllers\ControllerSpotlightInputController.cs" />
     <Compile Include="InputControllers\KeyboardSpotlightInputController.cs" />
+    <Compile Include="PluginState.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="InputControllers\MouseSpotlightInputController.cs" />
     <Compile Include="InputControllers\SpotlightInputController.cs" />
