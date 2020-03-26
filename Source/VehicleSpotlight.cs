@@ -524,6 +524,12 @@
                             (RelativeRotation * Vehicle.Orientation).ToVector();
             }
 
+            if (IsTrackingEntity || IsInSearchMode)
+            {
+                // keep updating the RelativeRotation when tracking or search mode so it's available through the API
+                RelativeRotation = Direction.ToQuaternion() * Quaternion.Invert(Vehicle.Orientation);
+            }
+            
             justActivated = false;
 
             DrawLight();
