@@ -130,7 +130,6 @@
         private int nativeWeaponIndex = -1;
         private int nativeTurretIndex = -1;
         private eBoneRefId nativeTurretBaseBoneRefId = InvalidBoneRefId, nativeTurretBarrelBoneRefId = InvalidBoneRefId;
-        private ushort[] weaponBoneHierarchy;
         private int extraLightEmissiveIndex = -1;
 
         // TODO: small lag when executing for the first time, probably due to JIT compilation, figure out if there's a fix
@@ -348,8 +347,7 @@
                                 weaponBoneHierarchyList.Add(idx);
                                 ushort parent = nativeVehicle->inst->entry->skeleton->skeletonData->bones[idx].parentIndex;
                                 idx = parent;
-                            } while (idx != 0xFFFF);
-                            weaponBoneHierarchy = weaponBoneHierarchyList.ToArray();
+                            } while (idx != 0 && idx != 0xFFFF); // until idx is root or doesn't exists
                             Game.LogTrivialDebug("[Weapon Bone Hierarchy] " + String.Join(" -> ", weaponBoneHierarchyList));
 
                             enableTurret = true;
@@ -361,21 +359,26 @@
 
                             if (Plugin.Settings.EnableLightEmissives && VehicleData.SpotlightExtraLight == VehicleData.DefaultSpotlightExtraLight)
                             {
-                                byte[] extraLightIndices = new byte[4];
-                                extraLightIndices[0] = nativeVehicle->GetBoneIndex(eBoneRefId.extralight_1);
-                                extraLightIndices[1] = nativeVehicle->GetBoneIndex(eBoneRefId.extralight_2);
-                                extraLightIndices[2] = nativeVehicle->GetBoneIndex(eBoneRefId.extralight_3);
-                                extraLightIndices[3] = nativeVehicle->GetBoneIndex(eBoneRefId.extralight_4);
+                                byte[] extraLightIndices = new[]
+                                {
+                                    nativeVehicle->GetBoneIndex(eBoneRefId.extralight_1),
+                                    nativeVehicle->GetBoneIndex(eBoneRefId.extralight_2),
+                                    nativeVehicle->GetBoneIndex(eBoneRefId.extralight_3),
+                                    nativeVehicle->GetBoneIndex(eBoneRefId.extralight_4),
+                                };
 
-                                for (int i = 0; i < 4; i++)
+                                for (int i = 0; i < extraLightIndices.Length; i++)
                                 {
                                     byte boneIndex = extraLightIndices[i];
+                                    Game.LogTrivialDebug($"[ExtraLight Search] #{i} (boneIndex:{boneIndex})");
                                     if (boneIndex != 0xFF)
                                     {
                                         // check if the light bone is child of any of the bones in the turret hierarchy
                                         ushort parent = nativeVehicle->inst->entry->skeleton->skeletonData->bones[boneIndex].parentIndex;
-                                        if (Array.FindIndex(weaponBoneHierarchy, (ushort weaponBone) => weaponBone == parent) != -1)
+                                        Game.LogTrivialDebug($"[ExtraLight Search]  > Parent = {parent}");
+                                        if (weaponBoneHierarchyList.FindIndex(weaponBone => weaponBone == parent) != -1)
                                         {
+                                            Game.LogTrivialDebug("[ExtraLight Search]    in hierarchy");
                                             eBoneRefId id = eBoneRefId.extralight_1 + (i);
                                             extraLightEmissiveIndex = GameFunctions.GetLightEmissiveIndexForBone(id);
                                             break;
@@ -542,7 +545,7 @@
                 // keep updating the RelativeRotation when tracking or search mode so it's available through the API
                 RelativeRotation = Direction.ToQuaternion() * Quaternion.Invert(Vehicle.Orientation);
             }
-            
+
             justActivated = false;
 
             DrawLight();
