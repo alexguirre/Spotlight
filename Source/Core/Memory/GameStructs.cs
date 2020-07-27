@@ -295,6 +295,7 @@
 
         CanRenderUnderground = 0x8, // if not set the light won't render in underground parts of the map, such as tunnels
 
+        IgnoreArtificialLightsState = 0x10, // if set, keeps drawing the light after calling SET_ARTIFICIAL_LIGHTS_STATE(false)
         HasTexture = 0x20,
 
         ShadowsFlag1 = 0x40, // needed
