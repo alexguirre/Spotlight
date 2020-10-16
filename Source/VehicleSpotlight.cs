@@ -659,6 +659,7 @@
             Entity e = TrackedEntity;
             if (e)
             {
+                string distanceStr = Utility.FormatDistance(Vehicle.DistanceTo(e));
                 switch (e)
                 {
                     case Vehicle veh:
@@ -673,7 +674,7 @@
                             {
                                 text += $"~n~License Plate: ~b~{veh.LicensePlate}~s~";
                             }
-                            text += $"~n~Distance: ~b~{(int)Vehicle.DistanceTo(e)}m~s~";
+                            text += $"~n~Distance: ~b~{distanceStr}~s~";
 
 
                             string txd = "mpcarhud";
@@ -709,7 +710,7 @@
                             int startTime = Environment.TickCount;
                             GameFiber.WaitUntil(() => NativeFunction.Natives.IsPedheadshotReady<bool>(headshotHandle), 10000);
                             string txd = NativeFunction.Natives.GetPedheadshotTxdString<string>(headshotHandle);
-                            Game.DisplayNotification(txd, txd, NotificationTitle, "~b~Tracking pedestrian", $"Distance: ~b~{(int)Vehicle.DistanceTo(e)}m~s~");
+                            Game.DisplayNotification(txd, txd, NotificationTitle, "~b~Tracking pedestrian", $"Distance: ~b~{distanceStr}~s~");
                             NativeFunction.Natives.UnregisterPedheadshot<uint>(headshotHandle);
                         });
                         break;
