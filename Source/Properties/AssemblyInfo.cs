@@ -4,19 +4,26 @@ using Rage.Attributes;
 
 [assembly: AssemblyTitle("Spotlight")]
 [assembly: AssemblyDescription("")]
-#if DEBUG
-[assembly: AssemblyConfiguration("Debug")]
-#else
-[assembly: AssemblyConfiguration("Release")]
-#endif
+[assembly: AssemblyConfiguration(PluginInfo.Config)]
+[assembly: AssemblyInformationalVersion(PluginInfo.Version + " - " + PluginInfo.Config)]
 [assembly: AssemblyCompany("alexguirre")]
 [assembly: AssemblyProduct("Spotlight")]
-[assembly: AssemblyCopyright("Copyright ©  $CR_YEAR$ alexguirre")] // set by AppVeyor
+[assembly: AssemblyCopyright("Copyright ©  2015-2020 alexguirre")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: Guid("3ffad4ee-304c-47e6-8bdc-1dd20b9c6385")]
-[assembly: AssemblyVersion("1.4.0.0")] // set by AppVeyor
-[assembly: AssemblyFileVersion("1.4.0.0")] // set by AppVeyor
-[assembly: AssemblyInformationalVersion("1.4")] // set by AppVeyor
+[assembly: AssemblyVersion(PluginInfo.FullVersion)]
+[assembly: AssemblyFileVersion(PluginInfo.FullVersion)]
 [assembly: Plugin("Spotlight", Author = "alexguirre", PrefersSingleInstance = true, ShouldTickInPauseMenu = true)]
+
+internal static class PluginInfo
+{
+#if DEBUG
+    public const string Config = "Debug";
+#else
+    public const string Config = "Release";
+#endif
+    public const string Version = "1.4";
+    public const string FullVersion = Version + ".0.0";
+}
