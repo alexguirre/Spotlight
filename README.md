@@ -1,1 +1,1 @@
-# Spotlight [![Build status](https://ci.appveyor.com/api/projects/status/9f38a1mpsduqq6x7?svg=true)](https://ci.appveyor.com/project/alexguirre/spotlight) [![License](https://img.shields.io/github/license/alexguirre/Spotlight.svg)](LICENSE.md)
+# Spotlight [![Build status](https://github.com/alexguirre/Spotlight/workflows/CI/badge.svg)](https://github.com/alexguirre/Spotlight/actions?workflow=CI) [![License](https://img.shields.io/github/license/alexguirre/Spotlight.svg)](LICENSE.md)
