@@ -37,4 +37,4 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: Spotlight-${{ matrix.config }}
-          path: $SPOTLIGHT_BUILD_PATH
+          path: ${{ env.SPOTLIGHT_BUILD_PATH }}
