@@ -1,0 +1,40 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        config: [Debug, Release]
+    env:
+        SPOTLIGHT_BUILD_PATH: ${{ github.workspace }}/Build
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.1
+      
+      - name: Install Dependencies - RAGEPluginHook
+        uses: carlosperate/download-file-action@v1.0.2
+        with:
+          file-url: https://www.dropbox.com/s/a315cekpgeeiz9t/RagePluginHookSDK.dll?dl=1
+          location: Dependencies/
+      
+      - name: Install Dependencies - Gwen
+        uses: carlosperate/download-file-action@v1.0.2
+        with:
+          file-url: https://www.dropbox.com/s/0dwklamcsgmj5qg/Gwen.dll?dl=1
+          location: Dependencies/
+
+      - name: Build
+        run: |
+          msbuild Spotlight.sln /p:Configuration=${{ matrix.config }} /p:Platform=x64
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: Spotlight-${{ matrix.config }}
+          path: ${{ env.SPOTLIGHT_BUILD_PATH }}
