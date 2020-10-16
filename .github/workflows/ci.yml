@@ -10,7 +10,7 @@ jobs:
       matrix:
         config: [Debug, Release]
     env:
-        SPOTLIGHT_BUILD_PATH: Build
+        SPOTLIGHT_BUILD_PATH: ${{ github.workspace }}/Build
     steps:
       - uses: actions/checkout@v1
 
