@@ -145,5 +145,12 @@
                 }
             }
         }
+
+        public static string FormatDistance(float meters)
+            => NativeFunction.Natives.xD3D15555431AB793<bool>() ? // SHOULD_USE_METRIC_MEASUREMENTS
+                $"{(int)Math.Round(meters)} meters" :
+                $"{(int)Math.Round(MetersToFeet(meters))} feet";
+
+        private static float MetersToFeet(float meters) => meters * 3.2808f;
     }
 }
