@@ -35,25 +35,19 @@
             hasMoved = false;
             float pitch = 0.0f, yaw = 0.0f;
 
-            switch (method)
+            if (modifierButton == ControllerButtons.None || Game.IsControllerButtonDownRightNow(modifierButton))
             {
-                case ControllerMethod.LeftStick:
-                    if (modifierButton == ControllerButtons.None || Game.IsControllerButtonDownRightNow(modifierButton))
-                    {
+                switch (method)
+                {
+                    case ControllerMethod.LeftStick:
                         yaw -= Utility.GetDisabledControlNormal(GameControl.FrontendAxisX) * GetMovementAmountForThisFrame();
                         pitch -= Utility.GetDisabledControlNormal(GameControl.FrontendAxisY) * GetMovementAmountForThisFrame();
-                    }
-                    break;
-                case ControllerMethod.RightStick:
-                    if (modifierButton == ControllerButtons.None || Game.IsControllerButtonDownRightNow(modifierButton))
-                    {
+                        break;
+                    case ControllerMethod.RightStick:
                         yaw -= Utility.GetDisabledControlNormal(GameControl.FrontendRightAxisX) * GetMovementAmountForThisFrame();
                         pitch -= Utility.GetDisabledControlNormal(GameControl.FrontendRightAxisY) * GetMovementAmountForThisFrame();
-                    }
-                    break;
-                case ControllerMethod.DPad:
-                    if (modifierButton == ControllerButtons.None || Game.IsControllerButtonDownRightNow(modifierButton))
-                    {
+                        break;
+                    case ControllerMethod.DPad:
                         if (Game.IsControllerButtonDownRightNow(ControllerButtons.DPadLeft))
                             yaw += GetMovementAmountForThisFrame();
                         else if (Game.IsControllerButtonDownRightNow(ControllerButtons.DPadRight))
@@ -63,8 +57,30 @@
                             pitch += GetMovementAmountForThisFrame();
                         else if (Game.IsControllerButtonDownRightNow(ControllerButtons.DPadDown))
                             pitch -= GetMovementAmountForThisFrame();
+                        break;
+                }
+
+                if (modifierButton != ControllerButtons.None)
+                {
+                    Disable(ButtonToScriptControl(modifierButton));
+                    switch (method)
+                    {
+                        case ControllerMethod.LeftStick:
+                            Disable(GameControl.ScriptLeftAxisX);
+                            Disable(GameControl.ScriptLeftAxisY); 
+                            break;
+                        case ControllerMethod.RightStick:
+                            Disable(GameControl.ScriptRightAxisX);
+                            Disable(GameControl.ScriptRightAxisY);
+                            break;
+                        case ControllerMethod.DPad:
+                            Disable(ButtonToScriptControl(ControllerButtons.DPadUp));
+                            Disable(ButtonToScriptControl(ControllerButtons.DPadDown));
+                            Disable(ButtonToScriptControl(ControllerButtons.DPadLeft));
+                            Disable(ButtonToScriptControl(ControllerButtons.DPadRight));
+                            break;
                     }
-                    break;
+                }
             }
 
             if (pitch != 0.0f || yaw != 0.0f)
@@ -72,6 +88,36 @@
             rotationDelta = new Rotator(pitch, 0.0f, yaw);
         }
 
+        private static void Disable(GameControl? control)
+        {
+            if (control.HasValue)
+            {
+                NativeFunction.Natives.xEDE476E5EE29EDB1(0, (int)control.Value); // SET_INPUT_EXCLUSIVE
+                Game.DisableControlAction(0, control.Value, true);
+            }
+        }
+
+        private static GameControl? ButtonToScriptControl(ControllerButtons button)
+        {
+            switch (button)
+            {
+                case ControllerButtons.DPadUp: return GameControl.ScriptPadUp;
+                case ControllerButtons.DPadDown: return GameControl.ScriptPadDown;
+                case ControllerButtons.DPadLeft: return GameControl.ScriptPadLeft;
+                case ControllerButtons.DPadRight: return GameControl.ScriptPadRight;
+                case ControllerButtons.Start: return null;
+                case ControllerButtons.Back: return null;
+                case ControllerButtons.LeftThumb: return GameControl.ScriptLT;
+                case ControllerButtons.RightThumb: return GameControl.ScriptRT;
+                case ControllerButtons.LeftShoulder: return GameControl.ScriptLB;
+                case ControllerButtons.RightShoulder: return GameControl.ScriptRB;
+                case ControllerButtons.A: return GameControl.ScriptRDown;
+                case ControllerButtons.B: return GameControl.ScriptRRight;
+                case ControllerButtons.X: return GameControl.ScriptRLeft;
+                case ControllerButtons.Y: return GameControl.ScriptRUp;
+                default: return null;
+            };
+        }
 
         protected override bool GetUpdatedRotationDeltaInternal(VehicleSpotlight spotlight, out Rotator rotation)
         {
