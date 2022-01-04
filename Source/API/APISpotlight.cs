@@ -69,7 +69,7 @@
 
         private static void UpdateSpotlights()
         {
-            WinFunctions.CopyTlsValues(WinFunctions.GetProcessMainThreadId(), WinFunctions.GetCurrentThreadId(), GameOffsets.TlsAllocator0, GameOffsets.TlsAllocator1, GameOffsets.TlsAllocator2);
+            WinFunctions.CopyTlsValues(WinFunctions.GetProcessMainThreadId(), WinFunctions.GetCurrentThreadId(), GameOffsets.TlsAllocator);
             while (true)
             {
                 GameFiber.Yield();

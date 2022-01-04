@@ -8,7 +8,7 @@ using Rage.Attributes;
 [assembly: AssemblyInformationalVersion(PluginInfo.Version + " - " + PluginInfo.Config)]
 [assembly: AssemblyCompany("alexguirre")]
 [assembly: AssemblyProduct("Spotlight")]
-[assembly: AssemblyCopyright("Copyright ©  2015-2020 alexguirre")]
+[assembly: AssemblyCopyright("Copyright ©  2015-2022 alexguirre")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
@@ -24,6 +24,6 @@ internal static class PluginInfo
 #else
     public const string Config = "Release";
 #endif
-    public const string Version = "1.4";
-    public const string FullVersion = Version + ".0.0";
+    public const string Version = "1.3";
+    public const string FullVersion = Version + ".1.0";
 }

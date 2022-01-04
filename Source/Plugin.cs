@@ -63,7 +63,7 @@
             // when the queue array that the GetFreeLightDrawDataSlotFromQueue function accesses is full,
             // it uses the TLS to get an allocator to allocate memory for a bigger array,
             // therefore we copy the allocator pointers from the main thread TLS to our current thread TLS.
-            WinFunctions.CopyTlsValues(WinFunctions.GetProcessMainThreadId(), WinFunctions.GetCurrentThreadId(), GameOffsets.TlsAllocator0, GameOffsets.TlsAllocator1, GameOffsets.TlsAllocator2);
+            WinFunctions.CopyTlsValues(WinFunctions.GetProcessMainThreadId(), WinFunctions.GetCurrentThreadId(), GameOffsets.TlsAllocator);
 
             if (Settings.EnableLightEmissives)
             {

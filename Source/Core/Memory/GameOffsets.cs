@@ -8,9 +8,7 @@
     internal static unsafe class GameOffsets
     {
         public static int CVehicle_WeaponMgr { get; private set; }
-        public static int TlsAllocator0 { get; private set; }
-        public static int TlsAllocator1 { get; private set; }
-        public static int TlsAllocator2 { get; private set; }
+        public static int TlsAllocator { get; private set; }
         public static int CVehicleModelInfo_VehicleMakeName { get; private set; }
         public static int CVehicleModelInfo_GameName { get; private set; }
 
@@ -22,12 +20,10 @@
                 CVehicle_WeaponMgr = *(int*)(address + 3);
             }
 
-            address = Game.FindPattern("B8 ?? ?? ?? ?? 48 89 1C 10 B8 ?? ?? ?? ?? 48 89 1C 10 B8 ?? ?? ?? ?? 48 89 1C 10 E8 ?? ?? ?? ?? 48 8D 15 ?? ?? ?? ??");
-            if (AssertAddress(address, "TlsAllocatorOffsets"))
+            address = Game.FindPattern("B9 ?? ?? ?? ?? 48 8B 0C 01 45 33 C9 49 8B D2");
+            if (AssertAddress(address, "TlsAllocatorOffset"))
             {
-                TlsAllocator0 = *(int*)(address + 1);
-                TlsAllocator1 = *(int*)(address + 10);
-                TlsAllocator2 = *(int*)(address + 19);
+                TlsAllocator = *(int*)(address + 1);
             }
 
             address = Game.FindPattern("48 8D 82 ?? ?? ?? ?? 48 8D B2 ?? ?? ?? ?? 48 85 C0 74 09");
