@@ -24,6 +24,6 @@ internal static class PluginInfo
 #else
     public const string Config = "Release";
 #endif
-    public const string Version = "1.3";
-    public const string FullVersion = Version + ".1.0";
+    public const string Version = "1.4";
+    public const string FullVersion = Version + ".0.0";
 }
