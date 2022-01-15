@@ -15,10 +15,18 @@
         private static readonly bool DllExists = File.Exists(DllPath);
 
         /// <summary>
+        /// One more wrapper to prevent <see cref="CanBeUsed"/> from trying to load the Spotlight assembly.
+        /// </summary>
+        private static class IsLoadedWrapper
+        {
+            public static bool IsLoaded => Functions.IsLoaded;
+        }
+
+        /// <summary>
         /// Gets whether the API functions can be called.
         /// The 'Spotlight.dll' must exist and has been loaded by the user.
         /// </summary>
-        public static bool CanBeUsed => DllExists ? Functions.IsLoaded : false;
+        public static bool CanBeUsed => DllExists ? IsLoadedWrapper.IsLoaded : false;
 
         public static bool HasSpotlight(this Vehicle vehicle) => Functions.HasSpotlight(vehicle);
         public static bool RequestSpotlight(this Vehicle vehicle) => Functions.RequestSpotlight(vehicle);
