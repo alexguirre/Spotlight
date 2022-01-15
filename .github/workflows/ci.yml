@@ -19,7 +19,7 @@ jobs:
 
       - name: Build
         run: |
-          msbuild Spotlight.sln /t:restore
+          msbuild Spotlight.sln /p:RestorePackagesConfig=true /t:restore
           msbuild Spotlight.sln /p:Configuration=${{ matrix.config }} /p:Platform=x64
 
       - name: Upload Artifact
