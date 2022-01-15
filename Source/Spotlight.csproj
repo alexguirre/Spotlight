@@ -34,13 +34,11 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gwen">
-      <HintPath>..\Dependencies\Gwen.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Gwen, Version=3.0.6001.172, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Gwen.3.0.6001.172\lib\net40\Gwen.dll</HintPath>
     </Reference>
-    <Reference Include="RagePluginHookSDK">
-      <HintPath>..\Dependencies\RagePluginHookSDK.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="RagePluginHook, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\RagePluginHook.1.86.1\lib\net472\RagePluginHook.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -82,6 +80,9 @@
     <Compile Include="VehicleSpotlight.cs" />
     <Compile Include="SpotlightData.cs" />
     <Compile Include="VehiclesUpdateHook.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
