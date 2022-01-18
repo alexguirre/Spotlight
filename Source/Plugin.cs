@@ -3,11 +3,12 @@
     using System;
     using System.IO;
     using System.Linq;
-    using System.Diagnostics;
-    using System.Threading;
     using System.Collections.Generic;
 
     using Rage;
+
+    using RAGENativeUI;
+    using RAGENativeUI.PauseMenu;
 
     using Spotlight.Core.Memory;
     using Spotlight.InputControllers;
@@ -20,7 +21,8 @@
         public static readonly List<VehicleSpotlight> Spotlights = new List<VehicleSpotlight>();
         public static readonly List<SpotlightInputController> InputControllers = new List<SpotlightInputController>();
 
-        public static EditorForm Editor { get; private set; }
+        public static MenuPool EditorMenuPool { get; } = new MenuPool();
+        public static EditorMenu Editor { get; private set; }
 
         private static void Main()
         {
@@ -55,6 +57,8 @@
                 Game.UnloadActivePlugin();
             }
 
+            Editor = new EditorMenu();
+
             if (Settings.EnableLightEmissives)
             {
                 VehiclesUpdateHook.Hook();
@@ -74,39 +78,19 @@
 
             Game.LogTrivial("Initialized");
 
-#if DEBUG
-            bool f = false;
-#endif
+            GameFiber.StartNew(() =>
+            {
+                // process menus in a different fiber because items that use ONSCREEN_KEYBOARD will block the execution
+                while (true)
+                {
+                    GameFiber.Yield();
+                    EditorMenuPool.ProcessMenus();
+                }
+            }, "Spotlight Editor Menu Fiber");
+
             while (true)
             {
                 GameFiber.Yield();
-
-#if DEBUG
-                if (Game.LocalPlayer.Character.CurrentVehicle)
-                {
-                    if (Game.IsKeyDown(System.Windows.Forms.Keys.Y))
-                    {
-                        Game.LocalPlayer.Character.CurrentVehicle.IsPositionFrozen = f = !f;
-                    }
-                    else if (Game.IsKeyDown(System.Windows.Forms.Keys.D7))
-                    {
-                        Game.LocalPlayer.Character.CurrentVehicle.Rotation = new Rotator(45.0f, 0.0f, 0.0f);
-                    }
-                    else if (Game.IsKeyDown(System.Windows.Forms.Keys.D8))
-                    {
-                        Game.LocalPlayer.Character.CurrentVehicle.Rotation = new Rotator(0.0f, 45.0f, 0.0f);
-                    }
-                    else if (Game.IsKeyDown(System.Windows.Forms.Keys.D9))
-                    {
-                        Game.LocalPlayer.Character.CurrentVehicle.Rotation = new Rotator(0.0f, 0.0f, 45.0f);
-                    }
-                    else if (Game.IsKeyDown(System.Windows.Forms.Keys.D0))
-                    {
-                        Game.LocalPlayer.Character.CurrentVehicle.Rotation = Rotator.Zero;
-                    }
-                }
-#endif
-
                 Update();
             }
         }
@@ -154,17 +138,16 @@
             }
 
 
-            if ((Editor == null || !Editor.Window.IsVisible) && Game.IsKeyDown(Settings.EditorKey))
+            if (Game.IsKeyDown(Settings.EditorKey))
             {
-                if (Editor != null)
+                if (EditorMenuPool.IsAnyMenuOpen())
                 {
-                    Editor?.Window?.Close();
-                    Editor = null;
+                    EditorMenuPool.CloseAllMenus();
                 }
-
-                Editor = new EditorForm();
-                Editor.Show();
-                Editor.Position = new System.Drawing.Point(300, 300);
+                else if (!UIMenu.IsAnyMenuVisible && !TabView.IsAnyPauseMenuVisible)
+                {
+                    Editor.Visible = true;
+                }
             }
         }
 

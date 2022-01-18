@@ -10,6 +10,7 @@
     <RootNamespace>Spotlight</RootNamespace>
     <AssemblyName>Spotlight</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <LangVersion>9.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -36,6 +37,10 @@
   <ItemGroup>
     <Reference Include="Gwen, Version=3.0.6001.172, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Gwen.3.0.6001.172\lib\net40\Gwen.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RAGENativeUI, Version=1.8.2.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\RAGENativeUI.1.8.2\lib\net472\RAGENativeUI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="RagePluginHook, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
@@ -66,9 +71,12 @@
     <Compile Include="Core\XYZ.cs" />
     <Compile Include="Editor\ColorPicker.cs" />
     <Compile Include="Editor\EditorForm.cs" />
+    <Compile Include="Editor\EditorMenu.cs" />
     <Compile Include="Editor\InputTextForm.cs" />
     <Compile Include="Editor\IntNumericUpDown.cs" />
+    <Compile Include="Editor\MenuExtensions.cs" />
     <Compile Include="Editor\NumericUpDownEx.cs" />
+    <Compile Include="Editor\VisualSettingsMenu.cs" />
     <Compile Include="ISpotlight.cs" />
     <Compile Include="InputControllers\ControllerSpotlightInputController.cs" />
     <Compile Include="InputControllers\KeyboardSpotlightInputController.cs" />
